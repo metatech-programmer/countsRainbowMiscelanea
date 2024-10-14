@@ -29,13 +29,25 @@
     <h1>CountsMiscelanea</h1>
     <div>
         <div>
-            <form action="">
-                <div>
-                    <label for="dateMonthSearch">Seleccione un mes para ver las cuentas</label>
-                   <input type="month" name="dateMonthSearch" id="dateMonthSearch" required>
-                </div>
-                <input type="submit" value="Consultar" id="btnSearch">
-            </form>
+            <div class="search">
+
+                <form action="">
+                    <div>
+                        <label for="dateMonthSearch">Seleccione un mes para ver las cuentas</label>
+                        <input type="month" name="dateMonthSearch" id="dateMonthSearch" required>
+                    </div>
+                    <input type="submit" value="Consultar" id="btnSearch">
+                </form>
+                <!-- --------------------------------------------------------------------- -->
+                <form action="">
+                    <div>
+                        <label for="dateDaySearch">Seleccione un dia para ver las cuentas</label>
+                        <input type="date" name="dateDaySearch" id="dateDaySearch" required>
+                    </div>
+                    <input type="submit" value="Consultar" id="btnSearchDay">
+                </form>
+ 
+            </div>
             <div id="messageResult">
                 <div>
                     <h2>Venta Total</h2>
@@ -62,6 +74,7 @@
                         <th>Descripción jer</th>
                         <th>Gastos</th>
                         <th>Descripción gastos</th>
+                        <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody id="counts">

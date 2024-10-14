@@ -7,7 +7,7 @@ const dateNow = new Date().toLocaleDateString();
 let ventas = JSON.parse(localStorage.getItem("counts")) || [];
 
 function saveVenta() {
-  const dateNowLocal = new Date().toLocaleDateString();
+  const dateNowLocal = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
   const typeValue = type.value;
   const valueValue = parseFloat(value.value); // Cambiado a parseFloat
   const descriptionValue = description.value;
@@ -25,6 +25,7 @@ function saveVenta() {
   }
 
   const venta = {
+    id: Date.now(), // ID único basado en el tiempo
     date: dateNowLocal,
     type: typeValue,
     value: valueValue,
