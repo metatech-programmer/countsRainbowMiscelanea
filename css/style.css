@@ -1,236 +1,235 @@
 /* Estilos generales */
 body {
-    font-family: "Arial", sans-serif;
-    background-color: #f4f4f4;
-    margin: 0;
-    padding: 0;
-    min-height: 100dvh;
-    overflow-x: hidden;
-    line-height: 1.6;
-    font-size: 1rem; /* Tamaño base */
+  font-family: "Arial", sans-serif;
+  background-color: #f4f4f4;
+  margin: 0;
+  padding: 0;
+  min-height: 100dvh;
+  overflow-x: hidden;
+  line-height: 1.6;
+  font-size: 1rem; /* Tamaño base */
+  max-width: 100dvw;
+}
+
+/* Navegación */
+#nav {
+  background-color: #007bff;
+  color: white;
+  padding: 1.5rem 1rem;
+  text-align: center;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+#nav a {
+  color: white;
+  text-decoration: none;
+  margin: 0 1.5rem;
+  font-weight: bold;
+  transition: color 0.3s;
+  font-size: 1rem; /* Ajuste base */
+}
+
+#nav a:hover {
+  color: #ffcc00;
+}
+
+/* Títulos */
+h1 {
+  text-align: center;
+  color: #333;
+  margin: 2rem 0;
+  font-size: 2rem;
+}
+
+/* Contenedor principal */
+.container {
+  width: 100%;
+  max-width: 100dvw;
+  margin: 0 auto;
+  overflow: hidden;
+}
+
+/* Formularios */
+form {
+  background: white;
+  padding: 2rem;
+  margin: 2rem 0;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: box-shadow 0.3s;
+  max-width: 40dvw;
+  margin: 2rem auto;
+  gap: 1rem;
+}
+
+form:hover {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+form label,
+form div,
+form p {
+  width: 100%;
+}
+
+form input,
+form select {
+  width: 100%;
+  padding: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  transition: border-color 0.3s;
+  margin-bottom: 1rem;
+}
+
+/* Estilos de entrada */
+input[type="text"],
+input[type="number"],
+input[type="date"],
+select {
+  width: 100%;
+  padding: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  transition: border-color 0.3s;
+  margin-bottom: 1rem;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+input[type="date"]:focus,
+select:focus {
+  border-color: #007bff;
+}
+
+/* Botones */
+button,
+input[type="button"],
+input[type="submit"] {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s;
+  flex: 1;
+  margin: 0.5rem;
+}
+
+button:hover,
+input[type="button"]:hover,
+input[type="submit"]:hover {
+  background-color: #218838;
+}
+
+/* Disposición de botones en formularios */
+.form-buttons {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+/* Tablas */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 2rem;
+}
+
+th,
+td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+th {
+  background-color: #007bff;
+  color: white;
+}
+
+tbody tr:hover {
+  background-color: #f1f1f1;
+}
+
+.search {
+  display: flex;
+  justify-content: space-evenly;
+  flex-wrap: wrap;
+}
+
+/* Mensajes */
+#messageResult {
+  margin: 2rem 0;
+  padding: 1rem;
+  background-color: #e7f3fe;
+  border-left: 6px solid #2196f3;
+  color: #31708f;
+}
+
+/* Estilos responsivos */
+@media (max-width: 768px) {
+  body {
+    font-size: 0.9rem;
   }
-  
-  /* Navegación */
+
   #nav {
-    background-color: #007bff;
-    color: white;
-    padding: 1.5rem 1rem;
-    text-align: center;
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-  }
-  
-  #nav a {
-    color: white;
-    text-decoration: none;
-    margin: 0 1.5rem;
-    font-weight: bold;
-    transition: color 0.3s;
-    font-size: 1rem; /* Ajuste base */
-  }
-  
-  #nav a:hover {
-    color: #ffcc00;
-  }
-  
-  /* Títulos */
-  h1 {
-    text-align: center;
-    color: #333;
-    margin: 2rem 0;
-    font-size: 2rem;
-  }
-  
-  /* Contenedor principal */
-  .container {
-    width: 90%;
-    max-width: 80dvw;
-    margin: 0 auto;
-    overflow: hidden;
-    padding: 0 1rem;
-  }
-  
-  /* Formularios */
-  form {
-    background: white;
-    padding: 2rem;
-    margin: 2rem 0;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    display: flex;
     flex-direction: column;
-    align-items: center;
-    transition: box-shadow 0.3s;
-    max-width: 40dvw;
-    margin: 2rem auto;
-    gap: 1rem;
-  }
-  
-  form:hover {
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-  }
-  
-  form label,
-  form div,
-  form p {
-    width: 100%;
-  }
-  
-  form input,
-  form select {
-    width: 100%;
     padding: 1rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
-    transition: border-color 0.3s;
-    margin-bottom: 1rem;
   }
-  
-  /* Estilos de entrada */
-  input[type="text"],
-  input[type="number"],
-  input[type="date"],
-  select {
-    width: 100%;
-    padding: 1rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
-    transition: border-color 0.3s;
-    margin-bottom: 1rem;
+
+  #nav a {
+    margin: 0.5rem 0;
+    font-size: 0.9rem;
   }
-  
-  input[type="text"]:focus,
-  input[type="number"]:focus,
-  input[type="date"]:focus,
-  select:focus {
-    border-color: #007bff;
+
+  form {
+    max-width: 90%;
+    padding: 1.5rem;
   }
-  
-  /* Botones */
+
+  h1 {
+    font-size: 1.8rem;
+  }
+
   button,
   input[type="button"],
   input[type="submit"] {
-    background-color: #28a745;
-    color: white;
-    border: none;
-    padding: 1rem 2rem;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 1rem;
-    transition: background-color 0.3s;
-    flex: 1;
-    margin: 0.5rem;
+    margin: 0.5rem 0;
+    padding: 0.8rem 1.5rem;
   }
-  
-  button:hover,
-  input[type="button"]:hover,
-  input[type="submit"]:hover {
-    background-color: #218838;
+}
+
+@media (max-width: 480px) {
+  body {
+    font-size: 0.8rem;
   }
-  
-  /* Disposición de botones en formularios */
-  .form-buttons {
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
+
+  #nav {
+    padding: 0.5rem;
   }
-  
-  /* Tablas */
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 2rem;
-  }
-  
-  th,
-  td {
+
+  form {
     padding: 1rem;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
+    max-width: 100%;
   }
-  
-  th {
-    background-color: #007bff;
-    color: white;
+
+  button,
+  input[type="button"],
+  input[type="submit"] {
+    padding: 0.7rem 1rem;
+    margin: 0.5rem 0;
   }
-  
-  tbody tr:hover {
-    background-color: #f1f1f1;
-  }
-  
-  .search {
-    display: flex;
-    justify-content: space-evenly;
-    flex-wrap: wrap;
-  }
-  
-  /* Mensajes */
-  #messageResult {
-    margin: 2rem 0;
-    padding: 1rem;
-    background-color: #e7f3fe;
-    border-left: 6px solid #2196f3;
-    color: #31708f;
-  }
-  
-  /* Estilos responsivos */
-  @media (max-width: 768px) {
-    body {
-      font-size: 0.9rem;
-    }
-  
-    #nav {
-      flex-direction: column;
-      padding: 1rem;
-    }
-  
-    #nav a {
-      margin: 0.5rem 0;
-      font-size: 0.9rem;
-    }
-  
-    form {
-      max-width: 90%;
-      padding: 1.5rem;
-    }
-  
-    h1 {
-      font-size: 1.8rem;
-    }
-  
-    button,
-    input[type="button"],
-    input[type="submit"] {
-      margin: 0.5rem 0;
-      padding: 0.8rem 1.5rem;
-    }
-  }
-  
-  @media (max-width: 480px) {
-    body {
-      font-size: 0.8rem;
-    }
-  
-    #nav {
-      padding: 0.5rem;
-    }
-  
-    form {
-      padding: 1rem;
-      max-width: 100%;
-    }
-  
-    button,
-    input[type="button"],
-    input[type="submit"] {
-      padding: 0.7rem 1rem;
-      margin: 0.5rem 0;
-    }
-  }
-  
+}
