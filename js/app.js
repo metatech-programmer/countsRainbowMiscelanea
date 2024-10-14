@@ -10,7 +10,7 @@ function saveVenta() {
   const dateNowLocal = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
   const typeValue = type.value;
   const valueValue = parseFloat(value.value); // Cambiado a parseFloat
-  const descriptionValue = description.value;
+  const descriptionValue = String(description.value).toLowerCase();
 
   if (
     typeValue === "" ||
