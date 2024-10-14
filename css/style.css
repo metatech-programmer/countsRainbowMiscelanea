@@ -1,0 +1,214 @@
+/* Estilos generales */
+body {
+  font-family: "Arial", sans-serif;
+  background-color: #f4f4f4;
+  margin: 0;
+  padding: 0;
+}
+
+/* Navegación */
+#nav {
+  background-color: #007bff;
+  color: white;
+  padding: 15px;
+  text-align: center;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+#nav a {
+  color: white;
+  text-decoration: none;
+  margin: 0 15px;
+  font-weight: bold;
+  transition: color 0.3s;
+}
+
+#nav a:hover {
+  color: #ffcc00; /* Color al pasar el mouse */
+}
+
+/* Títulos */
+h1 {
+  text-align: center;
+  color: #333;
+  margin: 20px 0;
+}
+
+/* Contenedor principal */
+.container {
+  width: 90%;
+  max-width: 1200px;
+  margin: auto;
+  overflow: hidden;
+}
+
+/* Formularios */
+form {
+  background: white;
+  padding: 20px;
+  margin: 20px 0;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  transition: box-shadow 0.3s;
+  max-width: 500px;
+  margin: auto;
+  margin-top: 50px;
+  gap: 15px;
+}
+
+form:hover {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+form label {
+  width: 100%;
+}   
+
+form div {
+  width: 100%;
+}
+
+form p {
+  width: 100%;
+}
+
+form input,
+form select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  margin-bottom: 15px; /* Espaciado entre campos */
+}
+
+
+/* Estilos de entrada */
+input[type="text"],
+input[type="number"],
+input[type="date"],
+select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  transition: border-color 0.3s;
+  margin-bottom: 15px; /* Espaciado entre campos */
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+input[type="date"]:focus,
+select:focus {
+  border-color: #007bff; /* Color al enfocar */
+}
+
+/* Botones */
+button,
+input[type="button"],
+input[type="submit"] {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
+  margin: 5px; /* Espaciado entre botones */
+  flex: 1; /* Permitir que los botones crezcan */
+}
+
+button:hover,
+input[type="button"]:hover,
+input[type="submit"]:hover {
+  background-color: #218838;
+}
+
+/* Disposición de botones en formularios */
+.form-buttons {
+  display: flex;
+  justify-content: space-between; /* Espacio entre botones */
+  flex-wrap: wrap; /* Permitir que los botones se envuelvan en pantallas pequeñas */
+}
+
+/* Tablas */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+th,
+td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+th {
+  background-color: #007bff;
+  color: white;
+}
+
+tbody tr:hover {
+  background-color: #f1f1f1;
+}
+
+/* Mensajes */
+#messageResult {
+  margin: 20px 0;
+  padding: 10px;
+  background-color: #e7f3fe;
+  border-left: 6px solid #2196f3;
+  color: #31708f;
+}
+
+/* Estilos responsivos */
+@media (max-width: 768px) {
+  #nav {
+    padding: 10px;
+  }
+
+  #nav a {
+    margin: 0 10px;
+    font-size: 14px;
+  }
+
+  form {
+    padding: 15px;
+  }
+
+  h1 {
+    font-size: 24px;
+  }
+
+  button,
+  input[type="button"],
+  input[type="submit"] {
+    flex: 1; /* Botones ocupan el mismo espacio */
+    margin: 5px 0; /* Espaciado vertical en botones */
+  }
+}
+
+@media (max-width: 480px) {
+  #nav a {
+    display: block;
+    margin: 5px 0;
+  }
+
+  form {
+    margin: 10px 0;
+  }
+}

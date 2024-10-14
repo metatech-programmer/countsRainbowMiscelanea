@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="./css/style.css">
+    <meta og:title="CountsMiscelanea">
+    <meta og:description="App de ventas y gastos de la Papeleria y miscelanea">
+    <meta og:url="https://counts-miscelanea.vercel.app/">
+    <meta og:image="https://counts-miscelanea.vercel.app/">
+    <meta og:site_name="CountsMiscelanea">
+    <meta og:type="website">
+    <meta og:locale="es_CO">
+    <meta og:author="Metatech">
+    <link rel="shortcut icon" href="https://static.thenounproject.com/png/154887-200.png" type="image/png">
+
+    <title>CountsMiscelanea</title>
+</head>
+
+<body>
+    <div id="nav">
+        <a href="/index.html">Inicio</a>
+        <a href="#nav" class="active">Cuentas del día</a>
+        <!-- <a href="/graphics.html">Graficas del mes</a> -->
+
+    </div>
+    <h1>CountsMiscelanea</h1>
+    <div>
+        <div>
+            <form action="">
+                <div>
+                    <label for="dateMonthSearch">Seleccione un mes para ver las cuentas</label>
+                   <input type="month" name="dateMonthSearch" id="dateMonthSearch" required>
+                </div>
+                <input type="submit" value="Consultar" id="btnSearch">
+            </form>
+            <div id="messageResult">
+                <div>
+                    <h2>Venta Total</h2>
+                    <p id="totalVenta"></p>
+                </div>
+                <div>
+                    <h2>Venta JER</h2>
+                    <p id="totalJER"></p>
+                </div>
+                <div>
+                    <h2>Venta Gastos</h2>
+                    <p id="totalGastos"></p>
+                </div>
+            </div>
+        </div>
+        <div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Venta</th>
+                        <th>Descripción venta</th>
+                        <th>Jer</th>
+                        <th>Descripción jer</th>
+                        <th>Gastos</th>
+                        <th>Descripción gastos</th>
+                    </tr>
+                </thead>
+                <tbody id="counts">
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="./js/counts.js"></script>
+</body>
+
+</html>
