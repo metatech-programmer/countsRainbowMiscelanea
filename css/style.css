@@ -134,6 +134,30 @@ input[type="submit"]:hover {
   background-color: #218838;
 }
 
+.countR {
+  position: fixed;
+  left: 1rem;
+  bottom: 1rem;
+  font-size: 0.8rem;
+  color: red;   
+  opacity: .5;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+/* CSS para ajustar el tamaño de los gráficos */
+.chart-container {
+  width: 100%;
+  max-width: 600px; /* Limitar el tamaño máximo */
+  margin: auto; /* Centrar los gráficos */
+  margin-bottom: 2rem;
+}
+
+canvas {
+  width: 100%;
+  height: auto; /* Ajustar la altura automáticamente */
+}
+
 /* Disposición de botones en formularios */
 .form-buttons {
   display: flex;

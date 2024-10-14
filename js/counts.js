@@ -7,7 +7,6 @@ let totalJER = document.getElementById("totalJER");
 let totalGastos = document.getElementById("totalGastos");
 const btnSearch = document.getElementById("btnSearch");
 const btnSearchDay = document.getElementById("btnSearchDay");
-
 const counts = JSON.parse(localStorage.getItem("counts")) || [];
 
 function renderAllCounts() {

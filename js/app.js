@@ -2,8 +2,8 @@ const type = document.getElementById("type");
 const value = document.getElementById("value");
 const description = document.getElementById("description");
 const btnRegister = document.getElementById("btnRegister");
+const countRegistros = document.getElementById("countRegistros");
 const dateNow = new Date().toLocaleDateString();
-
 let ventas = JSON.parse(localStorage.getItem("counts")) || [];
 
 function saveVenta() {
@@ -44,5 +44,6 @@ function saveVenta() {
   value.value = "";
   description.value = "";
 }
+countRegistros.innerText = ventas.length;
 
 btnRegister.addEventListener("click", saveVenta);

@@ -1,12 +1,19 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gráficas de Ventas</title>
     <link rel="stylesheet" href="./css/style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+
+    <title>Gráficas de Ventas</title>
+
+
+
 </head>
+
 <body>
     <div id="nav">
         <a href="/index.html">Inicio</a>
@@ -14,11 +21,19 @@
         <a href="#nav" class="active">Graficas del mes</a>
     </div>
     <h1>Gráficas de Ventas</h1>
-    <div>
+    <div class="chart-container">
         <canvas id="monthlySalesChart"></canvas>
+    </div>
+
+    <div class="chart-container">
         <canvas id="yearlySalesChart"></canvas>
+    </div>
+
+    <div class="chart-container">
         <canvas id="weeklySalesChart"></canvas>
     </div>
+
     <script src="./js/graphics.js"></script>
 </body>
+
 </html>
