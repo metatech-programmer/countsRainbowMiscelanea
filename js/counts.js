@@ -1,11 +1,9 @@
 const dataMonthSearch = document.getElementById("dateMonthSearch");
-const dataMonthFilter = document.getElementById("dateMonthFilter");
 const countsTable = document.getElementById("counts");
 const messageResult = document.getElementById("messageResult");
 let totalVenta = document.getElementById("totalVenta");
 let totalJER = document.getElementById("totalJER");
 let totalGastos = document.getElementById("totalGastos");
-const btnFilter = document.getElementById("btnFilter");
 const btnSearch = document.getElementById("btnSearch");
 
 const counts = JSON.parse(localStorage.getItem("counts")) || [];
@@ -72,21 +70,3 @@ btnSearch.addEventListener("click", (event) => {
   renderCounts(filteredCounts);
 });
 
-// Filtrar por mes y mostrar en la tabla
-btnFilter.addEventListener("click", (event) => {
-  event.preventDefault(); // Evitar la recarga de la página
-  const selectedMonth = new Date(dataMonthFilter.value + "-").toLocaleString(
-    "default",
-    { month: "long", year: "numeric" }
-  );
-  const filteredCounts = counts.filter((count) => {
-    const countDate = new Date(count.date);
-    return (
-      countDate.toLocaleString("default", {
-        month: "long",
-        year: "numeric",
-      }) === selectedMonth
-    );
-  });
-  renderCounts(filteredCounts);
-});

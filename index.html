@@ -32,18 +32,18 @@
             <div>
                 <label for="type">Seleccione el tipo de venta o gasto</label>
                 <select name="type" id="type" required>
-                    <option value="venta">Venta</option>
+                    <option value="venta" selected>Venta</option>
                     <option value="jer">Jer</option>
                     <option value="gastos">Gasto</option>
                 </select>
             </div>
             <div>
                 <label for="value" >Digite la cantidad o valor a registrar</label>
-                <input type="number" name="value" id="value" required>
+                <input type="number" name="value" id="value" required min="0" placeholder="0">
             </div>
             <div>
                 <label for="description">Digite una breve descripcion de la vente o gasto</label>
-                <input type="text" name="description" id="description" required>
+                <input type="text" name="description" id="description" placeholder="Un esfero y una caja" required>
             </div>
             <input type="button" value="Registrar" id="btnRegister">
         </form>
