@@ -40,7 +40,7 @@ function saveVenta() {
     alert("No se pudo guardar la venta. Inténtalo de nuevo.");
   }
 
-  type.value = "";
+  type.value = "venta";
   value.value = "";
   description.value = "";
 }
