@@ -61,6 +61,7 @@ function saveVenta() {
       type.value = "venta";
       value.value = "";
       description.value = "";
+      renderAllCounts()
     })
     .catch((error) => {
       console.error("Error al guardar la venta:", error);

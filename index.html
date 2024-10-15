@@ -48,12 +48,53 @@
             <input type="button" value="Registrar" id="btnRegister">
         </form>
     </div>
+    <hr>
+    <div class="countDay">
+        <h2 style="color: #fff; text-align: center; font-size: 2rem; margin-top: 1rem; margin-bottom: 1rem;">Venta del dia</h2>
+        <div id="messageResult">
+            <div class="messageResultNoData hidden">No hay resultados para esta busqueda.</div>
+            <div class="messageResultData">
+                <div>
+
+                    <h2>Venta Total</h2>
+                    <p id="totalVenta"></p>
+                </div>
+                <div>
+                    <h2>Venta JER</h2>
+                    <p id="totalJER"></p>
+                </div>
+                <div>
+                    <h2>Venta Gastos</h2>
+                    <p id="totalGastos"></p>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Venta</th>
+                        <th>Descripción venta</th>
+                        <th>Jer</th>
+                        <th>Descripción jer</th>
+                        <th>Gastos</th>
+                        <th>Descripción gastos</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="counts">
+                </tbody>
+            </table>
+        </div>
+    </div>
     <div class="countR">
         
         Registros: <span id="countRegistros"></span>
     </div>
 
     <script src="./js/app.js"></script>
+    <script src="./js/appTable.js"></script>
 </body>
 
 </html>
