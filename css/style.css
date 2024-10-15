@@ -2,18 +2,35 @@
 body {
   font-family: "Arial", sans-serif;
   background-color: #f4f4f4;
+  background-image: url("https://img.freepik.com/vector-gratis/estilo-moderno-minimalista-onda-fondo_483537-5220.jpg?size=626&ext=jpg&ga=GA1.1.2008272138.1727308800&semt=ais_hybrid");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
   margin: 0;
-  padding: 0;
   min-height: 100dvh;
   overflow-x: hidden;
   line-height: 1.6;
   font-size: 1rem; /* Tamaño base */
   max-width: 100dvw;
+  width: 100dvw;
+  overflow-x: hidden;
+ 
+  
+}
+
+::-webkit-scrollbar {
+  width: .3rem;
+}
+::-webkit-scrollbar-track {
+  background: #19b8b1;
+}
+::-webkit-scrollbar-thumb {
+  background: #ffcc00;
 }
 
 /* Navegación */
 #nav {
-  background-color: #007bff;
+  background-color: transparent;
   color: white;
   padding: 1.5rem 1rem;
   text-align: center;
@@ -23,6 +40,9 @@ body {
   display: flex;
   justify-content: space-around;
   align-items: center;
+  animation: navLinkFade linear both;
+  animation-timeline: scroll();
+  animation-range: 0 100px;
 }
 
 #nav a {
@@ -38,10 +58,16 @@ body {
   color: #ffcc00;
 }
 
+#nav .active {
+  color: #ffcc00;
+  font-weight: bold;
+  border-bottom: 2px solid #ffcc00;
+}
+
 /* Títulos */
 h1 {
   text-align: center;
-  color: #333;
+  color: #fcfcfc;
   margin: 2rem 0;
   font-size: 2rem;
 }
@@ -51,7 +77,7 @@ h1 {
   width: 100%;
   max-width: 100dvw;
   margin: 0 auto;
-  overflow: hidden;
+  overflow-x: scroll;
 }
 
 /* Formularios */
@@ -68,6 +94,10 @@ form {
   max-width: 40dvw;
   margin: 2rem auto;
   gap: 1rem;
+}
+
+.formIn {
+  width: 20%;
 }
 
 form:hover {
@@ -109,7 +139,7 @@ input[type="text"]:focus,
 input[type="number"]:focus,
 input[type="date"]:focus,
 select:focus {
-  border-color: #007bff;
+  border-color: #19b8b1;
 }
 
 /* Botones */
@@ -134,28 +164,56 @@ input[type="submit"]:hover {
   background-color: #218838;
 }
 
+.hidden {
+  display: none;
+}
+
 .countR {
   position: fixed;
   left: 1rem;
   bottom: 1rem;
   font-size: 0.8rem;
-  color: red;   
-  opacity: .5;
+  color: red;
+  opacity: 0.7;
   font-weight: bold;
   text-transform: uppercase;
 }
 
+.delete {
+  background-color: rgba(255, 0, 0, 0.349);
+  color: rgba(139, 0, 0, 0.829);
+  border: none;
+  opacity: 0.7;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.delete:hover {
+  background-color: rgba(255, 0, 0, 0.582);
+  color: rgb(255, 5, 5);
+  opacity: 0.8;
+  font-weight: bolder;
+}
+
 /* CSS para ajustar el tamaño de los gráficos */
 .chart-container {
-  width: 100%;
+  width: 90%;
   max-width: 600px; /* Limitar el tamaño máximo */
   margin: auto; /* Centrar los gráficos */
   margin-bottom: 2rem;
+  color: #131313;
+  background-color: #ffffff;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 canvas {
   width: 100%;
-  height: auto; /* Ajustar la altura automáticamente */
+  height: auto;
+  color: #ffffff;
 }
 
 /* Disposición de botones en formularios */
@@ -170,6 +228,10 @@ table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 2rem;
+  font-size: 0.9rem;
+  max-width: 100dvw;
+  overflow-x: auto;
+  white-space: nowrap;
 }
 
 th,
@@ -180,8 +242,16 @@ td {
 }
 
 th {
-  background-color: #007bff;
+  background-color: #19b8b1;
   color: white;
+}
+
+tbody tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+tbody tr:nth-child(odd) {
+  background-color: #fff;
 }
 
 tbody tr:hover {
@@ -199,7 +269,7 @@ tbody tr:hover {
   margin: 2rem 0;
   padding: 1rem;
   background-color: #e7f3fe;
-  border-left: 6px solid #2196f3;
+  border-left: 6px solid #218838;
   color: #31708f;
 }
 
@@ -255,5 +325,14 @@ tbody tr:hover {
   input[type="submit"] {
     padding: 0.7rem 1rem;
     margin: 0.5rem 0;
+  }
+}
+
+@keyframes navLinkFade {
+  from {
+    background-color: transparent;
+  }
+  to {
+    background-color: #19b8b0;
   }
 }

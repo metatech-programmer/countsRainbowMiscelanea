@@ -15,7 +15,7 @@
     <meta og:locale="es_CO">
     <meta og:author="Metatech">
     <link rel="shortcut icon" href="https://static.thenounproject.com/png/154887-200.png" type="image/png">
-
+    <script src="./js/indexedDB.js"></script>
     <title>CountsMiscelanea</title>
 </head>
 
@@ -23,7 +23,7 @@
     <div id="nav">
         <a href="/index.html">Inicio</a>
         <a href="#nav" class="active">Cuentas del día</a>
-        <a href="/graphics.html">Graficas del mes</a>
+        <a href="/graphics.html">Datos de las ventas</a>
 
     </div>
     <h1>CountsMiscelanea</h1>
@@ -31,35 +31,49 @@
         <div>
             <div class="search">
 
-                <form action="">
+
+                <form action="" class="formIn">
                     <div>
-                        <label for="dateMonthSearch">Seleccione un mes para ver las cuentas</label>
+                        <label for="dateDaySearch">Seleccione un dia (observa los datos)</label>
+                        <input type="date" name="dateDaySearch" id="dateDaySearch" required>
+                    </div>
+                    <input type="submit" value="Consultar" id="btnSearchDay">
+                </form>
+                <form action="" class="formIn">
+                    <div>
+                        <label for="dateMonthSearch">Seleccione un mes (observa los datos)</label>
                         <input type="month" name="dateMonthSearch" id="dateMonthSearch" required>
                     </div>
                     <input type="submit" value="Consultar" id="btnSearch">
                 </form>
                 <!-- --------------------------------------------------------------------- -->
-                <form action="">
+                <form action="" class="formIn">
                     <div>
-                        <label for="dateDaySearch">Seleccione un dia para ver las cuentas</label>
-                        <input type="date" name="dateDaySearch" id="dateDaySearch" required>
+                        <label for="dateYearSearch">Seleccione un año (observa los datos)</label>
+                        <input type="number" name="dateYearSearch" id="dateYearSearch" min="0" placeholder="2020"
+                            required>
                     </div>
-                    <input type="submit" value="Consultar" id="btnSearchDay">
+                    <input type="submit" value="Consultar" id="btnSearchYear">
                 </form>
+
 
             </div>
             <div id="messageResult">
-                <div>
-                    <h2>Venta Total</h2>
-                    <p id="totalVenta"></p>
-                </div>
-                <div>
-                    <h2>Venta JER</h2>
-                    <p id="totalJER"></p>
-                </div>
-                <div>
-                    <h2>Venta Gastos</h2>
-                    <p id="totalGastos"></p>
+                <div class="messageResultNoData hidden">No hay resultados para este mes.</div>
+                <div class="messageResultData">
+                    <div>
+
+                        <h2>Venta Total</h2>
+                        <p id="totalVenta"></p>
+                    </div>
+                    <div>
+                        <h2>Venta JER</h2>
+                        <p id="totalJER"></p>
+                    </div>
+                    <div>
+                        <h2>Venta Gastos</h2>
+                        <p id="totalGastos"></p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -81,9 +95,9 @@
                 </tbody>
             </table>
         </div>
-       
+
     </div>
-    
+
 
     <script src="./js/counts.js"></script>
 </body>

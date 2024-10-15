@@ -1,16 +1,34 @@
 const dataMonthSearch = document.getElementById("dateMonthSearch");
 const dataDaySearch = document.getElementById("dateDaySearch");
+const dataYearSearch = document.getElementById("dateYearSearch");
 const countsTable = document.getElementById("counts");
-const messageResult = document.getElementById("messageResult");
+const messageResultNoData = document.querySelector(".messageResultNoData");
+const messageResultData = document.querySelector(".messageResultData");
 let totalVenta = document.getElementById("totalVenta");
 let totalJER = document.getElementById("totalJER");
 let totalGastos = document.getElementById("totalGastos");
 const btnSearch = document.getElementById("btnSearch");
 const btnSearchDay = document.getElementById("btnSearchDay");
-const counts = JSON.parse(localStorage.getItem("counts")) || [];
+const btnSearchYear = document.getElementById("btnSearchYear");
+
+document.addEventListener("DOMContentLoaded", () => {
+  initDB()
+    .then(() => {
+      renderAllCounts();
+    })
+    .catch((error) => {
+      console.error("Error al inicializar la base de datos:", error);
+    });
+});
 
 function renderAllCounts() {
-  renderCounts(counts);
+  getAllCounts()
+    .then((counts) => {
+      renderCounts(counts);
+    })
+    .catch((error) => {
+      console.error("Error al obtener todos los registros:", error);
+    });
 }
 
 function renderCounts(countsToRender) {
@@ -35,9 +53,7 @@ function renderCounts(countsToRender) {
               count.type === "gastos" ? count.value.toLocaleString() : "-"
             }</td>
             <td>${count.type === "gastos" ? count.description : "-"}</td>
-            <td onclick="deleteCount(${
-              count.id
-            })" style="cursor:pointer; color:red; font-weight:bold; background-color:rgba(255, 0, 0, 0.2); text-align:center" >Eliminar</td>
+            <td class="delete" onclick="deleteId(${count.id})" >Eliminar</td>
         `;
     countsTable.appendChild(tr);
     if (count.type === "venta") {
@@ -49,68 +65,92 @@ function renderCounts(countsToRender) {
     }
   });
 
-  totalVenta.textContent = total.toLocaleString();
-  totalJER.textContent = totalJERValue.toLocaleString();
-  totalGastos.textContent = totalGastosValue.toLocaleString();
+  totalVenta.innerHTML = `$${total.toLocaleString()}`;
+  totalJER.innerHTML = `$${totalJERValue.toLocaleString()}`;
+  totalGastos.innerHTML = `$${totalGastosValue.toLocaleString()}`;
 }
 
 btnSearch.addEventListener("click", (event) => {
   event.preventDefault();
 
   const selectedDate = new Date(dataMonthSearch.value + "-01T00:00:00");
-  const selectedMonth = selectedDate.getMonth();
+  const selectedMonth = selectedDate.getMonth() + 1;
   const selectedYear = selectedDate.getFullYear();
 
-  const filteredCounts = counts.filter((count) => {
-    const countDate = new Date(count.date + "T00:00:00");
-    const countMonth = countDate.getMonth();
-    const countYear = countDate.getFullYear();
-
-    return countMonth === selectedMonth && countYear === selectedYear;
-  });
-
-  if (filteredCounts.length === 0) {
-    messageResult.textContent = "No hay resultados para este mes.";
-  } else {
-    messageResult.textContent = "";
-  }
-
-  renderCounts(filteredCounts);
+  getCountsByMonth(selectedYear, selectedMonth)
+    .then((filteredCounts) => {
+      if (filteredCounts.length === 0) {
+        messageResultNoData.style = "display: block";
+        messageResultData.style = "display: none";
+      }
+      if (filteredCounts.length !== 0) {
+        messageResultNoData.style = "display: none";
+        messageResultData.style = "display: block";
+      }
+      renderCounts(filteredCounts);
+    })
+    .catch((error) => {
+      console.error("Error al buscar por mes:", error);
+    });
 });
 
 btnSearchDay.addEventListener("click", (event) => {
   event.preventDefault();
 
-  const selectedDate = dataDaySearch.value; // Ya está en formato YYYY-MM-DD
+  const selectedDate = dataDaySearch.value;
 
-  const filteredCounts = counts.filter((count) => {
-    return count.date === selectedDate; // Comparación directa ya que ambas están en formato YYYY-MM-DD
-  });
-
-  if (filteredCounts.length === 0) {
-    messageResult.textContent = "No hay resultados para este día.";
-  } else {
-    messageResult.textContent = "";
-  }
-
-  renderCounts(filteredCounts);
+  getCountsByDay(selectedDate)
+    .then((filteredCounts) => {
+      if (filteredCounts.length === 0) {
+        messageResultNoData.style = "display: block";
+        messageResultData.style = "display: none";
+      }
+      if (filteredCounts.length !== 0) {
+        messageResultNoData.style = "display: none";
+        messageResultData.style = "display: block";
+      }
+      renderCounts(filteredCounts);
+    })
+    .catch((error) => {
+      console.error("Error al buscar por día:", error);
+    });
 });
 
-function deleteCount(id) {
-  let confirmDelete = prompt(
-    "¿Seguro que quieres borrar el elemento de esta cuenta? Ingresa 'si' para confirmar"
-  );
+btnSearchYear.addEventListener("click", (event) => {
+  event.preventDefault();
 
+  const selectedYear = dateYearSearch.value;
+
+  getCountsByYear(selectedYear)
+    .then((filteredCounts) => {
+      if (filteredCounts.length === 0) {
+        messageResultNoData.style = "display: block";
+        messageResultData.style = "display: none";
+      }
+      if (filteredCounts.length !== 0) {
+        messageResultNoData.style = "display: none";
+        messageResultData.style = "display: block";
+      }
+      renderCounts(filteredCounts);
+    })
+    .catch((error) => {
+      console.error("Error al buscar por año:", error);
+    });
+});
+
+function deleteId(id) {
+  let confirmDelete = prompt(
+    "¿Deseas eliminar este registro? Ingresa 'si' para confirmar."
+  );
   if (confirmDelete.toLowerCase() === "si") {
-    const index = counts.findIndex((count) => count.id === id); // Buscamos por ID
-    if (index !== -1) {
-      counts.splice(index, 1);
-      localStorage.setItem("counts", JSON.stringify(counts));
-      renderAllCounts(); // Refrescar la tabla después de borrar
-    }
+    deleteCount(id)
+      .then(() => {
+        renderAllCounts();
+      })
+      .catch((error) => {
+        console.error("Error al eliminar el registro:", error);
+      });
   } else {
-    alert("No se borró el elemento");
+    alert("Operación cancelada.");
   }
 }
-
-renderAllCounts();
