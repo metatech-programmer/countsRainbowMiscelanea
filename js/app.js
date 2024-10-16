@@ -4,7 +4,15 @@ const description = document.getElementById("description");
 const btnRegister = document.getElementById("btnRegister");
 const countRegistros = document.getElementById("countRegistros");
 const spanValue = document.getElementById("spanValue");
+const btnProx = document.getElementById("btnProx");
+const pedidoList = document.querySelector(".pedidoList");
+const btncloseList = document.getElementById("closeList");
+const pedido = document.getElementById("pedido");
+const btnPedido = document.getElementById("btnPedido");
 const dateNow = new Date().toLocaleDateString();
+const list = JSON.parse(localStorage.getItem("list")) || [];
+const lis = document.getElementById("list");
+const btnDelete = document.getElementById("btnDelete");
 
 document.addEventListener("DOMContentLoaded", () => {
   initDB()
@@ -61,7 +69,7 @@ function saveVenta() {
       type.value = "venta";
       value.value = "";
       description.value = "";
-      renderAllCounts()
+      renderAllCounts();
     })
     .catch((error) => {
       console.error("Error al guardar la venta:", error);
@@ -78,4 +86,54 @@ function updateSpanValue() {
   }
 }
 
-btnRegister.addEventListener("click", saveVenta);
+function renderList() {
+  lis.innerHTML = "";
+  list.forEach((item) => {
+    const li = document.createElement("li");
+    li.textContent = item;
+    lis.appendChild(li);
+  });
+}
+
+btnProx.addEventListener("click", () => {
+  btnProx.style.display = "none";
+  pedidoList.style.display = "block";
+});
+
+btncloseList.addEventListener("click", () => {
+  btnProx.style.display = "block";
+  pedidoList.style.display = "none";
+});
+
+btnPedido.addEventListener("click", (e) => {
+  if (pedido.value === "") {
+    alert("Por favor, ingresa el item a pedir.");
+    return;
+  }
+
+  const item = pedido.value;
+  list.push(item);
+  localStorage.setItem("list", JSON.stringify(list));
+  pedido.value = "";
+  renderList();
+});
+
+btnDelete.addEventListener("click", () => {
+  let confirmDelete = prompt(
+    "¿Deseas eliminar todos los registros? Ingresa 'si' para confirmar."
+  );
+  if (confirmDelete.toLowerCase() === "si") {
+    localStorage.removeItem("list");
+    list.length = 0;
+    lis.innerHTML = "";
+    btncloseList.click();
+    renderList();
+  }
+});
+
+btnRegister.addEventListener("click", (e) => {
+  e.preventDefault();
+  saveVenta();
+});
+
+renderList();
