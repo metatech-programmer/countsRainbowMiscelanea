@@ -229,7 +229,7 @@ canvas {
   left: 1rem;
   top: 0;
   height: 90%;
-  max-height: 25rem;
+  max-width: 25rem;
  
   & h2{
     font-weight: bold;
