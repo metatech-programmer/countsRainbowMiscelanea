@@ -90,7 +90,30 @@ function renderList() {
   lis.innerHTML = "";
   list.forEach((item) => {
     const li = document.createElement("li");
-    li.textContent = item;
+    const btnDeletes = document.createElement("div");
+    btnDeletes.innerHTML = "X";
+    li.style =
+      "color: #131313; font-weight: bold; font-size: 1.2rem;cursor: pointer; ";
+
+    li.addEventListener("mouseover", () => {
+      li.style =
+        "color: #131313; font-weight: bold; font-size: 1.2rem;cursor: pointer; color: red; display:flex; justify-content: space-between;";
+      li.appendChild(btnDeletes);
+    });
+
+    li.addEventListener("mouseout", () => {
+      li.style =
+        "color: #131313; font-weight: bold; font-size: 1.2rem;cursor: pointer;";
+      li.removeChild(btnDeletes);
+    });
+
+    li.addEventListener("click", () => {
+      list.splice(list.indexOf(item), 1);
+      localStorage.setItem("list", JSON.stringify(list));
+      renderList();
+    });
+    li.innerHTML = item;
+
     lis.appendChild(li);
   });
 }
