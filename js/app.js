@@ -25,6 +25,8 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
+renderList();
+
 function updateCountRegistros() {
   getAllCounts()
     .then((counts) => {
