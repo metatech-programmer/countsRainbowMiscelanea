@@ -230,6 +230,7 @@ canvas {
   top: 0;
   height: 90%;
   max-width: 25rem;
+  
  
   & h2{
     font-weight: bold;
@@ -260,8 +261,9 @@ canvas {
     position: sticky;
     left: 100rem;
     top: 0;
+    z-index: 999;
     &:hover {
-      background-color: #218838;
+      background-color: #882121;
     }
   }
 
