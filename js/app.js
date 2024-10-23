@@ -13,6 +13,7 @@ const dateNow = new Date().toLocaleDateString();
 const list = JSON.parse(localStorage.getItem("list")) || [];
 const lis = document.getElementById("list");
 const btnDelete = document.getElementById("btnDelete");
+const btnSendList = document.getElementById("btnSendList");
 
 document.addEventListener("DOMContentLoaded", () => {
   initDB()
@@ -108,9 +109,11 @@ function renderList() {
     });
 
     li.addEventListener("click", () => {
-      list.splice(list.indexOf(item), 1);
-      localStorage.setItem("list", JSON.stringify(list));
-      renderList();
+      if (prompt("¿Deseas eliminar este item?") === "si") {
+        list.splice(list.indexOf(item), 1);
+        localStorage.setItem("list", JSON.stringify(list));
+        renderList();
+      }
     });
     li.innerHTML = item;
 
@@ -159,4 +162,33 @@ btnRegister.addEventListener("click", (e) => {
   saveVenta();
 });
 
-renderList();
+btnSendList.addEventListener("click", () => {
+  if (list.length === 0) {
+    alert("Por favor, agrega un ítem a la lista.");
+    return;
+  }
+
+  const pedido = localStorage.getItem("list");
+  const pedidoLista = JSON.parse(pedido);
+
+  if (pedidoLista) {
+    const mensaje = pedidoLista
+      .map((item) => `🌟 ${item}\n`) // Añadir un emoji atractivo a cada ítem
+      .join("");
+
+    const whatsAppApi = "whatsapp://send"; // API correcta
+    const grupoId = "3229383988"; // Formato correcto del ID del grupo
+    const message = encodeURIComponent(
+      `📋 ¡Hola! Aquí está la lista de lo que necesitamos pedir para la próxima semana en la papeleria:\n\n${mensaje}🛒😊`
+    );
+
+    // Crear el enlace para abrir WhatsApp
+    const url = `${whatsAppApi}?phone=${grupoId}&text=${message}`;
+
+    //  Abrir la app de WhatsApp
+    window.location.href = url;
+
+  } else {
+    console.error("No hay pedidos en localStorage.");
+  }
+});

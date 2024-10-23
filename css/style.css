@@ -248,7 +248,7 @@ canvas {
 
 
 
-  & button {
+  & #closeList {
     background-color: #28a745;
     color: white;
     border: none;
@@ -257,11 +257,9 @@ canvas {
     cursor: pointer;
     font-size: 1rem;
     transition: background-color 0.3s;
-    position: absolute;
-    right: 0;
+    position: sticky;
+    left: 100rem;
     top: 0;
-    margin: 0.5rem;
-
     &:hover {
       background-color: #218838;
     }

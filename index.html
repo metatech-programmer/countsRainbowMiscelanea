@@ -30,7 +30,7 @@
     <div style="position: relative;">
         <button style="position: absolute; bottom: 0; right: 1rem; background-color: black;" id="btnProx">Prox.
             pedido</button>
-        <div class="pedidoList" style="overflow-y: scroll; overflow-x: hidden; display: none; ">
+        <div class="pedidoList" style="overflow-y: scroll; overflow-x: hidden; display: block;  ">
             <button type="button" id="closeList">x</button>
             <h2>Proximo pedido</h2>
             <form action="">
@@ -39,13 +39,19 @@
                 </div>
                 <input type="submit" value="Registrar" id="btnPedido">
             </form>
-            <div>
+            <div style="position: relative; display: flex; flex-direction: column; ">
                 <h3>Lista de lo mas pedido</h3>
-                <button type="button"
-                    style=" background-color: rgba(255, 0, 0, 0.411); color: darkred; width: max-content; height: 2rem; left: 15rem; opacity: .8; position: sticky; "
-                    id="btnDelete">Eliminar lista</button>
-                <hr style="width: 100%; margin: 0.5rem 0; background-color: #19b8b1;">
 
+                <div style="display: flex; width: 100%; justify-content: space-between;">
+                    <button type="button"
+                        style=" background-color: rgba(255, 0, 0, 0.411); color: darkred; width: max-content;  opacity: .8; cursor: pointer;"
+                        id="btnDelete">Eliminar lista</button>
+                    <button type="button" id="btnSendList">
+                        Enviar Lista
+                    </button>
+
+                </div>
+                <hr style="width: 100%; margin: 0.5rem 0; background-color: #19b8b1;">
                 <ul id="list">
                 </ul>
             </div>
