@@ -38,6 +38,13 @@
           bottom: 0;
           right: 1rem;
           background-color: black;
+          color: white;
+          opacity: 0.7;
+          cursor: pointer;
+          border: none;
+          border-radius: 8px;
+          text-transform: uppercase;
+          font-weight: bold;
         "
         id="btnProx"
       >
@@ -48,7 +55,7 @@
         style="overflow-y: scroll; overflow-x: hidden; display: none"
       >
         <button type="button" id="closeList">x</button>
-        <h2 style="text-transform: uppercase;">Proximo pedido</h2>
+        <h2 style="text-transform: uppercase">Proximo pedido</h2>
         <form action="">
           <div>
             <input
@@ -90,7 +97,9 @@
       </div>
       <form action="">
         <div>
-          <label for="type">Seleccione el tipo de venta o gasto</label>
+          <label for="type" style="font-weight: bolder"
+            >Seleccione el tipo de venta o gasto</label
+          >
           <div
             style="
               display: flex;
@@ -101,17 +110,41 @@
             "
           >
             <input type="radio" name="type" id="venta" value="venta" checked />
-            <label for="venta">Venta</label>
+            <label
+              for="venta"
+              style="
+                color: #19b8b1;
+                font-weight: bold;
+                text-shadow: 1px 1px 1px #130f0f7c;
+              "
+              >Venta</label
+            >
             <br />
             <input type="radio" name="type" id="jer" value="jer" />
-            <label for="jer">Jer</label>
+            <label
+              for="jer"
+              style="
+                color: #f5d002;
+                font-weight: bold;
+                text-shadow: 1px 1px 1px #000;
+              "
+              >Jer</label
+            >
             <br />
             <input type="radio" name="type" id="gastos" value="gastos" />
-            <label for="gastos">Gasto</label>
+            <label
+              for="gastos"
+              style="
+                color: #ff0000;
+                font-weight: bold;
+                text-shadow: 1px 1px 1px #130f0f7c;
+              "
+              >Gasto</label
+            >
           </div>
         </div>
-        <div>
-          <label for="value"
+        <div style="display: flex; flex-direction: column; gap: 0.5rem">
+          <label for="value" style="font-weight: bolder"
             >Digite la cantidad o valor a registrar ( $<span
               id="spanValue"
             ></span>
@@ -128,9 +161,41 @@
           />
         </div>
         <div>
-          <label for="description"
-            >Digite una breve descripcion de la venta o gasto</label
+          <label for="description" style="font-weight: bolder"
+            >Digite una breve descripcion de la venta o gasto <br /><span
+              style="font-size: 0.8rem; font-style: italic"
+            >
+              (SELECCIONE PAGO DIGITAL SI APLICA)
+            </span></label
           >
+          <div
+            style="
+              display: flex;
+              gap: 0.5rem;
+              margin: 1rem 0;
+              justify-content: center;
+              font-size: larger;
+            "
+          >
+            <input type="radio" name="digitalPago" id="nequi" value="nequi" />
+            <label
+              for="nequi"
+              style="color: purple; text-shadow: 1px 1px 1px black"
+              >Nequi</label
+            >
+            <br />
+            <input
+              type="radio"
+              name="digitalPago"
+              id="daviplata"
+              value="daviplata"
+            />
+            <label
+              for="daviplata"
+              style="color: red; text-shadow: 1px 1px 1px black"
+              >Daviplata</label
+            >
+          </div>
           <input
             type="text"
             name="description"
@@ -144,7 +209,12 @@
           />
           <datalist id="opciones"> </datalist>
         </div>
-        <input type="submit" value="Registrar" id="btnRegister" />
+        <input
+          type="submit"
+          value="Registrar"
+          id="btnRegister"
+          style="font-weight: bold"
+        />
       </form>
     </div>
     <hr />

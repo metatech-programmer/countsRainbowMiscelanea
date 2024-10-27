@@ -1,4 +1,3 @@
-const type = document.querySelector('input[name="type"]:checked');
 const typeVenta = document.getElementById("venta");
 const value = document.getElementById("value");
 const description = document.getElementById("description");
@@ -17,7 +16,26 @@ const lis = document.getElementById("list");
 const btnDelete = document.getElementById("btnDelete");
 const btnSendList = document.getElementById("btnSendList");
 
+
 const listaPapeleriaMiscelanea = [
+  "sobres de lluvia",
+  "clorox",
+  "clorox liquido",
+  "huelleros",
+  "sacapuntas",
+  "tijeras",
+  "tijeras de seguridad",
+  "sacapuntas con deposito",
+  "chomelos",
+  "cosas de papeleria",
+  "cosas de escritorio",
+  "cosas de oficina",
+  "cosas de cocina",
+  "cosas de lavanderia",
+  "cosas de miscelanea",
+  "cosas de dulceria",
+  "cosas de paqueteria",
+  "venta nocturna",	
   "abono",
   "pago santiago",
   "pago angie",
@@ -780,13 +798,25 @@ function updateCountRegistros() {
 }
 
 function saveVenta() {
+
+  let type = document.querySelector('input[name="type"]:checked');
+  let digitalPago = document.querySelector('input[name="digitalPago"]:checked') || "";
   const dateNowUTC = new Date();
   const dateNowLocal = new Date(dateNowUTC.getTime() - 5 * 60 * 60 * 1000)
     .toISOString()
     .split("T")[0];
-  const typeValue = type.value;
-  const valueValue = parseFloat(value.value);
-  const descriptionValue = String(description.value).toLowerCase();
+  let typeValue = type.value;
+  let valueValue = parseFloat(value.value);
+  let descriptionValue = "";
+  if (digitalPago.value === "nequi") {
+    descriptionValue = "(nequi) " + String(description.value).toLowerCase()
+  } else if (digitalPago.value === "daviplata") {
+
+    descriptionValue = "(daviplata) " + String(description.value).toLowerCase()
+  } else {
+    descriptionValue = String(description.value).toLowerCase()
+  }
+
 
   if (
     typeValue === "" ||
@@ -815,6 +845,7 @@ function saveVenta() {
       typeVenta.checked = true;
       value.value = "";
       description.value = "";
+      digitalPago.checked = false;
       renderAllCounts();
     })
     .catch((error) => {
