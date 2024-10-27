@@ -10,7 +10,8 @@ body {
   min-height: 100dvh;
   overflow-x: hidden;
   line-height: 1.6;
-  font-size: 1rem; /* Tamaño base */
+  font-size: 1rem;
+  /* Tamaño base */
   max-width: 100dvw;
   width: 100dvw;
   overflow-x: hidden;
@@ -19,9 +20,11 @@ body {
 ::-webkit-scrollbar {
   width: 0.3rem;
 }
+
 ::-webkit-scrollbar-track {
   background: #19b8b1;
 }
+
 ::-webkit-scrollbar-thumb {
   background: #ffcc00;
 }
@@ -49,7 +52,8 @@ body {
   margin: 0 1.5rem;
   font-weight: bold;
   transition: color 0.3s;
-  font-size: 1rem; /* Ajuste base */
+  font-size: 1rem;
+  /* Ajuste base */
 }
 
 #nav a:hover {
@@ -198,8 +202,10 @@ input[type="submit"]:hover {
 /* CSS para ajustar el tamaño de los gráficos */
 .chart-container {
   width: 90%;
-  max-width: 600px; /* Limitar el tamaño máximo */
-  margin: auto; /* Centrar los gráficos */
+  max-width: 600px;
+  /* Limitar el tamaño máximo */
+  margin: auto;
+  /* Centrar los gráficos */
   margin-bottom: 2rem;
   color: #131313;
   background-color: #ffffff;
@@ -230,16 +236,16 @@ canvas {
   top: 0;
   height: 90%;
   max-width: 25rem;
-  
- 
-  & h2{
+
+
+  & h2 {
     font-weight: bold;
     text-align: center;
     color: #131313;
     text-shadow: 0 0 2px #131313;
   }
 
-  & h3{
+  & h3 {
     font-weight: bold;
     font-size: 1rem;
     text-align: center;
@@ -262,6 +268,7 @@ canvas {
     left: 100rem;
     top: 0;
     z-index: 999;
+
     &:hover {
       background-color: #882121;
     }
@@ -406,6 +413,7 @@ tbody tr:hover {
   from {
     background-color: transparent;
   }
+
   to {
     background-color: #19b8b0;
   }
