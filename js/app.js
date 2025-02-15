@@ -94,7 +94,7 @@ function saveVenta() {
 
   if(!listaPapeleriaMiscelanea.includes(descriptionValue)){
     listaPapeleriaMiscelanea.push(descriptionValue);
-    localStorage.setItem("papeleriaMiscelaneaLista", JSON.stringify(listaPapeleriaMiscelanea));
+    localStorage.setItem("papeleriaMiscelaneaLista", listaPapeleriaMiscelanea);
   }
 
   addCount(venta)
