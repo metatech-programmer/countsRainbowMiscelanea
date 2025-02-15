@@ -116,6 +116,9 @@ form label,
 form div,
 form p {
   width: 100%;
+  color: #0e0e0e9d!important;
+  font-weight: bold;
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
 }
 
 form input,
