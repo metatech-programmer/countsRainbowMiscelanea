@@ -92,6 +92,11 @@ function saveVenta() {
     description: descriptionValue,
   };
 
+  if(!listaPapeleriaMiscelanea.includes(descriptionValue)){
+    listaPapeleriaMiscelanea.push(descriptionValue);
+    localStorage.setItem("papeleriaMiscelaneaLista", JSON.stringify(listaPapeleriaMiscelanea));
+  }
+
   addCount(venta)
     .then(() => {
       updateCountRegistros();
@@ -101,8 +106,7 @@ function saveVenta() {
       description.value = "";
       digitalPago.checked = false;
       renderAllCounts();
-      listaPapeleriaMiscelanea.push(descriptionValue);
-      localStorage.setItem("papeleriaMiscelaneaLista", JSON.stringify(listaPapeleriaMiscelanea));
+      
     })
     .catch((error) => {
       console.error("Error al guardar la venta:", error);
