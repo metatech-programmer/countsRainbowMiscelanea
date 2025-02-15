@@ -17,17 +17,14 @@ const btnDelete = document.getElementById("btnDelete");
 const btnSendList = document.getElementById("btnSendList");
 
 
-const listaPapeleriaMiscelanea = localStorage.getItem("papeleriaMiscelaneaLista") || [];
+const listaPapeleriaMiscelanea =  JSON.parse(localStorage.getItem("papeleriaMiscelaneaLista")) || [];
 
-
-options.append(
-  ...listaPapeleriaMiscelanea.map((item) => {
-    const option = document.createElement("option");
-    option.value = item;
-    option.innerText = item;
-    return option;
-  })
-);
+for (const item of listaPapeleriaMiscelanea) {
+  const option = document.createElement("option");
+  option.value = item;
+  option.innerText = item;
+  options.appendChild(option);
+}
 
 document.addEventListener("DOMContentLoaded", () => {
   initDB()
@@ -92,9 +89,9 @@ function saveVenta() {
     description: descriptionValue,
   };
 
-  if(!listaPapeleriaMiscelanea.includes(descriptionValue)){
+  if (!listaPapeleriaMiscelanea.includes(descriptionValue)) {
     listaPapeleriaMiscelanea.push(descriptionValue);
-    localStorage.setItem("papeleriaMiscelaneaLista", listaPapeleriaMiscelanea);
+    localStorage.setItem("papeleriaMiscelaneaLista", JSON.stringify(listaPapeleriaMiscelanea));
   }
 
   addCount(venta)
