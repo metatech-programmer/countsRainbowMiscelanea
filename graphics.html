@@ -1,39 +1,36 @@
 <!DOCTYPE html>
 <html lang="es">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./css/style.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./css/style.css" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
     <script src="./js/indexedDB.js"></script>
     <title>Gráficas de Ventas</title>
+  </head>
 
-
-
-</head>
-
-<body>
+  <body>
     <div id="nav">
-        <a href="/index.html">Inicio</a>
-        <a href="/counts.html">Cuentas del día</a>
-        <a href="#nav" class="active">Datos de las ventas</a>
+      <a href="/index.html">Inicio</a>
+      <a href="/counts.html">Cuentas del día</a>
+      <a href="#nav" class="active">Datos de las ventas</a>
     </div>
-    <h1>Gráficas de Ventas</h1>
-    <div class="chart-container">
+    <h1 class="animated">Gráficas de Ventas</h1>
+    <div class="animated">
+      <div class="chart-container">
         <canvas id="monthlySalesChart"></canvas>
-    </div>
+      </div>
 
-    <div class="chart-container">
+      <div class="chart-container">
         <canvas id="yearlySalesChart"></canvas>
-    </div>
+      </div>
 
-    <div class="chart-container">
+      <div class="chart-container">
         <canvas id="weeklySalesChart"></canvas>
+      </div>
     </div>
 
     <script src="./js/graphics.js"></script>
-</body>
-
+  </body>
 </html>
