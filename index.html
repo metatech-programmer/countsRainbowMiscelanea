@@ -174,30 +174,51 @@
           <div
             style="
               display: flex;
-              gap: 0.5rem;
               margin: 1rem 0;
               justify-content: center;
-              font-size: larger;
+              align-items: center;
+              width: 100%;
             "
           >
-            <input type="radio" name="digitalPago" id="nequi" value="nequi" />
-            <label
-              for="nequi"
-              style="color: rgb(211, 49, 211); text-shadow: 1px 1px 1px black"
-              > <img style="height: 20px;" src="https://seeklogo.com/images/N/nequi-colombia-logo-CF8C45C51E-seeklogo.com.png" alt="nequi"></label
-            >
-            <br />
-            <input
-              type="radio"
-              name="digitalPago"
-              id="daviplata"
-              value="daviplata"
-            />
-            <label
-              for="daviplata"
-              style="color: red; text-shadow: 1px 1px 1px black"
-              ><img style="height: 30px;" src="https://seeklogo.com/images/D/daviplata-logo-750F0FC1B7-seeklogo.com.png" alt="daviplata"></label
-            >
+            <div style="display: flex; width: 50%; height: 50px">
+              <input
+                style="margin: auto"
+                type="radio"
+                name="digitalPago"
+                id="nequi"
+                value="nequi"
+              />
+              <label
+                for="nequi"
+                style="
+                  color: rgb(211, 49, 211);
+                  text-shadow: 1px 1px 1px black;
+                  height: 55px;
+                "
+              >
+                <img
+                  style="object-fit: fill; height: 100%"
+                  src="https://seeklogo.com/images/N/nequi-colombia-logo-CF8C45C51E-seeklogo.com.png"
+                  alt="nequi"
+              /></label>
+              <br />
+            </div>
+            <div style="display: flex; width: 50%; height: 30px">
+              <input
+                type="radio"
+                name="digitalPago"
+                id="daviplata"
+                value="daviplata"
+              />
+              <label
+                for="daviplata"
+                style="color: red; text-shadow: 1px 1px 1px black; height: 100%"
+                ><img
+                  style="object-fit: fill; height: 100%"
+                  src="https://seeklogo.com/images/D/daviplata-logo-750F0FC1B7-seeklogo.com.png"
+                  alt="daviplata"
+              /></label>
+            </div>
           </div>
           <input
             type="text"
