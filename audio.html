@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Reproductor de Música Aleatoria de Audius</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 50px;
+    }
+    audio {
+      margin-top: 20px;
+      width: 80%;
+      max-width: 600px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Reproductor de Música Aleatoria de Audius</h1>
+  <audio id="audioPlayer" controls>
+    Tu navegador no soporta la reproducción de audio.
+  </audio>
+
+  <script>
+    const appName = 'confiesate'; // Reemplaza con el nombre de tu aplicación
+    const audioPlayer = document.getElementById('audioPlayer');
+
+    async function fetchRandomTrack() {
+      try {
+        // Obtener la lista de hosts de la API de Audius
+        const hostResponse = await fetch('https://api.audius.co');
+        const hostData = await hostResponse.json();
+        const hosts = hostData.data;
+        const selectedHost = hosts[Math.floor(Math.random() * hosts.length)];
+
+        // Obtener las pistas en tendencia
+        const tracksResponse = await fetch(`${selectedHost}/v1/tracks/trending?app_name=${appName}&limit=50`);
+        const tracksData = await tracksResponse.json();
+        const tracks = tracksData.data;
+
+        if (tracks.length > 0) {
+          // Seleccionar una pista aleatoria
+          const randomTrack = tracks[Math.floor(Math.random() * tracks.length)];
+          const trackId = randomTrack.id;
+          const streamUrl = `${selectedHost}/v1/tracks/${trackId}/stream?app_name=${appName}`;
+
+          // Actualizar el reproductor de audio
+          audioPlayer.src = streamUrl;
+          audioPlayer.play();
+
+          // Mostrar información de la pista
+          document.title = `Reproduciendo: ${randomTrack.title} - ${randomTrack.user.name}`;
+        } else {
+          console.error('No se encontraron pistas.');
+        }
+      } catch (error) {
+        console.error('Error al obtener la pista aleatoria:', error);
+      }
+    }
+
+    // Reproducir una pista al cargar la página
+    fetchRandomTrack();
+
+    // Reproducir una nueva pista cuando termine la actual
+    audioPlayer.addEventListener('ended', fetchRandomTrack);
+  </script>
+</body>
+</html>
