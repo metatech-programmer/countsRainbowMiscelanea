@@ -68,11 +68,9 @@ if (accessToken) {
     // Si ya tenemos el token, inicializamos el reproductor
     document.getElementById('login').style.display = 'none';
     document.getElementById('playRandomTrack').style.display = 'inline-block';
-    document.getElementById('player').style.display = 'block';
     initializePlayer(accessToken);
 } else {
     // Si no tenemos el token, mostramos el botón de login
     document.getElementById('login').style.display = 'inline-block';
     document.getElementById('playRandomTrack').style.display = 'none';
-    document.getElementById('player').style.display = 'none';
 }
