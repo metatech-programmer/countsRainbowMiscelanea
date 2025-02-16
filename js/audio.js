@@ -1,17 +1,41 @@
 // app.js
 const clientId = 'e2cbb0b330d241edab3720338d46e7fc'; // Reemplaza con tu Client ID
-const redirectUri = 'https://counts-miscelanea.vercel.app'; // Asegúrate de que coincida con la Redirect URI registrada
-const accessToken = 'a1e9ca9182e148f18c2d8b586c3a72af'; // Obtén el token de acceso mediante el flujo de autorización
+const redirectUri = 'https://counts-miscelanea.vercel.app/'; // Asegúrate de que coincida con la Redirect URI registrada
+const scope = 'user-read-private user-read-email';
 
-// Cargar el SDK de Spotify
-window.onSpotifyWebPlaybackSDKReady = () => {
+// Función para generar un estado aleatorio
+function generateRandomString(length) {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let result = '';
+    for (let i = length; i > 0; --i) {
+        result += chars[Math.floor(Math.random() * chars.length)];
+    }
+    return result;
+}
+
+// Iniciar sesión con Spotify
+document.getElementById('login').addEventListener('click', () => {
+    const state = generateRandomString(16);
+    localStorage.setItem('state', state);
+
+    const authUrl = `https://accounts.spotify.com/authorize?response_type=token&client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${encodeURIComponent(scope)}&state=${state}`;
+    window.location = authUrl;
+});
+
+// Obtener el token de acceso de la URL
+function getAccessTokenFromUrl() {
+    const hashParams = new URLSearchParams(window.location.hash.substring(1));
+    return hashParams.get('access_token');
+}
+
+// Inicializar el reproductor de Spotify
+function initializePlayer(accessToken) {
     const player = new Spotify.Player({
         name: 'Reproductor Aleatorio',
         getOAuthToken: cb => { cb(accessToken); },
         volume: 0.5
     });
 
-    // Inicializar el reproductor
     player.connect().then(success => {
         if (success) {
             console.log('Reproductor conectado con éxito');
@@ -36,4 +60,19 @@ window.onSpotifyWebPlaybackSDKReady = () => {
             });
         });
     });
-};
+}
+
+// Verificar si ya tenemos un token de acceso
+const accessToken = getAccessTokenFromUrl();
+if (accessToken) {
+    // Si ya tenemos el token, inicializamos el reproductor
+    document.getElementById('login').style.display = 'none';
+    document.getElementById('playRandomTrack').style.display = 'inline-block';
+    document.getElementById('player').style.display = 'block';
+    initializePlayer(accessToken);
+} else {
+    // Si no tenemos el token, mostramos el botón de login
+    document.getElementById('login').style.display = 'inline-block';
+    document.getElementById('playRandomTrack').style.display = 'none';
+    document.getElementById('player').style.display = 'none';
+}

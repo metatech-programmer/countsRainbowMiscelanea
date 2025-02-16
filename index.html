@@ -16,15 +16,15 @@
     <meta og:type="website" />
     <meta og:locale="es_CO" />
     <meta og:author="Metatech" />
-    
+
     <link
       rel="shortcut icon"
       href="https://static.thenounproject.com/png/154887-200.png"
       type="image/png"
     />
     <script src="./js/indexedDB.js"></script>
-    <script src="https://sdk.scdn.co/spotify-player.js"></script>
     <title>CountsMiscelanea</title>
+    <script src="https://sdk.scdn.co/spotify-player.js"></script>
   </head>
 
   <body>
@@ -33,9 +33,26 @@
       <a href="/counts.html">Cuentas del día</a>
       <a href="/graphics.html">Datos de las ventas</a>
     </div>
-    <button id="playRandomTrack">Reproducir Pista Aleatoria</button>
+    <div
+      style="
+        display: flex;
+        flex-direction: column;
+        background: #0f0f0f;
+        padding: 2rem 0;
+        justify-content: center;
+        align-items: center;
+      "
+      class="animated"
+    >
+      <h1>Reproductor Aleatorio de Spotify</h1>
+      <button id="login">Iniciar Sesión con Spotify</button>
+      <button id="playRandomTrack" style="display: none">
+        Reproducir Pista Aleatoria
+      </button>
+      <div id="player" style="display: none"></div>
+    </div>
     <h1 class="animated">CountsMiscelanea</h1>
-    
+
     <div style="position: relative" class="animated">
       <button
         style="
@@ -281,7 +298,7 @@
           </div>
         </div>
       </div>
-     
+
       <div class="container">
         <table>
           <thead>
