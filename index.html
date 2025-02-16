@@ -16,13 +16,14 @@
     <meta og:type="website" />
     <meta og:locale="es_CO" />
     <meta og:author="Metatech" />
+    
     <link
       rel="shortcut icon"
       href="https://static.thenounproject.com/png/154887-200.png"
       type="image/png"
     />
     <script src="./js/indexedDB.js"></script>
-
+    <script src="https://sdk.scdn.co/spotify-player.js"></script>
     <title>CountsMiscelanea</title>
   </head>
 
@@ -32,13 +33,7 @@
       <a href="/counts.html">Cuentas del día</a>
       <a href="/graphics.html">Datos de las ventas</a>
     </div>
-    <button id="loginButton">Iniciar Sesión con Spotify</button>
-    <div id="userProfile" style="display: none;">
-        <h2>Perfil de Usuario</h2>
-        <p id="userName"></p>
-        <img id="userImage" src="" alt="Imagen de Perfil">
-    </div>
-    
+    <button id="playRandomTrack">Reproducir Pista Aleatoria</button>
     <h1 class="animated">CountsMiscelanea</h1>
     
     <div style="position: relative" class="animated">
