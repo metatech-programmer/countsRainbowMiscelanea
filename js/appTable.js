@@ -79,41 +79,48 @@ function renderCounts(countsToRender) {
   totalGastos.innerHTML = `$${totalGastosValue.toLocaleString()}`;
 }
 
-btnSearchDay.addEventListener("click", (event) => {
-  event.preventDefault();
+const btnSearchDay = document.getElementById("btnSearchDay");
+if (btnSearchDay) {
+  btnSearchDay.addEventListener("click", (event) => {
+    event.preventDefault();
 
-  const selectedDate = dataDaySearch;
+    const selectedDate = dataDaySearch;
 
-  getCountsByDay(selectedDate)
-    .then((filteredCounts) => {
-      if (filteredCounts.length === 0) {
-        messageResultNoData.style = "display: block";
-        messageResultData.style = "display: none";
-      }
-      if (filteredCounts.length !== 0) {
-        messageResultNoData.style = "display: none";
-        messageResultData.style = "display: block";
+    getCountsByDay(selectedDate)
+      .then((filteredCounts) => {
+        if (filteredCounts.length === 0) {
+          messageResultNoData.style = "display: block";
+          messageResultData.style = "display: none";
+        }
+        if (filteredCounts.length !== 0) {
+          messageResultNoData.style = "display: none";
+          messageResultData.style = "display: block";
       }
       renderCounts(filteredCounts);
     })
     .catch((error) => {
       console.error("Error al buscar por día:", error);
     });
-});
+  });
+}
 
 function deleteId(id) {
-  let confirmDelete = prompt(
-    "¿Deseas eliminar este registro? Ingresa 'si' para confirmar."
-  );
-  if (confirmDelete.toLowerCase() === "si") {
-    deleteCount(id)
-      .then(() => {
-        renderAllCounts();
-      })
-      .catch((error) => {
-        console.error("Error al eliminar el registro:", error);
-      });
-  } else {
-    alert("Operación cancelada.");
-  }
+  showConfirmModal({
+    title: '¿Eliminar registro?',
+    message: 'Esta acción eliminará permanentemente este registro. No se puede deshacer.',
+    type: 'danger',
+    confirmText: 'Eliminar',
+    cancelText: 'Cancelar',
+    onConfirm: () => {
+      deleteCount(id)
+        .then(() => {
+          renderAllCounts();
+          showToast('¡Eliminado!', 'El registro se eliminó correctamente.', 'success');
+        })
+        .catch((error) => {
+          console.error("Error al eliminar el registro:", error);
+          showToast('Error', 'No se pudo eliminar el registro.', 'error');
+        });
+    }
+  });
 }

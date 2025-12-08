@@ -6,231 +6,158 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
 
     <link rel="stylesheet" href="./css/style.css" />
-    <meta og:title="CountsMiscelanea" />
-    <meta
-      og:description="App de ventas y gastos de la Papeleria y miscelanea"
-    />
-    <meta og:url="https://counts-miscelanea.vercel.app/" />
-    <meta og:image="https://counts-miscelanea.vercel.app/" />
-    <meta og:site_name="CountsMiscelanea" />
-    <meta og:type="website" />
-    <meta og:locale="es_CO" />
-    <meta og:author="Metatech" />
+    <meta name="title" content="Merkatodo - Sistema de Autoservicio" />
+    <meta name="description" content="Sistema de gestión de ventas y gastos para Merkatodo" />
+    <meta property="og:title" content="Merkatodo - Sistema de Autoservicio" />
+    <meta property="og:description" content="Sistema de gestión de ventas y gastos para Merkatodo" />
+    <meta property="og:url" content="https://counts-miscelanea.vercel.app/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="es_CO" />
+    <meta name="author" content="Metatech" />
 
-    <link
-      rel="shortcut icon"
-      href="./icon.png"
-      type="image/png"
-    />
+    <link rel="shortcut icon" href="./icon.png" type="image/png" />
     <script src="./js/indexedDB.js"></script>
-    <title>CountsMiscelanea</title>
+    <title>Merkatodo - Sistema de Autoservicio</title>
   </head>
 
   <body>
-    <div id="nav">
-      <a href="#nav" class="active">Inicio</a>
-      <a href="/counts.html">Cuentas del día</a>
-      <a href="/graphics.html">Datos de las ventas</a>
-    </div>
+    <nav id="nav">
+      <a href="#nav" class="active">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+        Inicio
+      </a>
+      <a href="/counts.html">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+        Historial
+      </a>
+      <a href="/graphics.html">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+        Estadísticas
+      </a>
+    </nav>
 
-    <h1 class="animated">CountsMiscelanea</h1>
+    <h1 class="animated">Registro de Operaciones</h1>
 
     <div style="position: relative" class="animated">
-      <button
-        style="
-          position: absolute;
-          bottom: 0;
-          right: 1rem;
-          background-color: black;
-          color: white;
-          opacity: 0.7;
-          cursor: pointer;
-          border: none;
-          border-radius: 8px;
-          text-transform: uppercase;
-          font-weight: bold;
-        "
-        id="btnProx"
-      >
-        Prox. pedido
+      <button id="btnProx">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
+        Lista de pedidos
       </button>
       <div
         class="pedidoList"
-        style="overflow-y: scroll; overflow-x: hidden; display: none"
+        style="overflow-y: auto; overflow-x: hidden; display: none"
       >
-        <button type="button" id="closeList">x</button>
-        <h2 style="text-transform: uppercase">Proximo pedido</h2>
+        <button type="button" id="closeList">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+        <h2>Lista de Pedidos</h2>
         <form action="">
           <div>
             <input
               type="text"
               name="pedido"
               id="pedido"
-              placeholder="Ingrese lo que desea pedir"
+              placeholder="Agregar producto al pedido..."
               required
             />
           </div>
-          <input type="submit" value="Registrar" id="btnPedido" />
+          <input type="submit" value="Agregar" id="btnPedido" />
         </form>
-        <div style="position: relative; display: flex; flex-direction: column">
-          <h3>Lista de lo mas pedido</h3>
+        <div style="position: relative; display: flex; flex-direction: column; width: 100%;">
+          <h3>Productos pendientes</h3>
 
           <div
-            style="display: flex; width: 100%; justify-content: space-between"
+            style="display: flex; width: 100%; justify-content: space-between; gap: 0.5rem; margin: 1rem 0;"
           >
             <button
               type="button"
-              style="
-                background-color: rgba(255, 0, 0, 0.411);
-                color: darkred;
-                width: max-content;
-                opacity: 0.8;
-                cursor: pointer;
-              "
+              class="delete btn-sm"
               id="btnDelete"
             >
-              Eliminar lista
+              Vaciar lista
             </button>
-            <button type="button" id="btnSendList">Enviar Lista</button>
+            <button type="button" class="btn-primary btn-sm" id="btnSendList">Enviar lista</button>
           </div>
           <hr
-            style="width: 100%; margin: 0.5rem 0; background-color: #19b8b1"
+            style="width: 100%; margin: 0.5rem 0; border: none; border-top: 1px solid var(--border-color);"
           />
           <ul id="list"></ul>
         </div>
       </div>
       <form action="">
         <div>
-          <label for="type" style="font-weight: bolder"
-            >Seleccione el tipo de venta o gasto</label
-          >
-          <div
-            style="
-              display: flex;
-              gap: 0.5rem;
-              margin: 1rem 0;
-              justify-content: center;
-              font-size: larger;
-            "
-          >
-            <input type="radio" name="type" id="venta" value="venta" checked />
-            <label
-              for="venta"
-              style="
-                color: #1b1b1b;
-                font-weight: bold;
-                text-shadow: 3px 3px 2px #43fa0b59;
-                text-transform: uppercase;
-              "
-              >Venta</label
-            >
-            <br />
-            <input type="radio" name="type" id="jer" value="jer" />
-            <label
-              for="jer"
-              style="
-                color: #0257f5;
-                font-weight: bold;
-                text-shadow: 3px 3px 2px #fad504;
-                text-transform: uppercase;
-              "
-              >Jer</label
-            >
-            <br />
-            <input type="radio" name="type" id="gastos" value="gastos" />
-            <label
-              for="gastos"
-              style="
-                color: #e24040;
-                font-weight: bold;
-                text-shadow: 2px 2px 2px hsla(2, 84%, 52%, 0.363);
-                text-transform: uppercase;
-              "
-              >Gasto</label
-            >
+          <label for="type">Tipo de operación</label>
+          <div class="radio-group">
+            <label class="radio-item venta">
+              <input type="radio" name="type" id="venta" value="venta" checked />
+              <span>Venta</span>
+            </label>
+            <label class="radio-item jer">
+              <input type="radio" name="type" id="jer" value="jer" />
+              <span>JER</span>
+            </label>
+            <label class="radio-item gastos">
+              <input type="radio" name="type" id="gastos" value="gastos" />
+              <span>Gasto</span>
+            </label>
           </div>
         </div>
-        <div style="display: flex; flex-direction: column; gap: 0.5rem">
-          <label for="value" style="font-weight: bolder"
-            >Digite la cantidad o valor a registrar ( $<span
-              id="spanValue"
-            ></span>
-            )</label
-          >
+        <div>
+          <label for="value">
+            Monto
+            <span style="color: var(--success); font-weight: 600;">
+              $<span id="spanValue">0</span>
+            </span>
+          </label>
           <input
             type="number"
             name="value"
             id="value"
             required
             min="0"
-            placeholder="0"
+            placeholder="Ingrese el valor"
             oninput="updateSpanValue();"
           />
         </div>
         <div>
-          <label for="description" style="font-weight: bolder"
-            ><span style="font-size: 0.8rem; font-style: italic">
-              (SELECCIONE PAGO DIGITAL SI APLICA)
-            </span>
+          <label for="description">
+            Método de pago
+            <span class="label-hint">(opcional)</span>
           </label>
-          <div
-            style="
-              display: flex;
-              margin: 1rem 0;
-              justify-content: center;
-              align-items: center;
-              width: 100%;
-            "
-          >
-            <div style="display: flex; width: 50%; height: 50px">
+          <div class="payment-selector">
+            <label class="payment-item">
               <input
-                style="margin: auto"
                 type="radio"
                 name="digitalPago"
                 id="nequi"
                 value="nequi"
               />
-              <label
-                for="nequi"
-                style="
-                  color: rgb(211, 49, 211);
-                  text-shadow: 1px 1px 1px black;
-                  height: 55px;
-                "
-              >
-                <img
-                  style="object-fit: fill; height: 100%"
-                  src="https://seeklogo.com/images/N/nequi-colombia-logo-CF8C45C51E-seeklogo.com.png"
-                  alt="nequi"
-              /></label>
-            </div>
-            <div style="display: flex; width: 50%; height: 90px">
+              <img
+                src="https://seeklogo.com/images/N/nequi-colombia-logo-CF8C45C51E-seeklogo.com.png"
+                alt="Nequi"
+              />
+            </label>
+            <label class="payment-item">
               <input
-                style="margin: auto"
                 type="radio"
                 name="digitalPago"
                 id="daviplata"
                 value="daviplata"
               />
-              <label
-                for="daviplata"
-                style="color: red; text-shadow: 1px 1px 1px black; height: 100%"
-                ><img
-                  style="object-fit: fill; height: 100%"
-                  src="https://seeklogo.com/images/D/daviplata-logo-750F0FC1B7-seeklogo.com.png"
-                  alt="daviplata"
-              /></label>
-            </div>
+              <img
+                src="https://seeklogo.com/images/D/daviplata-logo-750F0FC1B7-seeklogo.com.png"
+                alt="Daviplata"
+              />
+            </label>
           </div>
-          <label for="description" style="font-weight: bolder"
-            >Digite una breve descripcion de la venta o gasto
-          </label>
-          <br />
+        </div>
+        <div>
+          <label for="description">Descripción</label>
           <input
             type="text"
             name="description"
             id="description"
-            placeholder="Un esfero y una caja"
+            placeholder="Detalle del producto o servicio"
             required
             list="opciones"
             autocomplete="off"
@@ -241,42 +168,30 @@
         </div>
         <input
           type="submit"
-          value="Registrar"
+          value="Registrar operación"
           id="btnRegister"
-          style="font-weight: bold"
         />
       </form>
     </div>
-    <hr />
+    
     <div class="countDay animated">
-      <h2
-        style="
-          color: #fff;
-          text-align: center;
-          font-size: 2rem;
-          margin-top: 1rem;
-          margin-bottom: 1rem;
-          text-transform: uppercase;
-        "
-      >
-        Venta del dia
-      </h2>
+      <h2>Resumen del día</h2>
       <div id="messageResult">
         <div class="messageResultNoData hidden">
-          No hay resultados para esta busqueda.
+          No hay registros para mostrar.
         </div>
         <div class="messageResultData">
           <div>
-            <h2>Venta Total</h2>
-            <p id="totalVenta"></p>
+            <h2>Ventas</h2>
+            <p id="totalVenta">$0</p>
           </div>
           <div>
-            <h2>Venta JER</h2>
-            <p id="totalJER"></p>
+            <h2>JER</h2>
+            <p id="totalJER">$0</p>
           </div>
           <div>
-            <h2>Venta Gastos</h2>
-            <p id="totalGastos"></p>
+            <h2>Gastos</h2>
+            <p id="totalGastos">$0</p>
           </div>
         </div>
       </div>
@@ -287,11 +202,11 @@
             <tr>
               <th>Fecha</th>
               <th>Venta</th>
-              <th>Descripción venta</th>
-              <th>Jer</th>
-              <th>Descripción jer</th>
+              <th>Descripción</th>
+              <th>JER</th>
+              <th>Desc. JER</th>
               <th>Gastos</th>
-              <th>Descripción gastos</th>
+              <th>Desc. Gastos</th>
               <th>Acciones</th>
             </tr>
           </thead>
@@ -300,10 +215,12 @@
       </div>
     </div>
     <div class="countR animated">
-      Registros: <span id="countRegistros"></span>
+      <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+      Registros: <span id="countRegistros">0</span>
     </div>
 
 
+    <script src="./js/modal.js"></script>
     <script src="./js/app.js"></script>
     <script src="./js/appTable.js"></script>
   </body>

@@ -75,9 +75,7 @@ function saveVenta() {
     valueValue <= 0 ||
     descriptionValue === ""
   ) {
-    alert(
-      "Todos los campos son obligatorios y el valor debe ser un número positivo."
-    );
+    showToast('Campos incompletos', 'Todos los campos son obligatorios y el valor debe ser un número positivo.', 'warning');
     return;
   }
 
@@ -103,11 +101,11 @@ function saveVenta() {
       description.value = "";
       digitalPago.checked = false;
       renderAllCounts();
-      
+      showToast('¡Registro guardado!', `Venta de $${valueValue.toLocaleString()} registrada exitosamente.`, 'success');
     })
     .catch((error) => {
       console.error("Error al guardar la venta:", error);
-      alert("No se pudo guardar la venta. Inténtalo de nuevo.");
+      showToast('Error', 'No se pudo guardar la venta. Inténtalo de nuevo.', 'error');
     });
 }
 
@@ -122,33 +120,54 @@ function updateSpanValue() {
 
 function renderList() {
   lis.innerHTML = "";
-  list.forEach((item) => {
+  list.forEach((item, index) => {
     const li = document.createElement("li");
-    const btnDeletes = document.createElement("div");
-    btnDeletes.innerHTML = "X";
-    li.style =
-      "color: #131313; font-weight: bold; font-size: 1.2rem;cursor: pointer; ";
-
-    li.addEventListener("mouseover", () => {
-      li.style =
-        "color: #131313; font-weight: bold; font-size: 1.2rem;cursor: pointer; color: red; display:flex; justify-content: space-between;";
-      li.appendChild(btnDeletes);
+    const btnDeletes = document.createElement("span");
+    btnDeletes.innerHTML = "✕";
+    btnDeletes.style.cssText = "color: var(--danger); font-weight: bold; cursor: pointer; padding: 4px 8px; border-radius: 4px; transition: all 0.2s;";
+    
+    const textSpan = document.createElement("span");
+    textSpan.textContent = item;
+    textSpan.style.cssText = "flex: 1;";
+    
+    li.appendChild(textSpan);
+    li.appendChild(btnDeletes);
+    
+    // Evento para eliminar al hacer clic en la X
+    btnDeletes.addEventListener("click", (e) => {
+      e.stopPropagation();
+      showConfirmModal({
+        title: 'Eliminar producto',
+        message: `¿Deseas eliminar "${item}" de la lista?`,
+        type: 'danger',
+        confirmText: 'Eliminar',
+        cancelText: 'Cancelar',
+        onConfirm: () => {
+          list.splice(index, 1);
+          localStorage.setItem("list", JSON.stringify(list));
+          renderList();
+          showToast('Producto eliminado', 'El producto se eliminó de la lista correctamente.', 'success');
+        }
+      });
     });
-
-    li.addEventListener("mouseout", () => {
-      li.style =
-        "color: #131313; font-weight: bold; font-size: 1.2rem;cursor: pointer;";
-      li.removeChild(btnDeletes);
+    
+    // Evento para eliminar al hacer clic en todo el item
+    li.addEventListener("click", (e) => {
+      if (e.target === btnDeletes) return;
+      showConfirmModal({
+        title: 'Eliminar producto',
+        message: `¿Deseas eliminar "${item}" de la lista?`,
+        type: 'danger',
+        confirmText: 'Eliminar',
+        cancelText: 'Cancelar',
+        onConfirm: () => {
+          list.splice(index, 1);
+          localStorage.setItem("list", JSON.stringify(list));
+          renderList();
+          showToast('Producto eliminado', 'El producto se eliminó de la lista correctamente.', 'success');
+        }
+      });
     });
-
-    li.addEventListener("click", () => {
-      if (prompt("¿Deseas eliminar este item?") === "si") {
-        list.splice(list.indexOf(item), 1);
-        localStorage.setItem("list", JSON.stringify(list));
-        renderList();
-      }
-    });
-    li.innerHTML = item;
 
     lis.appendChild(li);
   });
@@ -166,7 +185,7 @@ btncloseList.addEventListener("click", () => {
 
 btnPedido.addEventListener("click", (e) => {
   if (pedido.value === "") {
-    alert("Por favor, ingresa el item a pedir.");
+    showToast('Campo vacío', 'Por favor, ingresa el producto a pedir.', 'warning');
     return;
   }
 
@@ -175,19 +194,30 @@ btnPedido.addEventListener("click", (e) => {
   localStorage.setItem("list", JSON.stringify(list));
   pedido.value = "";
   renderList();
+  showToast('Producto agregado', `"${item}" se agregó a la lista.`, 'success', 2000);
 });
 
 btnDelete.addEventListener("click", () => {
-  let confirmDelete = prompt(
-    "¿Deseas eliminar todos los registros? Ingresa 'si' para confirmar."
-  );
-  if (confirmDelete.toLowerCase() === "si") {
-    localStorage.removeItem("list");
-    list.length = 0;
-    lis.innerHTML = "";
-    btncloseList.click();
-    renderList();
+  if (list.length === 0) {
+    showToast('Lista vacía', 'No hay productos en la lista para eliminar.', 'info');
+    return;
   }
+  
+  showConfirmModal({
+    title: '¿Vaciar lista completa?',
+    message: `Esta acción eliminará ${list.length} producto${list.length > 1 ? 's' : ''} de la lista. Esta acción no se puede deshacer.`,
+    type: 'danger',
+    confirmText: 'Vaciar lista',
+    cancelText: 'Cancelar',
+    onConfirm: () => {
+      localStorage.removeItem("list");
+      list.length = 0;
+      lis.innerHTML = "";
+      btncloseList.click();
+      renderList();
+      showToast('Lista vaciada', 'Todos los productos fueron eliminados.', 'success');
+    }
+  });
 });
 
 btnRegister.addEventListener("click", (e) => {
@@ -198,7 +228,7 @@ btnRegister.addEventListener("click", (e) => {
 
 btnSendList.addEventListener("click", () => {
   if (list.length === 0) {
-    alert("Por favor, agrega un ítem a la lista.");
+    showToast('Lista vacía', 'Por favor, agrega productos a la lista antes de enviar.', 'warning');
     return;
   }
 

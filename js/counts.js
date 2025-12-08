@@ -139,18 +139,52 @@ btnSearchYear.addEventListener("click", (event) => {
 });
 
 function deleteId(id) {
-  let confirmDelete = prompt(
-    "¿Deseas eliminar este registro? Ingresa 'si' para confirmar."
-  );
-  if (confirmDelete.toLowerCase() === "si") {
-    deleteCount(id)
-      .then(() => {
-        renderAllCounts();
-      })
-      .catch((error) => {
-        console.error("Error al eliminar el registro:", error);
-      });
+  // Usar nuevo sistema de modal si está disponible
+  if (typeof modal !== 'undefined') {
+    modal.delete(
+      'Esta acción eliminará permanentemente este registro. No se puede deshacer.',
+      '¿Eliminar registro?'
+    ).then((confirmed) => {
+      if (confirmed) {
+        deleteCount(id)
+          .then(() => {
+            renderAllCounts();
+            
+            if (typeof toast !== 'undefined') {
+              toast.success('El registro se eliminó correctamente', '¡Eliminado!', 3000);
+            } else {
+              showToast('¡Eliminado!', 'El registro se eliminó correctamente.', 'success');
+            }
+          })
+          .catch((error) => {
+            console.error("Error al eliminar el registro:", error);
+            if (typeof toast !== 'undefined') {
+              toast.error('No se pudo eliminar el registro', 'Error', 4000);
+            } else {
+              showToast('Error', 'No se pudo eliminar el registro.', 'error');
+            }
+          });
+      }
+    });
   } else {
-    alert("Operación cancelada.");
+    // Fallback al sistema antiguo
+    showConfirmModal({
+      title: '¿Eliminar registro?',
+      message: 'Esta acción eliminará permanentemente este registro. No se puede deshacer.',
+      type: 'danger',
+      confirmText: 'Eliminar',
+      cancelText: 'Cancelar',
+      onConfirm: () => {
+        deleteCount(id)
+          .then(() => {
+            renderAllCounts();
+            showToast('¡Eliminado!', 'El registro se eliminó correctamente.', 'success');
+          })
+          .catch((error) => {
+            console.error("Error al eliminar el registro:", error);
+            showToast('Error', 'No se pudo eliminar el registro.', 'error');
+          });
+      }
+    });
   }
 }
