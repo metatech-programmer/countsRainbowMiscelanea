@@ -30,31 +30,289 @@
       </a>
     </nav>
     
-    <h1 class="animated">Panel de Estadísticas</h1>
-    
-    <div class="animated">
-      <div class="chart-container">
-        <h2>
-          <svg class="icon" style="vertical-align: middle; margin-right: 8px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-          Ventas Mensuales
-        </h2>
-        <canvas id="monthlySalesChart"></canvas>
+    <div class="stats-container animated">
+      <div class="stats-header">
+        <h1>
+          <svg class="icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="20" x2="18" y2="10"></line>
+            <line x1="12" y1="20" x2="12" y2="4"></line>
+            <line x1="6" y1="20" x2="6" y2="14"></line>
+          </svg>
+          Panel de Análisis Empresarial
+        </h1>
+        <p class="stats-subtitle">Análisis detallado del rendimiento de tu negocio</p>
       </div>
 
-      <div class="chart-container">
-        <h2>
-          <svg class="icon" style="vertical-align: middle; margin-right: 8px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-          Ventas Anuales
-        </h2>
-        <canvas id="yearlySalesChart"></canvas>
+      <!-- FILTROS AVANZADOS -->
+      <div class="filters-section">
+        <div class="filters-card">
+          <div class="filters-header">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+            </svg>
+            <h3>Filtros de Análisis</h3>
+          </div>
+          <div class="filters-grid">
+            <div class="filter-group">
+              <label for="filterPeriod">Período</label>
+              <select id="filterPeriod" class="filter-select">
+                <option value="all">Todo el tiempo</option>
+                <option value="today">Hoy</option>
+                <option value="week">Última semana</option>
+                <option value="month" selected>Mes actual</option>
+                <option value="year">Año actual</option>
+                <option value="custom">Rango personalizado</option>
+              </select>
+            </div>
+            
+            <div class="filter-group" id="customRangeGroup" style="display: none;">
+              <label for="dateFrom">Desde</label>
+              <input type="date" id="dateFrom" class="filter-input">
+            </div>
+            
+            <div class="filter-group" id="customRangeToGroup" style="display: none;">
+              <label for="dateTo">Hasta</label>
+              <input type="date" id="dateTo" class="filter-input">
+            </div>
+            
+            <div class="filter-group">
+              <label for="filterYear">Año</label>
+              <select id="filterYear" class="filter-select">
+                <option value="all">Todos</option>
+              </select>
+            </div>
+            
+            <div class="filter-group">
+              <label for="filterMonth">Mes</label>
+              <select id="filterMonth" class="filter-select">
+                <option value="all">Todos</option>
+                <option value="0">Enero</option>
+                <option value="1">Febrero</option>
+                <option value="2">Marzo</option>
+                <option value="3">Abril</option>
+                <option value="4">Mayo</option>
+                <option value="5">Junio</option>
+                <option value="6">Julio</option>
+                <option value="7">Agosto</option>
+                <option value="8">Septiembre</option>
+                <option value="9">Octubre</option>
+                <option value="10">Noviembre</option>
+                <option value="11">Diciembre</option>
+              </select>
+            </div>
+            
+            <div class="filter-actions">
+              <button id="applyFilters" class="btn-filter-apply">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+                Aplicar
+              </button>
+              <button id="resetFilters" class="btn-filter-reset">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M1 4v6h6"></path>
+                  <path d="M23 20v-6h-6"></path>
+                  <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"></path>
+                </svg>
+                Reiniciar
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div class="chart-container">
-        <h2>
-          <svg class="icon" style="vertical-align: middle; margin-right: 8px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
-          Ventas Semanales
-        </h2>
-        <canvas id="weeklySalesChart"></canvas>
+      <!-- KPIs PRINCIPALES -->
+      <div class="kpi-grid">
+        <div class="kpi-card kpi-success">
+          <div class="kpi-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="12" y1="1" x2="12" y2="23"></line>
+              <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+            </svg>
+          </div>
+          <div class="kpi-content">
+            <h4>Total Ventas</h4>
+            <p class="kpi-value" id="kpiTotalSales">$0</p>
+            <span class="kpi-change" id="kpiSalesChange">-</span>
+          </div>
+        </div>
+
+        <div class="kpi-card kpi-info">
+          <div class="kpi-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <path d="M12 6v6l4 2"></path>
+            </svg>
+          </div>
+          <div class="kpi-content">
+            <h4>Total Jer</h4>
+            <p class="kpi-value" id="kpiTotalJer">$0</p>
+            <span class="kpi-change" id="kpiJerChange">-</span>
+          </div>
+        </div>
+
+        <div class="kpi-card kpi-danger">
+          <div class="kpi-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+              <polyline points="17 6 23 6 23 12"></polyline>
+            </svg>
+          </div>
+          <div class="kpi-content">
+            <h4>Total Gastos</h4>
+            <p class="kpi-value" id="kpiTotalExpenses">$0</p>
+            <span class="kpi-change" id="kpiExpensesChange">-</span>
+          </div>
+        </div>
+
+        <div class="kpi-card kpi-primary">
+          <div class="kpi-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="12" y1="1" x2="12" y2="23"></line>
+              <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+            </svg>
+          </div>
+          <div class="kpi-content">
+            <h4>Ganancia Neta</h4>
+            <p class="kpi-value" id="kpiNetProfit">$0</p>
+            <span class="kpi-change" id="kpiProfitChange">-</span>
+          </div>
+        </div>
+
+        <div class="kpi-card kpi-warning">
+          <div class="kpi-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="16" x2="12" y2="12"></line>
+              <line x1="12" y1="8" x2="12.01" y2="8"></line>
+            </svg>
+          </div>
+          <div class="kpi-content">
+            <h4>Margen Bruto</h4>
+            <p class="kpi-value" id="kpiMargin">0%</p>
+            <span class="kpi-change" id="kpiMarginChange">-</span>
+          </div>
+        </div>
+
+        <div class="kpi-card kpi-accent">
+          <div class="kpi-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+          </div>
+          <div class="kpi-content">
+            <h4>Promedio Diario</h4>
+            <p class="kpi-value" id="kpiAvgDaily">$0</p>
+            <span class="kpi-change" id="kpiAvgChange">-</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- GRÁFICOS -->
+      <div class="charts-grid">
+        <div class="chart-container chart-large">
+          <div class="chart-header">
+            <h2>
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+              </svg>
+              Tendencia de Ventas
+            </h2>
+            <div class="chart-actions">
+              <select id="trendChartType" class="chart-type-select">
+                <option value="line">Línea</option>
+                <option value="bar">Barras</option>
+              </select>
+            </div>
+          </div>
+          <canvas id="trendChart"></canvas>
+        </div>
+
+        <div class="chart-container">
+          <div class="chart-header">
+            <h2>
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M12 6v6l4 2"></path>
+              </svg>
+              Distribución por Categoría
+            </h2>
+          </div>
+          <canvas id="distributionChart"></canvas>
+        </div>
+
+        <div class="chart-container">
+          <div class="chart-header">
+            <h2>
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+              </svg>
+              Comparación Mensual
+            </h2>
+          </div>
+          <canvas id="monthlyComparisonChart"></canvas>
+        </div>
+
+        <div class="chart-container">
+          <div class="chart-header">
+            <h2>
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+              </svg>
+              Análisis Semanal
+            </h2>
+          </div>
+          <canvas id="weeklyChart"></canvas>
+        </div>
+      </div>
+
+      <!-- TABLA DE RESUMEN -->
+      <div class="summary-table-container">
+        <div class="summary-header">
+          <h2>
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="8" y1="6" x2="21" y2="6"></line>
+              <line x1="8" y1="12" x2="21" y2="12"></line>
+              <line x1="8" y1="18" x2="21" y2="18"></line>
+              <line x1="3" y1="6" x2="3.01" y2="6"></line>
+              <line x1="3" y1="12" x2="3.01" y2="12"></line>
+              <line x1="3" y1="18" x2="3.01" y2="18"></line>
+            </svg>
+            Resumen Detallado
+          </h2>
+          <button id="exportData" class="btn-export">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            Exportar
+          </button>
+        </div>
+        <div class="table-wrapper">
+          <table id="summaryTable" class="stats-table">
+            <thead>
+              <tr>
+                <th>Período</th>
+                <th>Ventas</th>
+                <th>Jer</th>
+                <th>Gastos</th>
+                <th>Ganancia</th>
+                <th>Margen</th>
+              </tr>
+            </thead>
+            <tbody id="summaryTableBody">
+              <tr>
+                <td colspan="6" class="no-data">Cargando datos...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
 
