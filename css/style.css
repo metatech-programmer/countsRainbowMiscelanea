@@ -2233,29 +2233,36 @@ select:focus-visible {
   justify-content: center;
   border: 2px solid var(--primary);
   border-radius: var(--border-radius-sm);
-  background: var(--bg-card);
+  background: linear-gradient(135deg, rgba(13, 148, 136, 0.1), rgba(13, 148, 136, 0.05));
   color: var(--primary);
   cursor: pointer;
   transition: all var(--transition-fast);
   font-family: var(--font-family);
+  position: relative;
 }
 
+.pagination-btn .icon-sm,
 .pagination-btn svg {
-  stroke: var(--primary);
-  width: 20px;
-  height: 20px;
+  stroke: var(--primary) !important;
+  fill: none !important;
+  width: 20px !important;
+  height: 20px !important;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .pagination-btn:hover:not(:disabled) {
-  background: var(--primary);
+  background: linear-gradient(135deg, var(--primary), var(--accent));
   color: var(--text-white);
   border-color: var(--primary);
   transform: translateY(-2px);
   box-shadow: var(--shadow-md), var(--shadow-glow);
 }
 
+.pagination-btn:hover:not(:disabled) .icon-sm,
 .pagination-btn:hover:not(:disabled) svg {
-  stroke: var(--text-white);
+  stroke: var(--text-white) !important;
 }
 
 .pagination-btn:active:not(:disabled) {
@@ -2269,8 +2276,10 @@ select:focus-visible {
   border-color: var(--border-color-strong);
 }
 
+.pagination-btn:disabled .icon-sm,
 .pagination-btn:disabled svg {
-  stroke: var(--text-muted);
+  stroke: var(--text-muted) !important;
+  opacity: 0.5;
 }
 
 .pagination-info {
@@ -2399,9 +2408,10 @@ select:focus-visible {
     height: 36px;
   }
 
+  .pagination-btn .icon-sm,
   .pagination-btn svg {
-    width: 18px;
-    height: 18px;
+    width: 18px !important;
+    height: 18px !important;
   }
 
   .pagination-info {

@@ -228,23 +228,23 @@ function updateKPIs() {
   document.getElementById('kpiTotalExpenses').textContent = formatCurrency(stats.totalExpenses);
   updateChangeIndicator('kpiExpensesChange', stats.totalExpenses, prevStats.totalExpenses, true);
 
-  // Net Profit
-  const netProfit = stats.totalSales + stats.totalJer - stats.totalExpenses;
-  const prevNetProfit = prevStats.totalSales + prevStats.totalJer - prevStats.totalExpenses;
+  // Net Profit (Solo Ventas - Gastos, sin incluir JER)
+  const netProfit = stats.totalSales - stats.totalExpenses;
+  const prevNetProfit = prevStats.totalSales - prevStats.totalExpenses;
   document.getElementById('kpiNetProfit').textContent = formatCurrency(netProfit);
   updateChangeIndicator('kpiProfitChange', netProfit, prevNetProfit);
 
-  // Margin
+  // Margin (Solo basado en Ventas y Gastos, sin JER)
   const margin = stats.totalSales > 0 ? ((netProfit / stats.totalSales) * 100) : 0;
   const prevMargin = prevStats.totalSales > 0 ? ((prevNetProfit / prevStats.totalSales) * 100) : 0;
   document.getElementById('kpiMargin').textContent = margin.toFixed(1) + '%';
   updateChangeIndicator('kpiMarginChange', margin, prevMargin);
 
-  // Average Daily
+  // Average Daily (Solo Ventas, sin JER)
   const days = getUniqueDays(filteredData).length || 1;
-  const avgDaily = (stats.totalSales + stats.totalJer) / days;
+  const avgDaily = stats.totalSales / days;
   const prevDays = getUniqueDays(getPreviousPeriodData()).length || 1;
-  const prevAvgDaily = (prevStats.totalSales + prevStats.totalJer) / prevDays;
+  const prevAvgDaily = prevStats.totalSales / prevDays;
   document.getElementById('kpiAvgDaily').textContent = formatCurrency(avgDaily);
   updateChangeIndicator('kpiAvgChange', avgDaily, prevAvgDaily);
 }
@@ -455,8 +455,9 @@ function renderMonthlyComparisonChart() {
     return `${getMonthName(parseInt(month))} ${year}`;
   });
   
+  // Ganancia Neta = Ventas - Gastos (sin JER)
   const netProfits = Object.values(monthlyData).map(data => 
-    data.venta + data.jer - data.gastos
+    data.venta - data.gastos
   );
   
   if (charts.monthlyComparison) charts.monthlyComparison.destroy();
@@ -595,7 +596,8 @@ function updateSummaryTable() {
   const rows = displayKeys.map(key => {
     const [year, month] = key.split('-');
     const data = monthlyData[key];
-    const profit = data.venta + data.jer - data.gastos;
+    // Ganancia = Ventas - Gastos (sin JER)
+    const profit = data.venta - data.gastos;
     const margin = data.venta > 0 ? ((profit / data.venta) * 100) : 0;
     
     return `
@@ -739,7 +741,8 @@ document.getElementById('exportData')?.addEventListener('click', () => {
   Object.keys(monthlyData).sort().forEach(key => {
     const [year, month] = key.split('-');
     const data = monthlyData[key];
-    const profit = data.venta + data.jer - data.gastos;
+    // Ganancia = Ventas - Gastos (sin JER)
+    const profit = data.venta - data.gastos;
     const margin = data.venta > 0 ? ((profit / data.venta) * 100).toFixed(1) : '0';
     
     csv += `${getMonthName(parseInt(month))} ${year},${data.venta},${data.jer},${data.gastos},${profit},${margin}%\n`;
