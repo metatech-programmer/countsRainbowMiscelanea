@@ -2059,10 +2059,17 @@ select:focus-visible {
 .summary-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   margin-bottom: var(--spacing-xl);
   padding-bottom: var(--spacing-md);
   border-bottom: 2px solid var(--border-color);
+  gap: var(--spacing-xl);
+  flex-wrap: wrap;
+}
+
+.summary-title-group {
+  flex: 1;
+  min-width: 250px;
 }
 
 .summary-header h2 {
@@ -2072,6 +2079,52 @@ select:focus-visible {
   display: flex;
   align-items: center;
   gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-sm);
+}
+
+.table-info {
+  font-size: var(--font-size-sm);
+  color: var(--text-muted);
+  font-weight: 500;
+  margin: 0;
+}
+
+.summary-actions {
+  display: flex;
+  gap: var(--spacing-md);
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.rows-per-page {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.rows-per-page label {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.rows-select {
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--border-radius-sm);
+  font-size: var(--font-size-sm);
+  color: var(--text-primary);
+  background: var(--bg-card);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  font-family: var(--font-family);
+  min-width: 80px;
+}
+
+.rows-select:hover {
+  border-color: var(--primary);
+  background: var(--bg-hover);
 }
 
 .btn-export {
@@ -2161,6 +2214,99 @@ select:focus-visible {
   padding: var(--spacing-3xl);
 }
 
+/* ====== Paginador ====== */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-xl);
+  padding-top: var(--spacing-lg);
+  border-top: 1px solid var(--border-color);
+}
+
+.pagination-btn {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--border-radius-sm);
+  background: var(--bg-card);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  font-family: var(--font-family);
+}
+
+.pagination-btn:hover:not(:disabled) {
+  background: var(--primary);
+  color: var(--text-white);
+  border-color: var(--primary);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+
+.pagination-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  background: var(--bg-hover);
+  border-color: var(--border-color);
+}
+
+.pagination-info {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--text-secondary);
+  padding: 0 var(--spacing-md);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.pagination-info span {
+  color: var(--primary);
+  font-weight: 700;
+}
+
+/* ====== Tabla del Historial ====== */
+.history-table-container {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(250, 255, 254, 0.95));
+  backdrop-filter: var(--blur-md);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-2xl);
+  box-shadow: var(--shadow-md);
+  border: 1.5px solid var(--border-color);
+  margin-top: var(--spacing-2xl);
+}
+
+.history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--spacing-xl);
+  padding-bottom: var(--spacing-md);
+  border-bottom: 2px solid var(--border-color);
+  gap: var(--spacing-xl);
+  flex-wrap: wrap;
+}
+
+.history-title-group {
+  flex: 1;
+  min-width: 250px;
+}
+
+.history-header h2 {
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-sm);
+}
+
 /* ====== Responsive Design ====== */
 @media (max-width: 768px) {
   .stats-container {
@@ -2205,9 +2351,39 @@ select:focus-visible {
     align-items: flex-start;
   }
 
+  .summary-actions {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .rows-per-page {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .rows-select {
+    flex: 1;
+    max-width: 120px;
+  }
+
   .btn-export {
     width: 100%;
     justify-content: center;
+  }
+
+  .pagination {
+    gap: var(--spacing-sm);
+  }
+
+  .pagination-btn {
+    width: 32px;
+    height: 32px;
+  }
+
+  .pagination-info {
+    font-size: var(--font-size-xs);
+    padding: 0 var(--spacing-sm);
   }
 
   .table-wrapper {

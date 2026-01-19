@@ -274,26 +274,42 @@
       <!-- TABLA DE RESUMEN -->
       <div class="summary-table-container">
         <div class="summary-header">
-          <h2>
-            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <line x1="8" y1="6" x2="21" y2="6"></line>
-              <line x1="8" y1="12" x2="21" y2="12"></line>
-              <line x1="8" y1="18" x2="21" y2="18"></line>
-              <line x1="3" y1="6" x2="3.01" y2="6"></line>
-              <line x1="3" y1="12" x2="3.01" y2="12"></line>
-              <line x1="3" y1="18" x2="3.01" y2="18"></line>
-            </svg>
-            Resumen Detallado
-          </h2>
-          <button id="exportData" class="btn-export">
-            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-              <polyline points="7 10 12 15 17 10"></polyline>
-              <line x1="12" y1="15" x2="12" y2="3"></line>
-            </svg>
-            Exportar
-          </button>
+          <div class="summary-title-group">
+            <h2>
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="8" y1="6" x2="21" y2="6"></line>
+                <line x1="8" y1="12" x2="21" y2="12"></line>
+                <line x1="8" y1="18" x2="21" y2="18"></line>
+                <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                <line x1="3" y1="18" x2="3.01" y2="18"></line>
+              </svg>
+              Resumen Detallado por Período
+            </h2>
+            <p class="table-info" id="tableInfo">Mostrando 0 de 0 registros</p>
+          </div>
+          <div class="summary-actions">
+            <div class="rows-per-page">
+              <label for="rowsPerPage">Mostrar:</label>
+              <select id="rowsPerPage" class="rows-select">
+                <option value="5">5</option>
+                <option value="10" selected>10</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+                <option value="all">Todos</option>
+              </select>
+            </div>
+            <button id="exportData" class="btn-export">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              Exportar
+            </button>
+          </div>
         </div>
+        
         <div class="table-wrapper">
           <table id="summaryTable" class="stats-table">
             <thead>
@@ -312,6 +328,35 @@
               </tr>
             </tbody>
           </table>
+        </div>
+
+        <!-- PAGINADOR -->
+        <div class="pagination" id="tablePagination">
+          <button class="pagination-btn" id="firstPage" disabled>
+            <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="11 17 6 12 11 7"></polyline>
+              <polyline points="18 17 13 12 18 7"></polyline>
+            </svg>
+          </button>
+          <button class="pagination-btn" id="prevPage" disabled>
+            <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+          </button>
+          <div class="pagination-info" id="paginationInfo">
+            Página <span id="currentPage">1</span> de <span id="totalPages">1</span>
+          </div>
+          <button class="pagination-btn" id="nextPage" disabled>
+            <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </button>
+          <button class="pagination-btn" id="lastPage" disabled>
+            <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="13 17 18 12 13 7"></polyline>
+              <polyline points="6 17 11 12 6 7"></polyline>
+            </svg>
+          </button>
         </div>
       </div>
     </div>

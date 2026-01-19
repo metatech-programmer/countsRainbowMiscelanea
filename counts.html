@@ -91,23 +91,77 @@
             </div>
         </div>
 
-        <div class="container">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Fecha</th>
-                        <th>Venta</th>
-                        <th>Descripcion</th>
-                        <th>JER</th>
-                        <th>Desc. JER</th>
-                        <th>Gastos</th>
-                        <th>Desc. Gastos</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody id="counts">
-                </tbody>
-            </table>
+        <div class="history-table-container">
+            <div class="history-header">
+                <div class="history-title-group">
+                    <h2>
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                        </svg>
+                        Registros Detallados
+                    </h2>
+                    <p class="table-info" id="historyTableInfo">Mostrando 0 de 0 registros</p>
+                </div>
+                <div class="rows-per-page">
+                    <label for="historyRowsPerPage">Mostrar:</label>
+                    <select id="historyRowsPerPage" class="rows-select">
+                        <option value="10" selected>10</option>
+                        <option value="20">20</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                        <option value="all">Todos</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Venta</th>
+                            <th>Descripcion</th>
+                            <th>JER</th>
+                            <th>Desc. JER</th>
+                            <th>Gastos</th>
+                            <th>Desc. Gastos</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="counts">
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- PAGINADOR -->
+            <div class="pagination" id="historyPagination">
+                <button class="pagination-btn" id="historyFirstPage" disabled>
+                    <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="11 17 6 12 11 7"></polyline>
+                        <polyline points="18 17 13 12 18 7"></polyline>
+                    </svg>
+                </button>
+                <button class="pagination-btn" id="historyPrevPage" disabled>
+                    <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="15 18 9 12 15 6"></polyline>
+                    </svg>
+                </button>
+                <div class="pagination-info" id="historyPaginationInfo">
+                    Página <span id="historyCurrentPage">1</span> de <span id="historyTotalPages">1</span>
+                </div>
+                <button class="pagination-btn" id="historyNextPage" disabled>
+                    <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                </button>
+                <button class="pagination-btn" id="historyLastPage" disabled>
+                    <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="13 17 18 12 13 7"></polyline>
+                        <polyline points="6 17 11 12 6 7"></polyline>
+                    </svg>
+                </button>
+            </div>
         </div>
     </div>
 

@@ -10,6 +10,11 @@ let charts = {
   weekly: null
 };
 
+// Variables de paginación
+let currentPage = 1;
+let rowsPerPage = 10;
+let totalRows = 0;
+
 // ====================================
 // INICIALIZACIÓN
 // ====================================
@@ -78,6 +83,54 @@ function setupFilters() {
   // Change chart type
   trendChartType.addEventListener('change', (e) => {
     updateTrendChart(e.target.value);
+  });
+
+  // Configurar paginación
+  setupPagination();
+}
+
+function setupPagination() {
+  const rowsPerPageSelect = document.getElementById('rowsPerPage');
+  const firstPageBtn = document.getElementById('firstPage');
+  const prevPageBtn = document.getElementById('prevPage');
+  const nextPageBtn = document.getElementById('nextPage');
+  const lastPageBtn = document.getElementById('lastPage');
+
+  // Cambiar filas por página
+  rowsPerPageSelect.addEventListener('change', (e) => {
+    rowsPerPage = e.target.value === 'all' ? 'all' : parseInt(e.target.value);
+    currentPage = 1;
+    updateSummaryTable();
+  });
+
+  // Primera página
+  firstPageBtn.addEventListener('click', () => {
+    currentPage = 1;
+    updateSummaryTable();
+  });
+
+  // Página anterior
+  prevPageBtn.addEventListener('click', () => {
+    if (currentPage > 1) {
+      currentPage--;
+      updateSummaryTable();
+    }
+  });
+
+  // Página siguiente
+  nextPageBtn.addEventListener('click', () => {
+    const totalPages = Math.ceil(totalRows / rowsPerPage);
+    if (currentPage < totalPages) {
+      currentPage++;
+      updateSummaryTable();
+    }
+  });
+
+  // Última página
+  lastPageBtn.addEventListener('click', () => {
+    const totalPages = Math.ceil(totalRows / rowsPerPage);
+    currentPage = totalPages;
+    updateSummaryTable();
   });
 }
 
@@ -519,10 +572,27 @@ function updateSummaryTable() {
   
   if (Object.keys(monthlyData).length === 0) {
     tbody.innerHTML = '<tr><td colspan="6" class="no-data">No hay datos para mostrar</td></tr>';
+    updatePaginationInfo(0, 0, 0);
     return;
   }
   
-  const rows = Object.keys(monthlyData).sort().reverse().map(key => {
+  // Ordenar y preparar datos
+  const sortedKeys = Object.keys(monthlyData).sort().reverse();
+  totalRows = sortedKeys.length;
+  
+  // Calcular paginación
+  let displayKeys = sortedKeys;
+  let start = 0;
+  let end = totalRows;
+  
+  if (rowsPerPage !== 'all') {
+    start = (currentPage - 1) * rowsPerPage;
+    end = Math.min(start + rowsPerPage, totalRows);
+    displayKeys = sortedKeys.slice(start, end);
+  }
+  
+  // Generar filas
+  const rows = displayKeys.map(key => {
     const [year, month] = key.split('-');
     const data = monthlyData[key];
     const profit = data.venta + data.jer - data.gastos;
@@ -541,6 +611,53 @@ function updateSummaryTable() {
   }).join('');
   
   tbody.innerHTML = rows;
+  updatePaginationInfo(start + 1, end, totalRows);
+  updatePaginationButtons();
+}
+
+function updatePaginationInfo(start, end, total) {
+  const tableInfo = document.getElementById('tableInfo');
+  const currentPageSpan = document.getElementById('currentPage');
+  const totalPagesSpan = document.getElementById('totalPages');
+  
+  if (total === 0) {
+    tableInfo.textContent = 'No hay registros para mostrar';
+    currentPageSpan.textContent = '0';
+    totalPagesSpan.textContent = '0';
+  } else {
+    tableInfo.textContent = `Mostrando ${start} a ${end} de ${total} registros`;
+    
+    if (rowsPerPage === 'all') {
+      currentPageSpan.textContent = '1';
+      totalPagesSpan.textContent = '1';
+    } else {
+      const totalPages = Math.ceil(total / rowsPerPage);
+      currentPageSpan.textContent = currentPage;
+      totalPagesSpan.textContent = totalPages;
+    }
+  }
+}
+
+function updatePaginationButtons() {
+  const firstPageBtn = document.getElementById('firstPage');
+  const prevPageBtn = document.getElementById('prevPage');
+  const nextPageBtn = document.getElementById('nextPage');
+  const lastPageBtn = document.getElementById('lastPage');
+  const paginationDiv = document.getElementById('tablePagination');
+  
+  if (rowsPerPage === 'all' || totalRows === 0) {
+    paginationDiv.style.display = 'none';
+    return;
+  }
+  
+  paginationDiv.style.display = 'flex';
+  const totalPages = Math.ceil(totalRows / rowsPerPage);
+  
+  // Deshabilitar botones según la página actual
+  firstPageBtn.disabled = currentPage === 1;
+  prevPageBtn.disabled = currentPage === 1;
+  nextPageBtn.disabled = currentPage === totalPages;
+  lastPageBtn.disabled = currentPage === totalPages;
 }
 
 // ====================================

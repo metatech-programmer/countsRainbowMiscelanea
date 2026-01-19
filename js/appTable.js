@@ -10,15 +10,67 @@ let totalVenta = document.getElementById("totalVenta");
 let totalJER = document.getElementById("totalJER");
 let totalGastos = document.getElementById("totalGastos");
 
+// Variables de paginación
+let currentHistoryPage = 1;
+let historyRowsPerPage = 10;
+let totalHistoryRows = 0;
+let allHistoryCounts = [];
+
 document.addEventListener("DOMContentLoaded", () => {
   initDB()
     .then(() => {
+      setupHistoryPagination();
       renderAllCounts();
     })
     .catch((error) => {
       console.error("Error al inicializar la base de datos:", error);
     });
 });
+
+function setupHistoryPagination() {
+  const rowsPerPageSelect = document.getElementById('historyRowsPerPage');
+  const firstPageBtn = document.getElementById('historyFirstPage');
+  const prevPageBtn = document.getElementById('historyPrevPage');
+  const nextPageBtn = document.getElementById('historyNextPage');
+  const lastPageBtn = document.getElementById('historyLastPage');
+
+  // Cambiar filas por página
+  rowsPerPageSelect.addEventListener('change', (e) => {
+    historyRowsPerPage = e.target.value === 'all' ? 'all' : parseInt(e.target.value);
+    currentHistoryPage = 1;
+    renderCounts(allHistoryCounts);
+  });
+
+  // Primera página
+  firstPageBtn.addEventListener('click', () => {
+    currentHistoryPage = 1;
+    renderCounts(allHistoryCounts);
+  });
+
+  // Página anterior
+  prevPageBtn.addEventListener('click', () => {
+    if (currentHistoryPage > 1) {
+      currentHistoryPage--;
+      renderCounts(allHistoryCounts);
+    }
+  });
+
+  // Página siguiente
+  nextPageBtn.addEventListener('click', () => {
+    const totalPages = Math.ceil(totalHistoryRows / historyRowsPerPage);
+    if (currentHistoryPage < totalPages) {
+      currentHistoryPage++;
+      renderCounts(allHistoryCounts);
+    }
+  });
+
+  // Última página
+  lastPageBtn.addEventListener('click', () => {
+    const totalPages = Math.ceil(totalHistoryRows / historyRowsPerPage);
+    currentHistoryPage = totalPages;
+    renderCounts(allHistoryCounts);
+  });
+}
 
 function renderAllCounts() {
   const selectedDate = dataDaySearch;
@@ -40,13 +92,48 @@ function renderAllCounts() {
     });
 }
 
+function renderAllCounts() {
+  const selectedDate = dataDaySearch;
+
+  getCountsByDay(selectedDate)
+    .then((filteredCounts) => {
+      allHistoryCounts = filteredCounts.reverse();
+      if (allHistoryCounts.length === 0) {
+        messageResultNoData.style = "display: block";
+        messageResultData.style = "display: none";
+      }
+      if (allHistoryCounts.length !== 0) {
+        messageResultNoData.style = "display: none";
+        messageResultData.style = "display: block";
+      }
+      currentHistoryPage = 1;
+      renderCounts(allHistoryCounts);
+    })
+    .catch((error) => {
+      console.error("Error al buscar por día:", error);
+    });
+}
+
 function renderCounts(countsToRender) {
   countsTable.innerHTML = "";
+  totalHistoryRows = countsToRender.length;
+  
+  // Calcular paginación
+  let displayCounts = countsToRender;
+  let start = 0;
+  let end = totalHistoryRows;
+  
+  if (historyRowsPerPage !== 'all') {
+    start = (currentHistoryPage - 1) * historyRowsPerPage;
+    end = Math.min(start + historyRowsPerPage, totalHistoryRows);
+    displayCounts = countsToRender.slice(start, end);
+  }
+  
   let total = 0;
   let totalJERValue = 0;
   let totalGastosValue = 0;
 
-  countsToRender.forEach((count) => {
+  displayCounts.forEach((count) => {
     const tr = document.createElement("tr");
     tr.innerHTML = `
             <td>${count.date}</td>
@@ -65,6 +152,10 @@ function renderCounts(countsToRender) {
             <td class="delete" onclick="deleteId(${count.id})" >Eliminar</td>
         `;
     countsTable.appendChild(tr);
+  });
+
+  // Calcular totales de TODOS los registros (no solo los mostrados)
+  countsToRender.forEach((count) => {
     if (count.type === "venta") {
       total += parseFloat(count.value);
     } else if (count.type === "jer") {
@@ -77,6 +168,54 @@ function renderCounts(countsToRender) {
   totalVenta.innerHTML = `$${total.toLocaleString()}`;
   totalJER.innerHTML = `$${totalJERValue.toLocaleString()}`;
   totalGastos.innerHTML = `$${totalGastosValue.toLocaleString()}`;
+  
+  updateHistoryPaginationInfo(start + 1, end, totalHistoryRows);
+  updateHistoryPaginationButtons();
+}
+
+function updateHistoryPaginationInfo(start, end, total) {
+  const tableInfo = document.getElementById('historyTableInfo');
+  const currentPageSpan = document.getElementById('historyCurrentPage');
+  const totalPagesSpan = document.getElementById('historyTotalPages');
+  
+  if (total === 0) {
+    tableInfo.textContent = 'No hay registros para mostrar';
+    currentPageSpan.textContent = '0';
+    totalPagesSpan.textContent = '0';
+  } else {
+    tableInfo.textContent = `Mostrando ${start} a ${end} de ${total} registros`;
+    
+    if (historyRowsPerPage === 'all') {
+      currentPageSpan.textContent = '1';
+      totalPagesSpan.textContent = '1';
+    } else {
+      const totalPages = Math.ceil(total / historyRowsPerPage);
+      currentPageSpan.textContent = currentHistoryPage;
+      totalPagesSpan.textContent = totalPages;
+    }
+  }
+}
+
+function updateHistoryPaginationButtons() {
+  const firstPageBtn = document.getElementById('historyFirstPage');
+  const prevPageBtn = document.getElementById('historyPrevPage');
+  const nextPageBtn = document.getElementById('historyNextPage');
+  const lastPageBtn = document.getElementById('historyLastPage');
+  const paginationDiv = document.getElementById('historyPagination');
+  
+  if (historyRowsPerPage === 'all' || totalHistoryRows === 0) {
+    paginationDiv.style.display = 'none';
+    return;
+  }
+  
+  paginationDiv.style.display = 'flex';
+  const totalPages = Math.ceil(totalHistoryRows / historyRowsPerPage);
+  
+  // Deshabilitar botones según la página actual
+  firstPageBtn.disabled = currentHistoryPage === 1;
+  prevPageBtn.disabled = currentHistoryPage === 1;
+  nextPageBtn.disabled = currentHistoryPage === totalPages;
+  lastPageBtn.disabled = currentHistoryPage === totalPages;
 }
 
 const btnSearchDay = document.getElementById("btnSearchDay");
@@ -88,19 +227,21 @@ if (btnSearchDay) {
 
     getCountsByDay(selectedDate)
       .then((filteredCounts) => {
-        if (filteredCounts.length === 0) {
+        allHistoryCounts = filteredCounts.reverse();
+        if (allHistoryCounts.length === 0) {
           messageResultNoData.style = "display: block";
           messageResultData.style = "display: none";
         }
-        if (filteredCounts.length !== 0) {
+        if (allHistoryCounts.length !== 0) {
           messageResultNoData.style = "display: none";
           messageResultData.style = "display: block";
-      }
-      renderCounts(filteredCounts);
-    })
-    .catch((error) => {
-      console.error("Error al buscar por día:", error);
-    });
+        }
+        currentHistoryPage = 1;
+        renderCounts(allHistoryCounts);
+      })
+      .catch((error) => {
+        console.error("Error al buscar por día:", error);
+      });
   });
 }
 

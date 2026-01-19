@@ -11,9 +11,16 @@ const btnSearch = document.getElementById("btnSearch");
 const btnSearchDay = document.getElementById("btnSearchDay");
 const btnSearchYear = document.getElementById("btnSearchYear");
 
+// Variables de paginación
+let currentHistoryPage = 1;
+let historyRowsPerPage = 10;
+let totalHistoryRows = 0;
+let allHistoryCounts = [];
+
 document.addEventListener("DOMContentLoaded", () => {
   initDB()
     .then(() => {
+      setupHistoryPagination();
       renderAllCounts();
     })
     .catch((error) => {
@@ -21,10 +28,59 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
+function setupHistoryPagination() {
+  const rowsPerPageSelect = document.getElementById('historyRowsPerPage');
+  const firstPageBtn = document.getElementById('historyFirstPage');
+  const prevPageBtn = document.getElementById('historyPrevPage');
+  const nextPageBtn = document.getElementById('historyNextPage');
+  const lastPageBtn = document.getElementById('historyLastPage');
+
+  if (!rowsPerPageSelect) return; // Si no existe el elemento, salir
+
+  // Cambiar filas por página
+  rowsPerPageSelect.addEventListener('change', (e) => {
+    historyRowsPerPage = e.target.value === 'all' ? 'all' : parseInt(e.target.value);
+    currentHistoryPage = 1;
+    renderCounts(allHistoryCounts);
+  });
+
+  // Primera página
+  firstPageBtn?.addEventListener('click', () => {
+    currentHistoryPage = 1;
+    renderCounts(allHistoryCounts);
+  });
+
+  // Página anterior
+  prevPageBtn?.addEventListener('click', () => {
+    if (currentHistoryPage > 1) {
+      currentHistoryPage--;
+      renderCounts(allHistoryCounts);
+    }
+  });
+
+  // Página siguiente
+  nextPageBtn?.addEventListener('click', () => {
+    const totalPages = Math.ceil(totalHistoryRows / historyRowsPerPage);
+    if (currentHistoryPage < totalPages) {
+      currentHistoryPage++;
+      renderCounts(allHistoryCounts);
+    }
+  });
+
+  // Última página
+  lastPageBtn?.addEventListener('click', () => {
+    const totalPages = Math.ceil(totalHistoryRows / historyRowsPerPage);
+    currentHistoryPage = totalPages;
+    renderCounts(allHistoryCounts);
+  });
+}
+
 function renderAllCounts() {
   getAllCounts()
     .then((counts) => {
-      renderCounts(counts);
+      allHistoryCounts = counts.reverse();
+      currentHistoryPage = 1;
+      renderCounts(allHistoryCounts);
     })
     .catch((error) => {
       console.error("Error al obtener todos los registros:", error);
@@ -33,11 +89,24 @@ function renderAllCounts() {
 
 function renderCounts(countsToRender) {
   countsTable.innerHTML = "";
+  totalHistoryRows = countsToRender.length;
+  
+  // Calcular paginación
+  let displayCounts = countsToRender;
+  let start = 0;
+  let end = totalHistoryRows;
+  
+  if (historyRowsPerPage !== 'all') {
+    start = (currentHistoryPage - 1) * historyRowsPerPage;
+    end = Math.min(start + historyRowsPerPage, totalHistoryRows);
+    displayCounts = countsToRender.slice(start, end);
+  }
+  
   let total = 0;
   let totalJERValue = 0;
   let totalGastosValue = 0;
 
-  countsToRender.forEach((count) => {
+  displayCounts.forEach((count) => {
     const tr = document.createElement("tr");
     tr.innerHTML = `
             <td>${count.date}</td>
@@ -56,6 +125,10 @@ function renderCounts(countsToRender) {
             <td class="delete" onclick="deleteId(${count.id})" >Eliminar</td>
         `;
     countsTable.appendChild(tr);
+  });
+
+  // Calcular totales de TODOS los registros (no solo los mostrados)
+  countsToRender.forEach((count) => {
     if (count.type === "venta") {
       total += parseFloat(count.value);
     } else if (count.type === "jer") {
@@ -68,6 +141,58 @@ function renderCounts(countsToRender) {
   totalVenta.innerHTML = `$${total.toLocaleString()}`;
   totalJER.innerHTML = `$${totalJERValue.toLocaleString()}`;
   totalGastos.innerHTML = `$${totalGastosValue.toLocaleString()}`;
+  
+  updateHistoryPaginationInfo(start + 1, end, totalHistoryRows);
+  updateHistoryPaginationButtons();
+}
+
+function updateHistoryPaginationInfo(start, end, total) {
+  const tableInfo = document.getElementById('historyTableInfo');
+  const currentPageSpan = document.getElementById('historyCurrentPage');
+  const totalPagesSpan = document.getElementById('historyTotalPages');
+  
+  if (!tableInfo) return;
+  
+  if (total === 0) {
+    tableInfo.textContent = 'No hay registros para mostrar';
+    if (currentPageSpan) currentPageSpan.textContent = '0';
+    if (totalPagesSpan) totalPagesSpan.textContent = '0';
+  } else {
+    tableInfo.textContent = `Mostrando ${start} a ${end} de ${total} registros`;
+    
+    if (historyRowsPerPage === 'all') {
+      if (currentPageSpan) currentPageSpan.textContent = '1';
+      if (totalPagesSpan) totalPagesSpan.textContent = '1';
+    } else {
+      const totalPages = Math.ceil(total / historyRowsPerPage);
+      if (currentPageSpan) currentPageSpan.textContent = currentHistoryPage;
+      if (totalPagesSpan) totalPagesSpan.textContent = totalPages;
+    }
+  }
+}
+
+function updateHistoryPaginationButtons() {
+  const firstPageBtn = document.getElementById('historyFirstPage');
+  const prevPageBtn = document.getElementById('historyPrevPage');
+  const nextPageBtn = document.getElementById('historyNextPage');
+  const lastPageBtn = document.getElementById('historyLastPage');
+  const paginationDiv = document.getElementById('historyPagination');
+  
+  if (!paginationDiv) return;
+  
+  if (historyRowsPerPage === 'all' || totalHistoryRows === 0) {
+    paginationDiv.style.display = 'none';
+    return;
+  }
+  
+  paginationDiv.style.display = 'flex';
+  const totalPages = Math.ceil(totalHistoryRows / historyRowsPerPage);
+  
+  // Deshabilitar botones según la página actual
+  if (firstPageBtn) firstPageBtn.disabled = currentHistoryPage === 1;
+  if (prevPageBtn) prevPageBtn.disabled = currentHistoryPage === 1;
+  if (nextPageBtn) nextPageBtn.disabled = currentHistoryPage === totalPages;
+  if (lastPageBtn) lastPageBtn.disabled = currentHistoryPage === totalPages;
 }
 
 btnSearch.addEventListener("click", (event) => {
@@ -79,15 +204,17 @@ btnSearch.addEventListener("click", (event) => {
 
   getCountsByMonth(selectedYear, selectedMonth)
     .then((filteredCounts) => {
-      if (filteredCounts.length === 0) {
+      allHistoryCounts = filteredCounts.reverse();
+      if (allHistoryCounts.length === 0) {
         messageResultNoData.style = "display: block";
         messageResultData.style = "display: none";
       }
-      if (filteredCounts.length !== 0) {
+      if (allHistoryCounts.length !== 0) {
         messageResultNoData.style = "display: none";
         messageResultData.style = "display: block";
       }
-      renderCounts(filteredCounts);
+      currentHistoryPage = 1;
+      renderCounts(allHistoryCounts);
     })
     .catch((error) => {
       console.error("Error al buscar por mes:", error);
@@ -101,15 +228,17 @@ btnSearchDay.addEventListener("click", (event) => {
 
   getCountsByDay(selectedDate)
     .then((filteredCounts) => {
-      if (filteredCounts.length === 0) {
+      allHistoryCounts = filteredCounts.reverse();
+      if (allHistoryCounts.length === 0) {
         messageResultNoData.style = "display: block";
         messageResultData.style = "display: none";
       }
-      if (filteredCounts.length !== 0) {
+      if (allHistoryCounts.length !== 0) {
         messageResultNoData.style = "display: none";
         messageResultData.style = "display: block";
       }
-      renderCounts(filteredCounts);
+      currentHistoryPage = 1;
+      renderCounts(allHistoryCounts);
     })
     .catch((error) => {
       console.error("Error al buscar por día:", error);
@@ -123,15 +252,17 @@ btnSearchYear.addEventListener("click", (event) => {
 
   getCountsByYear(selectedYear)
     .then((filteredCounts) => {
-      if (filteredCounts.length === 0) {
+      allHistoryCounts = filteredCounts.reverse();
+      if (allHistoryCounts.length === 0) {
         messageResultNoData.style = "display: block";
         messageResultData.style = "display: none";
       }
-      if (filteredCounts.length !== 0) {
+      if (allHistoryCounts.length !== 0) {
         messageResultNoData.style = "display: none";
         messageResultData.style = "display: block";
       }
-      renderCounts(filteredCounts);
+      currentHistoryPage = 1;
+      renderCounts(allHistoryCounts);
     })
     .catch((error) => {
       console.error("Error al buscar por año:", error);
