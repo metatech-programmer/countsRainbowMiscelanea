@@ -130,21 +130,30 @@ function renderCounts(countsToRender) {
 
   displayCounts.forEach((count) => {
     const tr = document.createElement("tr");
+    
+    // Helper para agregar tooltip si el texto es largo
+    const formatCell = (text, isValue = false) => {
+      if (!text || text === '-') return text;
+      const displayText = isValue ? text : text;
+      const title = text.length > 30 ? `title="${text}"` : '';
+      return `<span ${title}>${displayText}</span>`;
+    };
+    
     tr.innerHTML = `
-            <td>${count.date}</td>
+            <td title="${count.date}">${count.date}</td>
             <td>${
               count.type === "venta" ? count.value.toLocaleString() : "-"
             }</td>
-            <td>${count.type === "venta" ? count.description : "-"}</td>
+            <td title="${count.type === "venta" ? count.description : "-"}">${formatCell(count.type === "venta" ? count.description : "-")}</td>
             <td>${
               count.type === "jer" ? count.value.toLocaleString() : "-"
             }</td>
-            <td>${count.type === "jer" ? count.description : "-"}</td>
+            <td title="${count.type === "jer" ? count.description : "-"}">${formatCell(count.type === "jer" ? count.description : "-")}</td>
             <td>${
               count.type === "gastos" ? count.value.toLocaleString() : "-"
             }</td>
-            <td>${count.type === "gastos" ? count.description : "-"}</td>
-            <td class="delete" onclick="deleteId(${count.id})" >Eliminar</td>
+            <td title="${count.type === "gastos" ? count.description : "-"}">${formatCell(count.type === "gastos" ? count.description : "-")}</td>
+            <td class="delete" onclick="deleteId(${count.id})" title="Click para eliminar este registro">Eliminar</td>
         `;
     countsTable.appendChild(tr);
   });
@@ -161,14 +170,18 @@ function renderCounts(countsToRender) {
   });
 
   totalVenta.innerHTML = `$${total.toLocaleString()}`;
+  totalVenta.setAttribute('title', `Total Ventas: $${total.toLocaleString()}`);
   totalJER.innerHTML = `$${totalJERValue.toLocaleString()}`;
+  totalJER.setAttribute('title', `Total JER: $${totalJERValue.toLocaleString()}`);
   totalGastos.innerHTML = `$${totalGastosValue.toLocaleString()}`;
+  totalGastos.setAttribute('title', `Total Gastos: $${totalGastosValue.toLocaleString()}`);
   
   // Calcular y mostrar balance neto
   const balance = total - totalGastosValue;
   const totalBalanceEl = document.getElementById('totalBalance');
   if (totalBalanceEl) {
     totalBalanceEl.innerHTML = `$${balance.toLocaleString()}`;
+    totalBalanceEl.setAttribute('title', `Balance Neto: $${balance.toLocaleString()}`);
     totalBalanceEl.style.color = balance >= 0 ? 'var(--success)' : 'var(--danger)';
   }
   
