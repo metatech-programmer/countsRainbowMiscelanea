@@ -93,34 +93,13 @@ function renderAllCounts() {
 
   getCountsByDay(selectedDate)
     .then((filteredCounts) => {
-      if (filteredCounts.length === 0) {
-        messageResultNoData.style = "display: block";
-        messageResultData.style = "display: none";
-      }
-      if (filteredCounts.length !== 0) {
-        messageResultNoData.style = "display: none";
-        messageResultData.style = "display: block";
-      }
-      renderCounts(filteredCounts.reverse());
-    })
-    .catch((error) => {
-      console.error("Error al buscar por día:", error);
-    });
-}
-
-function renderAllCounts() {
-  const selectedDate = dataDaySearch;
-
-  getCountsByDay(selectedDate)
-    .then((filteredCounts) => {
       allHistoryCounts = filteredCounts.reverse();
       if (allHistoryCounts.length === 0) {
-        messageResultNoData.style = "display: block";
-        messageResultData.style = "display: none";
-      }
-      if (allHistoryCounts.length !== 0) {
-        messageResultNoData.style = "display: none";
-        messageResultData.style = "display: block";
+        messageResultNoData.classList.remove('hidden');
+        if (messageResultData) messageResultData.classList.add('hidden');
+      } else {
+        messageResultNoData.classList.add('hidden');
+        if (messageResultData) messageResultData.classList.remove('hidden');
       }
       currentHistoryPage = 1;
       renderCounts(allHistoryCounts);
@@ -256,12 +235,11 @@ if (btnSearchDay) {
       .then((filteredCounts) => {
         allHistoryCounts = filteredCounts.reverse();
         if (allHistoryCounts.length === 0) {
-          messageResultNoData.style = "display: block";
-          messageResultData.style = "display: none";
-        }
-        if (allHistoryCounts.length !== 0) {
-          messageResultNoData.style = "display: none";
-          messageResultData.style = "display: block";
+          messageResultNoData.classList.remove('hidden');
+          if (messageResultData) messageResultData.classList.add('hidden');
+        } else {
+          messageResultNoData.classList.add('hidden');
+          if (messageResultData) messageResultData.classList.remove('hidden');
         }
         currentHistoryPage = 1;
         renderCounts(allHistoryCounts);

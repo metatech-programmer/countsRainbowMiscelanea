@@ -92,6 +92,16 @@ function renderAllCounts() {
     .then((counts) => {
       allHistoryCounts = counts.reverse();
       currentHistoryPage = 1;
+      
+      // Mostrar/ocultar stats basado en si hay datos
+      if (allHistoryCounts.length === 0) {
+        messageResultNoData.classList.remove('hidden');
+        messageResultData.classList.add('hidden');
+      } else {
+        messageResultNoData.classList.add('hidden');
+        messageResultData.classList.remove('hidden');
+      }
+      
       renderCounts(allHistoryCounts);
     })
     .catch((error) => {
@@ -237,12 +247,11 @@ btnSearch.addEventListener("click", (event) => {
     .then((filteredCounts) => {
       allHistoryCounts = filteredCounts.reverse();
       if (allHistoryCounts.length === 0) {
-        messageResultNoData.style = "display: block";
-        messageResultData.style = "display: none";
-      }
-      if (allHistoryCounts.length !== 0) {
-        messageResultNoData.style = "display: none";
-        messageResultData.style = "display: block";
+        messageResultNoData.classList.remove('hidden');
+        messageResultData.classList.add('hidden');
+      } else {
+        messageResultNoData.classList.add('hidden');
+        messageResultData.classList.remove('hidden');
       }
       currentHistoryPage = 1;
       renderCounts(allHistoryCounts);
@@ -261,12 +270,11 @@ btnSearchDay.addEventListener("click", (event) => {
     .then((filteredCounts) => {
       allHistoryCounts = filteredCounts.reverse();
       if (allHistoryCounts.length === 0) {
-        messageResultNoData.style = "display: block";
-        messageResultData.style = "display: none";
-      }
-      if (allHistoryCounts.length !== 0) {
-        messageResultNoData.style = "display: none";
-        messageResultData.style = "display: block";
+        messageResultNoData.classList.remove('hidden');
+        messageResultData.classList.add('hidden');
+      } else {
+        messageResultNoData.classList.add('hidden');
+        messageResultData.classList.remove('hidden');
       }
       currentHistoryPage = 1;
       renderCounts(allHistoryCounts);
@@ -285,12 +293,11 @@ btnSearchYear.addEventListener("click", (event) => {
     .then((filteredCounts) => {
       allHistoryCounts = filteredCounts.reverse();
       if (allHistoryCounts.length === 0) {
-        messageResultNoData.style = "display: block";
-        messageResultData.style = "display: none";
-      }
-      if (allHistoryCounts.length !== 0) {
-        messageResultNoData.style = "display: none";
-        messageResultData.style = "display: block";
+        messageResultNoData.classList.remove('hidden');
+        messageResultData.classList.add('hidden');
+      } else {
+        messageResultNoData.classList.add('hidden');
+        messageResultData.classList.remove('hidden');
       }
       currentHistoryPage = 1;
       renderCounts(allHistoryCounts);
@@ -455,11 +462,11 @@ function applyFilters() {
   
   // Mostrar/ocultar mensaje de no hay datos
   if (filteredCounts.length === 0) {
-    messageResultNoData.style = "display: flex";
-    messageResultData.style = "display: none";
+    messageResultNoData.classList.remove('hidden');
+    messageResultData.classList.add('hidden');
   } else {
-    messageResultNoData.style = "display: none";
-    messageResultData.style = "display: grid";
+    messageResultNoData.classList.add('hidden');
+    messageResultData.classList.remove('hidden');
   }
   
   currentHistoryPage = 1;
