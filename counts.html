@@ -35,58 +35,234 @@
         </a>
     </nav>
     
-    <h1 class="animated">Historial de Operaciones</h1>
+    <div class="page-header animated">
+        <div class="page-header-content">
+            <div class="page-title-group">
+                <svg class="page-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                </svg>
+                <div>
+                    <h1>Historial de Operaciones</h1>
+                    <p class="page-subtitle">Consulta y filtra todas tus transacciones</p>
+                </div>
+            </div>
+            <button class="btn-filter-toggle" id="btnFilterToggle">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+                </svg>
+                Filtros
+            </button>
+        </div>
+    </div>
     
     <div class="animated">
-        <div class="search">
-            <form action="" class="formIn">
-                <div>
+        <div class="filters-panel" id="filtersPanel">
+            <div class="filters-header">
+                <h3>
+                    <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+                    </svg>
+                    Filtros de Búsqueda
+                </h3>
+                <button class="btn-reset-filters" id="btnResetFilters">
+                    <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="1 4 1 10 7 10"></polyline>
+                        <polyline points="23 20 23 14 17 14"></polyline>
+                        <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"></path>
+                    </svg>
+                    Limpiar filtros
+                </button>
+            </div>
+            
+            <div class="filters-grid">
+                <div class="filter-group">
+                    <label for="filterType">
+                        <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="8" y1="6" x2="21" y2="6"></line>
+                            <line x1="8" y1="12" x2="21" y2="12"></line>
+                            <line x1="8" y1="18" x2="21" y2="18"></line>
+                            <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                            <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                            <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                        </svg>
+                        Tipo de operación
+                    </label>
+                    <select id="filterType" class="filter-select">
+                        <option value="all">Todas</option>
+                        <option value="venta">Ventas</option>
+                        <option value="jer">JER</option>
+                        <option value="gastos">Gastos</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
                     <label for="dateDaySearch">
-                        <svg class="icon icon-sm" style="vertical-align: middle; margin-right: 4px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-                        Consultar por dia
+                        <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                        </svg>
+                        Buscar por día
                     </label>
-                    <input type="date" name="dateDaySearch" id="dateDaySearch" required>
+                    <div class="input-group">
+                        <input type="date" name="dateDaySearch" id="dateDaySearch" class="filter-input">
+                        <button type="button" class="btn-filter-apply" id="btnSearchDay">
+                            <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <path d="m21 21-4.35-4.35"></path>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
-                <input type="submit" value="Buscar" id="btnSearchDay">
-            </form>
-            
-            <form action="" class="formIn">
-                <div>
+                
+                <div class="filter-group">
                     <label for="dateMonthSearch">
-                        <svg class="icon icon-sm" style="vertical-align: middle; margin-right: 4px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-                        Consultar por mes
+                        <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                        </svg>
+                        Buscar por mes
                     </label>
-                    <input type="month" name="dateMonthSearch" id="dateMonthSearch" required>
+                    <div class="input-group">
+                        <input type="month" name="dateMonthSearch" id="dateMonthSearch" class="filter-input">
+                        <button type="button" class="btn-filter-apply" id="btnSearch">
+                            <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <path d="m21 21-4.35-4.35"></path>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
-                <input type="submit" value="Buscar" id="btnSearch">
-            </form>
-            
-            <form action="" class="formIn">
-                <div>
+                
+                <div class="filter-group">
                     <label for="dateYearSearch">
-                        <svg class="icon icon-sm" style="vertical-align: middle; margin-right: 4px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-                        Consultar por anio
+                        <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                        </svg>
+                        Buscar por año
                     </label>
-                    <input type="number" name="dateYearSearch" id="dateYearSearch" min="2020" placeholder="2024" required>
+                    <div class="input-group">
+                        <input type="number" name="dateYearSearch" id="dateYearSearch" min="2020" placeholder="2026" class="filter-input">
+                        <button type="button" class="btn-filter-apply" id="btnSearchYear">
+                            <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <path d="m21 21-4.35-4.35"></path>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
-                <input type="submit" value="Buscar" id="btnSearchYear">
-            </form>
+
+                <div class="filter-group">
+                    <label for="filterSearch">
+                        <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <path d="m21 21-4.35-4.35"></path>
+                        </svg>
+                        Buscar en descripción
+                    </label>
+                    <input type="text" id="filterSearch" class="filter-input" placeholder="Buscar producto o descripción...">
+                </div>
+
+                <div class="filter-group">
+                    <label for="filterMinAmount">
+                        <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="1" x2="12" y2="23"></line>
+                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                        </svg>
+                        Monto mínimo
+                    </label>
+                    <input type="number" id="filterMinAmount" class="filter-input" placeholder="$0" min="0">
+                </div>
+
+                <div class="filter-group">
+                    <label for="filterMaxAmount">
+                        <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="1" x2="12" y2="23"></line>
+                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                        </svg>
+                        Monto máximo
+                    </label>
+                    <input type="number" id="filterMaxAmount" class="filter-input" placeholder="$999,999" min="0">
+                </div>
+
+                <div class="filter-group filter-actions">
+                    <button class="btn-apply-filters" id="btnApplyFilters">
+                        <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        Aplicar filtros
+                    </button>
+                </div>
+            </div>
         </div>
         
-        <div id="messageResult">
-            <div class="messageResultNoData hidden">No hay registros para el periodo seleccionado.</div>
-            <div class="messageResultData">
-                <div>
-                    <h2>Ventas</h2>
-                    <p id="totalVenta">$0</p>
+        <div class="stats-cards" id="messageResult">
+            <div class="messageResultNoData stats-no-data hidden">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+                <p>No hay registros para el periodo seleccionado.</p>
+            </div>
+            <div class="messageResultData stats-grid">
+                <div class="stat-card stat-venta">
+                    <div class="stat-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                        </svg>
+                    </div>
+                    <div class="stat-content">
+                        <p class="stat-label">Total Ventas</p>
+                        <h2 class="stat-value" id="totalVenta">$0</h2>
+                    </div>
                 </div>
-                <div>
-                    <h2>JER</h2>
-                    <p id="totalJER">$0</p>
+                <div class="stat-card stat-jer">
+                    <div class="stat-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="16 12 12 8 8 12"></polyline>
+                            <line x1="12" y1="16" x2="12" y2="8"></line>
+                        </svg>
+                    </div>
+                    <div class="stat-content">
+                        <p class="stat-label">Total JER</p>
+                        <h2 class="stat-value" id="totalJER">$0</h2>
+                    </div>
                 </div>
-                <div>
-                    <h2>Gastos</h2>
-                    <p id="totalGastos">$0</p>
+                <div class="stat-card stat-gastos">
+                    <div class="stat-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="8 12 12 16 16 12"></polyline>
+                            <line x1="12" y1="8" x2="12" y2="16"></line>
+                        </svg>
+                    </div>
+                    <div class="stat-content">
+                        <p class="stat-label">Total Gastos</p>
+                        <h2 class="stat-value" id="totalGastos">$0</h2>
+                    </div>
+                </div>
+                <div class="stat-card stat-balance">
+                    <div class="stat-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="1" x2="12" y2="23"></line>
+                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                        </svg>
+                    </div>
+                    <div class="stat-content">
+                        <p class="stat-label">Balance Neto</p>
+                        <h2 class="stat-value" id="totalBalance">$0</h2>
+                    </div>
                 </div>
             </div>
         </div>
@@ -136,30 +312,34 @@
 
             <!-- PAGINADOR -->
             <div class="pagination" id="historyPagination">
-                <button class="pagination-btn" id="historyFirstPage" disabled>
+                <button class="pagination-btn" id="historyFirstPage" title="Primera página" aria-label="Ir a la primera página" data-action="first" disabled>
                     <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <polyline points="11 17 6 12 11 7"></polyline>
                         <polyline points="18 17 13 12 18 7"></polyline>
                     </svg>
+                    <span class="sr-only">Primera página</span>
                 </button>
-                <button class="pagination-btn" id="historyPrevPage" disabled>
+                <button class="pagination-btn" id="historyPrevPage" title="Página anterior" aria-label="Ir a la página anterior" data-action="prev" disabled>
                     <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <polyline points="15 18 9 12 15 6"></polyline>
                     </svg>
+                    <span class="sr-only">Página anterior</span>
                 </button>
                 <div class="pagination-info" id="historyPaginationInfo">
                     Página <span id="historyCurrentPage">1</span> de <span id="historyTotalPages">1</span>
                 </div>
-                <button class="pagination-btn" id="historyNextPage" disabled>
+                <button class="pagination-btn" id="historyNextPage" title="Siguiente página" aria-label="Ir a la siguiente página" data-action="next" disabled>
                     <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <polyline points="9 18 15 12 9 6"></polyline>
                     </svg>
+                    <span class="sr-only">Siguiente página</span>
                 </button>
-                <button class="pagination-btn" id="historyLastPage" disabled>
+                <button class="pagination-btn" id="historyLastPage" title="Última página" aria-label="Ir a la última página" data-action="last" disabled>
                     <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <polyline points="13 17 18 12 13 7"></polyline>
                         <polyline points="6 17 11 12 6 7"></polyline>
                     </svg>
+                    <span class="sr-only">Última página</span>
                 </button>
             </div>
         </div>

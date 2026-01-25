@@ -35,11 +35,15 @@ function setupHistoryPagination() {
   const lastPageBtn = document.getElementById('historyLastPage');
 
   // Cambiar filas por página
-  rowsPerPageSelect.addEventListener('change', (e) => {
-    historyRowsPerPage = e.target.value === 'all' ? 'all' : parseInt(e.target.value);
-    currentHistoryPage = 1;
-    renderCounts(allHistoryCounts);
-  });
+  if (rowsPerPageSelect) {
+    // Inicializar con el valor actual del select si existe
+    historyRowsPerPage = rowsPerPageSelect.value === 'all' ? 'all' : parseInt(rowsPerPageSelect.value);
+    rowsPerPageSelect.addEventListener('change', (e) => {
+      historyRowsPerPage = e.target.value === 'all' ? 'all' : parseInt(e.target.value);
+      currentHistoryPage = 1;
+      renderCounts(allHistoryCounts);
+    });
+  }
 
   // Primera página
   firstPageBtn.addEventListener('click', () => {
@@ -69,6 +73,18 @@ function setupHistoryPagination() {
     const totalPages = Math.ceil(totalHistoryRows / historyRowsPerPage);
     currentHistoryPage = totalPages;
     renderCounts(allHistoryCounts);
+  });
+
+  // Add press visual effects to pagination buttons to avoid stuck visuals
+  [firstPageBtn, prevPageBtn, nextPageBtn, lastPageBtn].forEach((btn) => {
+    if (!btn) return;
+    btn.addEventListener('mousedown', () => btn.classList.add('active'));
+    btn.addEventListener('touchstart', () => btn.classList.add('active'));
+    const removeActive = () => btn.classList.remove('active');
+    btn.addEventListener('mouseup', removeActive);
+    btn.addEventListener('mouseleave', removeActive);
+    btn.addEventListener('touchend', removeActive);
+    btn.addEventListener('blur', removeActive);
   });
 }
 
@@ -216,6 +232,17 @@ function updateHistoryPaginationButtons() {
   prevPageBtn.disabled = currentHistoryPage === 1;
   nextPageBtn.disabled = currentHistoryPage === totalPages;
   lastPageBtn.disabled = currentHistoryPage === totalPages;
+
+  // Ensure aria-disabled and remove any stuck active class
+  [firstPageBtn, prevPageBtn, nextPageBtn, lastPageBtn].forEach((btn) => {
+    if (!btn) return;
+    if (btn.disabled) {
+      btn.setAttribute('aria-disabled', 'true');
+      btn.classList.remove('active');
+    } else {
+      btn.setAttribute('aria-disabled', 'false');
+    }
+  });
 }
 
 const btnSearchDay = document.getElementById("btnSearchDay");

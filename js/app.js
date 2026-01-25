@@ -30,6 +30,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initDB()
     .then(() => {
       updateCountRegistros();
+      renderAllCounts();
     })
     .catch((error) => {
       console.error("Error al inicializar la base de datos:", error);

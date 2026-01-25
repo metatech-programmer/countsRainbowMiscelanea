@@ -73,6 +73,18 @@ function setupHistoryPagination() {
     currentHistoryPage = totalPages;
     renderCounts(allHistoryCounts);
   });
+
+  // Add press visual effects to pagination buttons to avoid stuck visuals
+  [firstPageBtn, prevPageBtn, nextPageBtn, lastPageBtn].forEach((btn) => {
+    if (!btn) return;
+    btn.addEventListener('mousedown', () => btn.classList.add('active'));
+    btn.addEventListener('touchstart', () => btn.classList.add('active'));
+    const removeActive = () => btn.classList.remove('active');
+    btn.addEventListener('mouseup', removeActive);
+    btn.addEventListener('mouseleave', removeActive);
+    btn.addEventListener('touchend', removeActive);
+    btn.addEventListener('blur', removeActive);
+  });
 }
 
 function renderAllCounts() {
@@ -142,6 +154,14 @@ function renderCounts(countsToRender) {
   totalJER.innerHTML = `$${totalJERValue.toLocaleString()}`;
   totalGastos.innerHTML = `$${totalGastosValue.toLocaleString()}`;
   
+  // Calcular y mostrar balance neto
+  const balance = total - totalGastosValue;
+  const totalBalanceEl = document.getElementById('totalBalance');
+  if (totalBalanceEl) {
+    totalBalanceEl.innerHTML = `$${balance.toLocaleString()}`;
+    totalBalanceEl.style.color = balance >= 0 ? 'var(--success)' : 'var(--danger)';
+  }
+  
   updateHistoryPaginationInfo(start + 1, end, totalHistoryRows);
   updateHistoryPaginationButtons();
 }
@@ -193,6 +213,17 @@ function updateHistoryPaginationButtons() {
   if (prevPageBtn) prevPageBtn.disabled = currentHistoryPage === 1;
   if (nextPageBtn) nextPageBtn.disabled = currentHistoryPage === totalPages;
   if (lastPageBtn) lastPageBtn.disabled = currentHistoryPage === totalPages;
+
+  // Ensure aria-disabled and remove any stuck active class
+  [firstPageBtn, prevPageBtn, nextPageBtn, lastPageBtn].forEach((btn) => {
+    if (!btn) return;
+    if (btn.disabled) {
+      btn.setAttribute('aria-disabled', 'true');
+      btn.classList.remove('active');
+    } else {
+      btn.setAttribute('aria-disabled', 'false');
+    }
+  });
 }
 
 btnSearch.addEventListener("click", (event) => {
@@ -318,4 +349,119 @@ function deleteId(id) {
       }
     });
   }
+}
+
+// ====== FUNCIONALIDAD DE FILTROS AVANZADOS ======
+
+// Toggle panel de filtros
+const btnFilterToggle = document.getElementById('btnFilterToggle');
+const filtersPanel = document.getElementById('filtersPanel');
+
+if (btnFilterToggle && filtersPanel) {
+  btnFilterToggle.addEventListener('click', () => {
+    filtersPanel.classList.toggle('hidden');
+    const isHidden = filtersPanel.classList.contains('hidden');
+    btnFilterToggle.innerHTML = `
+      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+      </svg>
+      ${isHidden ? 'Mostrar Filtros' : 'Ocultar Filtros'}
+    `;
+  });
+}
+
+// Filtro por tipo de operación en tiempo real
+const filterType = document.getElementById('filterType');
+if (filterType) {
+  filterType.addEventListener('change', applyFilters);
+}
+
+// Filtro de búsqueda en descripción en tiempo real
+const filterSearch = document.getElementById('filterSearch');
+if (filterSearch) {
+  let searchTimeout;
+  filterSearch.addEventListener('input', () => {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(applyFilters, 300);
+  });
+}
+
+// Filtros de monto
+const filterMinAmount = document.getElementById('filterMinAmount');
+const filterMaxAmount = document.getElementById('filterMaxAmount');
+if (filterMinAmount) filterMinAmount.addEventListener('change', applyFilters);
+if (filterMaxAmount) filterMaxAmount.addEventListener('change', applyFilters);
+
+// Botón aplicar filtros
+const btnApplyFilters = document.getElementById('btnApplyFilters');
+if (btnApplyFilters) {
+  btnApplyFilters.addEventListener('click', applyFilters);
+}
+
+// Botón resetear filtros
+const btnResetFilters = document.getElementById('btnResetFilters');
+if (btnResetFilters) {
+  btnResetFilters.addEventListener('click', () => {
+    // Resetear todos los campos de filtro
+    if (filterType) filterType.value = 'all';
+    if (filterSearch) filterSearch.value = '';
+    if (filterMinAmount) filterMinAmount.value = '';
+    if (filterMaxAmount) filterMaxAmount.value = '';
+    if (dataDaySearch) dataDaySearch.value = '';
+    if (dataMonthSearch) dataMonthSearch.value = '';
+    if (dateYearSearch) dateYearSearch.value = '';
+    
+    // Volver a cargar todos los registros
+    renderAllCounts();
+    
+    if (typeof showToast !== 'undefined') {
+      showToast('Filtros limpiados', 'Mostrando todos los registros.', 'info', 2000);
+    }
+  });
+}
+
+function applyFilters() {
+  let filteredCounts = [...allHistoryCounts];
+  
+  // Filtro por tipo
+  const typeValue = filterType?.value;
+  if (typeValue && typeValue !== 'all') {
+    filteredCounts = filteredCounts.filter(count => count.type === typeValue);
+  }
+  
+  // Filtro por búsqueda en descripción
+  const searchValue = filterSearch?.value.toLowerCase().trim();
+  if (searchValue) {
+    filteredCounts = filteredCounts.filter(count => 
+      count.description.toLowerCase().includes(searchValue)
+    );
+  }
+  
+  // Filtro por monto mínimo
+  const minAmount = filterMinAmount?.value;
+  if (minAmount && !isNaN(minAmount) && parseFloat(minAmount) > 0) {
+    filteredCounts = filteredCounts.filter(count => 
+      parseFloat(count.value) >= parseFloat(minAmount)
+    );
+  }
+  
+  // Filtro por monto máximo
+  const maxAmount = filterMaxAmount?.value;
+  if (maxAmount && !isNaN(maxAmount) && parseFloat(maxAmount) > 0) {
+    filteredCounts = filteredCounts.filter(count => 
+      parseFloat(count.value) <= parseFloat(maxAmount)
+    );
+  }
+  
+  // Mostrar/ocultar mensaje de no hay datos
+  if (filteredCounts.length === 0) {
+    messageResultNoData.style = "display: flex";
+    messageResultData.style = "display: none";
+  } else {
+    messageResultNoData.style = "display: none";
+    messageResultData.style = "display: grid";
+  }
+  
+  currentHistoryPage = 1;
+  renderCounts(filteredCounts);
 }
