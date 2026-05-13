@@ -25,6 +25,7 @@ Sistema profesional de gestión de ventas, gastos y operaciones para autoservici
 - ✅ Botones de acción prominentes con mejor contraste
 - ✅ Formularios simplificados con inputs más grandes
 - ✅ Tarjetas de información con jerarquía clara
+- ✅ Sistema de respaldo completo (exportar/importar datos)
 
 ### Rendimiento y Accesibilidad
 - ✅ Colores con suficiente contraste (WCAG AA)
@@ -54,6 +55,21 @@ El sistema está optimizado para:
 2. **Consulta de Historial**: Filtra por día, mes o año para ver resúmenes
 3. **Estadísticas**: Visualiza tendencias con gráficos interactivos
 4. **Lista de Pedidos**: Gestiona productos pendientes con el panel lateral
+
+## 💾 Respaldo e Importación de Datos
+
+- En la pantalla principal encontrarás el panel **Respaldo y restauración**.
+- Usa **Exportar datos** para descargar un JSON con todos los datos persistentes:
+  - Registros almacenados en IndexedDB (`counts`)
+  - Datos de `localStorage` de la aplicación
+- Usa **Importar respaldo** (botón o drag & drop) para restaurar el estado completo.
+- El sistema valida:
+  - Estructura del archivo
+  - Versión de formato
+  - Integridad criptográfica (SHA-256)
+  - Registros corruptos o incompatibles
+- Antes de sobrescribir, se solicita confirmación explícita.
+- Si ocurre un error durante la importación, el sistema intenta revertir al estado previo para evitar pérdidas.
 
 ## 🎨 Sistema de Diseño
 
