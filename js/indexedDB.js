@@ -126,3 +126,39 @@ function getCountsByYear(year) {
         };
     });
 }
+
+function replaceAllCounts(counts) {
+    return new Promise((resolve, reject) => {
+        if (!Array.isArray(counts)) {
+            reject('Los registros a restaurar deben ser un arreglo');
+            return;
+        }
+
+        const transaction = db.transaction(['counts'], 'readwrite');
+        const objectStore = transaction.objectStore('counts');
+
+        transaction.oncomplete = () => {
+            resolve();
+        };
+
+        transaction.onabort = () => {
+            reject('Error al restaurar los registros');
+        };
+
+        transaction.onerror = () => {
+            console.error('Error en transacción de restauración:', transaction.error);
+        };
+
+        const clearRequest = objectStore.clear();
+
+        clearRequest.onerror = () => {
+            transaction.abort();
+        };
+
+        clearRequest.onsuccess = () => {
+            for (const count of counts) {
+                objectStore.put(count);
+            }
+        };
+    });
+}

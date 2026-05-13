@@ -262,8 +262,51 @@
       Registros: <span id="countRegistros">0</span>
     </div>
 
+    <section class="backup-panel animated" aria-labelledby="backupPanelTitle">
+      <div class="backup-panel-header">
+        <h2 id="backupPanelTitle">Respaldo y restauración</h2>
+        <p>Exporta una copia completa de tus datos o restaura tu estado desde un archivo seguro.</p>
+      </div>
+
+      <div class="backup-actions">
+        <button type="button" id="btnExportBackup" class="btn-primary backup-btn">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+          Exportar datos
+        </button>
+        <button type="button" id="btnImportBackup" class="btn-export backup-btn">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="17 8 12 3 7 8"></polyline>
+            <line x1="12" y1="3" x2="12" y2="15"></line>
+          </svg>
+          Importar respaldo
+        </button>
+      </div>
+
+      <input id="backupFileInput" type="file" accept=".json,application/json" class="hidden" />
+
+      <div
+        id="backupDropzone"
+        class="backup-dropzone"
+        role="button"
+        tabindex="0"
+        aria-label="Arrastra y suelta un archivo de respaldo o presiona Enter para seleccionarlo"
+        aria-busy="false"
+      >
+        <p><strong>Arrastra y suelta aquí</strong> tu archivo de respaldo</p>
+        <span>o haz clic para seleccionarlo desde tu dispositivo.</span>
+      </div>
+
+      <p id="backupStatus" class="backup-status" aria-live="polite"></p>
+    </section>
+
 
     <script src="./js/modal.js"></script>
+    <script src="./js/dataBackup.js"></script>
     <script src="./js/app.js"></script>
     <script src="./js/appTable.js"></script>
   </body>
