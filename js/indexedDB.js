@@ -146,7 +146,7 @@ function replaceAllCounts(counts) {
         };
 
         transaction.onerror = () => {
-            // El flujo de error se maneja en onabort para evitar duplicados
+            console.error('Error en transacción de restauración:', transaction.error);
         };
 
         const clearRequest = objectStore.clear();

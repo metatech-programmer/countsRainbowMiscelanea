@@ -4,7 +4,7 @@
   const MAX_BACKUP_FILE_SIZE = 10 * 1024 * 1024; // 10MB
   const MAX_DESCRIPTION_LENGTH = 500;
   const MAX_LOCALSTORAGE_KEY_LENGTH = 200;
-  const RELOAD_DELAY_MS = 900;
+  const RELOAD_DELAY_MS = 900; // Breve margen para mostrar feedback visual antes de recargar
   const ALLOWED_COUNT_TYPES = new Set(["venta", "jer", "gastos"]);
 
   function isPlainObject(value) {
@@ -105,6 +105,19 @@
     }
 
     return normalized;
+  }
+
+  function parseValidExportedAt(value) {
+    if (typeof value !== "string") {
+      throw new Error("La fecha de exportación del respaldo es inválida.");
+    }
+
+    const exportedAtDate = new Date(value);
+    if (Number.isNaN(exportedAtDate.getTime())) {
+      throw new Error("La fecha de exportación del respaldo es inválida.");
+    }
+
+    return exportedAtDate;
   }
 
   class DataBackupService {
@@ -228,10 +241,7 @@
         throw new Error("Versión de respaldo incompatible.");
       }
 
-      const exportedAtDate = new Date(payload.metadata.exportedAt);
-      if (typeof payload.metadata.exportedAt !== "string" || Number.isNaN(exportedAtDate.getTime())) {
-        throw new Error("La fecha de exportación del respaldo es inválida.");
-      }
+      parseValidExportedAt(payload.metadata.exportedAt);
 
       if (!isPlainObject(payload.integrity) || payload.integrity.algorithm !== "SHA-256" || typeof payload.integrity.checksum !== "string") {
         throw new Error("El respaldo no incluye una firma de integridad válida.");
@@ -291,6 +301,7 @@
           await replaceAllCounts(previousCounts);
           this.setLocalStorageSnapshot(previousLocalStorage);
         } catch (_rollbackError) {
+          console.error("Error al revertir importación:", _rollbackError);
           throw new Error(
             "Falló la restauración y no fue posible revertir automáticamente. Intenta recuperar desde un respaldo anterior.",
           );
@@ -356,10 +367,7 @@
 
         const totalCounts = payload.data.indexedDB.counts.length;
         const storageKeys = Object.keys(payload.data.localStorage).length;
-        const exportedAtDate = new Date(payload.metadata.exportedAt);
-        const exportedAt = Number.isNaN(exportedAtDate.getTime())
-          ? "Fecha no disponible"
-          : escapeHtml(exportedAtDate.toLocaleString("es-CO"));
+        const exportedAt = escapeHtml(parseValidExportedAt(payload.metadata.exportedAt).toLocaleString("es-CO"));
 
         const confirmMessage = `
           <p>Se detectó un respaldo válido.</p>
