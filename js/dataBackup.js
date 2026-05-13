@@ -121,9 +121,8 @@
 
     getLocalStorageSnapshot() {
       const snapshot = {};
-      for (let i = 0; i < localStorage.length; i += 1) {
-        const key = localStorage.key(i);
-        if (!key) continue;
+      const keys = Object.keys(localStorage);
+      for (const key of keys) {
         snapshot[key] = localStorage.getItem(key) ?? "";
       }
       return snapshot;
@@ -229,6 +228,11 @@
         throw new Error("Versión de respaldo incompatible.");
       }
 
+      const exportedAtDate = new Date(payload.metadata.exportedAt);
+      if (typeof payload.metadata.exportedAt !== "string" || Number.isNaN(exportedAtDate.getTime())) {
+        throw new Error("La fecha de exportación del respaldo es inválida.");
+      }
+
       if (!isPlainObject(payload.integrity) || payload.integrity.algorithm !== "SHA-256" || typeof payload.integrity.checksum !== "string") {
         throw new Error("El respaldo no incluye una firma de integridad válida.");
       }
@@ -287,7 +291,9 @@
           await replaceAllCounts(previousCounts);
           this.setLocalStorageSnapshot(previousLocalStorage);
         } catch (_rollbackError) {
-          throw new Error("Falló la restauración y no fue posible revertir automáticamente.");
+          throw new Error(
+            "Falló la restauración y no fue posible revertir automáticamente. Intenta recuperar desde un respaldo anterior.",
+          );
         }
         throw new Error("No se pudo completar la importación. Se restauró el estado anterior.");
       }
@@ -350,7 +356,10 @@
 
         const totalCounts = payload.data.indexedDB.counts.length;
         const storageKeys = Object.keys(payload.data.localStorage).length;
-        const exportedAt = escapeHtml(new Date(payload.metadata.exportedAt).toLocaleString("es-CO"));
+        const exportedAtDate = new Date(payload.metadata.exportedAt);
+        const exportedAt = Number.isNaN(exportedAtDate.getTime())
+          ? "Fecha no disponible"
+          : escapeHtml(exportedAtDate.toLocaleString("es-CO"));
 
         const confirmMessage = `
           <p>Se detectó un respaldo válido.</p>

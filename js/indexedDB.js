@@ -136,34 +136,28 @@ function replaceAllCounts(counts) {
 
         const transaction = db.transaction(['counts'], 'readwrite');
         const objectStore = transaction.objectStore('counts');
-        let hasFailed = false;
-
-        const fail = (message) => {
-            if (hasFailed) return;
-            hasFailed = true;
-            reject(message);
-        };
 
         transaction.oncomplete = () => {
-            if (!hasFailed) resolve();
+            resolve();
+        };
+
+        transaction.onabort = () => {
+            reject('Error al restaurar los registros');
         };
 
         transaction.onerror = () => {
-            fail('Error al restaurar los registros');
+            // El flujo de error se maneja en onabort para evitar duplicados
         };
 
         const clearRequest = objectStore.clear();
 
         clearRequest.onerror = () => {
-            fail('Error al limpiar registros existentes');
+            transaction.abort();
         };
 
         clearRequest.onsuccess = () => {
             for (const count of counts) {
-                const putRequest = objectStore.put(count);
-                putRequest.onerror = () => {
-                    fail('Error al guardar uno de los registros restaurados');
-                };
+                objectStore.put(count);
             }
         };
     });
