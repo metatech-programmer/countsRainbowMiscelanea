@@ -2,6 +2,9 @@
   const BACKUP_SCHEMA_VERSION = 1;
   const BACKUP_FORMAT = "metatech-backup-v1";
   const MAX_BACKUP_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+  const MAX_DESCRIPTION_LENGTH = 500;
+  const MAX_LOCALSTORAGE_KEY_LENGTH = 200;
+  const RELOAD_DELAY_MS = 900;
   const ALLOWED_COUNT_TYPES = new Set(["venta", "jer", "gastos"]);
 
   function isPlainObject(value) {
@@ -34,6 +37,15 @@
     return hashArray.map((byte) => byte.toString(16).padStart(2, "0")).join("");
   }
 
+  function escapeHtml(text) {
+    return String(text)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  }
+
   function normalizeCount(rawCount, index = 0) {
     if (!isPlainObject(rawCount)) {
       throw new Error(`Registro inválido en posición ${index + 1}.`);
@@ -57,7 +69,11 @@
       throw new Error(`Valor inválido en registro ${index + 1}.`);
     }
 
-    if (typeof description !== "string" || description.trim().length === 0 || description.length > 500) {
+    if (
+      typeof description !== "string" ||
+      description.trim().length === 0 ||
+      description.length > MAX_DESCRIPTION_LENGTH
+    ) {
       throw new Error(`Descripción inválida en registro ${index + 1}.`);
     }
 
@@ -77,12 +93,12 @@
 
     const normalized = {};
     for (const [key, value] of Object.entries(rawLocalStorage)) {
-      if (typeof key !== "string" || key.length === 0 || key.length > 200) {
+      if (typeof key !== "string" || key.length === 0 || key.length > MAX_LOCALSTORAGE_KEY_LENGTH) {
         throw new Error("El respaldo contiene una clave de localStorage inválida.");
       }
 
       if (typeof value !== "string") {
-        throw new Error(`El valor de localStorage para "${key}" debe ser texto.`);
+        throw new Error("El respaldo contiene valores de localStorage inválidos.");
       }
 
       normalized[key] = value;
@@ -334,7 +350,7 @@
 
         const totalCounts = payload.data.indexedDB.counts.length;
         const storageKeys = Object.keys(payload.data.localStorage).length;
-        const exportedAt = new Date(payload.metadata.exportedAt).toLocaleString("es-CO");
+        const exportedAt = escapeHtml(new Date(payload.metadata.exportedAt).toLocaleString("es-CO"));
 
         const confirmMessage = `
           <p>Se detectó un respaldo válido.</p>
@@ -375,12 +391,17 @@
 
         setTimeout(() => {
           window.location.reload();
-        }, 900);
+        }, RELOAD_DELAY_MS);
       } catch (error) {
         setBusy(false);
         updateStatus(error.message || "No se pudo importar el respaldo.", "error");
         if (typeof showToast === "function") {
-          showToast("Error al importar", error.message || "No se pudo importar el respaldo.", "error", 5000);
+          showToast(
+            "Error al importar",
+            escapeHtml(error.message || "No se pudo importar el respaldo."),
+            "error",
+            5000,
+          );
         }
       } finally {
         fileInput.value = "";
@@ -409,7 +430,12 @@
         setBusy(false);
         updateStatus(error.message || "No se pudo exportar el respaldo.", "error");
         if (typeof showToast === "function") {
-          showToast("Error al exportar", error.message || "No se pudo exportar el respaldo.", "error", 5000);
+          showToast(
+            "Error al exportar",
+            escapeHtml(error.message || "No se pudo exportar el respaldo."),
+            "error",
+            5000,
+          );
         }
       }
     });
