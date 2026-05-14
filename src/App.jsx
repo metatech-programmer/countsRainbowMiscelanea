@@ -7,7 +7,7 @@ import HomePage from './pages/HomePage.jsx';
 import HistoryPage from './pages/HistoryPage.jsx';
 import StatsPage from './pages/StatsPage.jsx';
 import AudioPage from './pages/AudioPage.jsx';
-import TVPage from './pages/TVPage.jsx';
+import TVPage from './tv/pages/TVPage.tsx';
 
 function App() {
   return (

@@ -1,6 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import Hls from 'hls.js';
+import SmartPlayer from '../tv/components/SmartPlayer';
+import { useTvStore } from '../tv/store/tvStore';
 
 const MediaContext = createContext(null);
 
@@ -26,14 +27,14 @@ function PlayIcon({ stop = false }) {
 export function MediaProvider({ children }) {
   const location    = useLocation();
   const audioRef    = useRef(null);
-  const videoRef    = useRef(null);
-  const hlsRef      = useRef(null);
   const retryRef    = useRef(null);   // retry timeout handle
   const retriesRef  = useRef(0);      // auto-retry counter
   const timeoutRef  = useRef(null);   // load-timeout handle
 
   const [tvSlot, setTvSlot]           = useState(null);
   const [tvFrameStyle, setTvFrameStyle] = useState(null);
+
+  const currentTvChannel = useTvStore((s) => s.currentChannel);
 
   const [audio, setAudio] = useState({
     current: null,
@@ -42,7 +43,6 @@ export function MediaProvider({ children }) {
     volume: parseFloat(localStorage.getItem('audio_volume') || '0.8'),
     muted:  false,
   });
-  const [tv, setTv] = useState({ current: null, status: 'idle', error: '' });
 
   // Keep a ref to audio state to access inside closures without stale captures
   const audioStateRef = useRef(audio);
@@ -126,7 +126,8 @@ export function MediaProvider({ children }) {
 
   // ── Public playAudio ──────────────────────────────────────────────────────
   const playAudio = useCallback((station) => {
-    stopTv();
+    // 🛑 Automatically stop TV when Audio plays
+    useTvStore.getState().setCurrentChannel(null); 
     retriesRef.current = 0;
     _doPlay(station);
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -152,57 +153,6 @@ export function MediaProvider({ children }) {
     player.volume = audio.muted ? 0 : audio.volume;
   }, [audio.muted, audio.volume, ensureAudio]);
 
-  // ── TV playback ───────────────────────────────────────────────────────────
-  const stopTv = useCallback(() => {
-    if (hlsRef.current) { hlsRef.current.destroy(); hlsRef.current = null; }
-    const video = videoRef.current;
-    if (video) { video.pause(); video.removeAttribute('src'); video.load(); }
-    setTv({ current: null, status: 'idle', error: '' });
-  }, []);
-
-  const playTv = useCallback((channel) => {
-    stopAudio();
-    const video = videoRef.current;
-    if (!video) return;
-
-    if (hlsRef.current) { hlsRef.current.destroy(); hlsRef.current = null; }
-    video.pause();
-    video.removeAttribute('src');
-    video.load();
-
-    setTv({ current: channel, status: 'loading', error: '' });
-
-    const onPlaying = () => setTv((prev) => ({ ...prev, status: 'playing', error: '' }));
-    const onError   = () => setTv((prev) => ({
-      ...prev,
-      status: 'error',
-      error: 'No se pudo reproducir. El canal puede estar caído o bloqueado por CORS.',
-    }));
-
-    video.onplaying = onPlaying;
-    video.onerror   = onError;
-
-    if (/\.m3u8($|\?)/i.test(channel.url) && Hls.isSupported()) {
-      const hls = new Hls({ enableWorker: true, lowLatencyMode: true });
-      hlsRef.current = hls;
-      hls.on(Hls.Events.ERROR, (_, data) => { if (data.fatal) onError(); });
-      hls.loadSource(channel.url);
-      hls.attachMedia(video);
-      hls.on(Hls.Events.MANIFEST_PARSED, () => video.play().catch(onError));
-    } else {
-      video.src = channel.url;
-      video.play().catch(onError);
-    }
-  }, [stopAudio]);
-
-  // ── PiP when TV leaves the /tv route ─────────────────────────────────────
-  useEffect(() => {
-    const video = videoRef.current;
-    if (!video || location.pathname === '/tv' || tv.status !== 'playing') return;
-    if (document.pictureInPictureElement || !document.pictureInPictureEnabled || !video.requestPictureInPicture) return;
-    video.requestPictureInPicture().catch(() => {});
-  }, [location.pathname, tv.status]);
-
   // ── TV frame positioning ──────────────────────────────────────────────────
   useLayoutEffect(() => {
     const updateFrame = () => {
@@ -219,6 +169,7 @@ export function MediaProvider({ children }) {
           position: 'fixed',
           right: '1rem', bottom: '1rem',
           width: 'min(360px, calc(100vw - 2rem))',
+          height: '210px',
           zIndex: 50,
         });
       }
@@ -237,42 +188,26 @@ export function MediaProvider({ children }) {
 
   // ── Context value ─────────────────────────────────────────────────────────
   const value = useMemo(() => ({
-    audio, tv,
+    audio,
     playAudio, stopAudio,
     setAudioVolume, setAudioMuted,
-    playTv, stopTv,
     setTvSlot,
-  }), [audio, playAudio, playTv, setAudioMuted, setAudioVolume, stopAudio, stopTv, tv]);
+  }), [audio, playAudio, setAudioMuted, setAudioVolume, stopAudio]);
 
   const showAudioMini = audio.current && location.pathname !== '/audio';
-  const showTvMini    = tv.current && location.pathname !== '/tv' && !tvSlot;
+  const showTvMini    = currentTvChannel && location.pathname !== '/tv' && !tvSlot;
 
   return (
     <MediaContext.Provider value={value}>
       {children}
 
       {/* ── TV frame ── */}
-      {(tvSlot || showTvMini || tv.current) && (
+      {(tvSlot || showTvMini || currentTvChannel) && (
         <div
-          className={`overflow-hidden rounded-2xl border border-slate-200 bg-black shadow-card-hover dark:border-slate-800 ${
-            tvSlot && location.pathname === '/tv' ? '' : 'fixed'
-          }`}
-          style={{ ...tvFrameStyle, opacity: tv.current ? 1 : 0, pointerEvents: tv.current ? 'auto' : 'none' }}
+          className={`${tvSlot && location.pathname === '/tv' ? '' : 'fixed shadow-card-hover'} transition-all duration-300 ease-out z-[90]`}
+          style={{ ...tvFrameStyle, opacity: currentTvChannel ? 1 : 0, pointerEvents: currentTvChannel ? 'auto' : 'none' }}
         >
-          <div className={tvSlot && location.pathname === '/tv' ? 'h-full w-full' : 'aspect-video'}>
-            <video ref={videoRef} className="h-full w-full bg-black" controls playsInline />
-          </div>
-          {showTvMini && (
-            <div className="flex items-center justify-between gap-2 bg-white px-3 py-2 dark:bg-slate-900">
-              <div className="min-w-0">
-                <p className="truncate text-xs font-bold text-slate-900 dark:text-white">{tv.current?.name}</p>
-                <p className="truncate text-[10px] text-slate-500">
-                  {tv.status === 'playing' ? 'TV en vivo' : tv.status}
-                </p>
-              </div>
-              <button type="button" onClick={stopTv} className="btn-ghost btn-sm">Cerrar</button>
-            </div>
-          )}
+          <SmartPlayer isFloating={location.pathname !== '/tv'} />
         </div>
       )}
 
