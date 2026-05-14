@@ -1,94 +1,92 @@
-# 🛒 Merkatodo - Sistema de Autoservicio
+# Merkatodo — Sistema de Autoservicio
 
-Sistema profesional de gestión de ventas, gastos y operaciones para autoservicio, diseñado con un enfoque minimalista, intuitivo y optimizado para uso rápido.
+Plataforma moderna de gestión comercial diaria para autoservicio. Registra ventas, JER y gastos, consulta historial, analiza estadísticas y gestiona pedidos — todo offline, rápido y desde cualquier dispositivo.
 
-## ✨ Características Principales
+## Características
 
-- **Registro de Operaciones**: Gestión rápida de ventas, JER y gastos
-- **Historial Completo**: Consulta por día, mes o año
-- **Estadísticas Visuales**: Gráficos interactivos de rendimiento
-- **Lista de Pedidos**: Sistema de gestión de productos pendientes
-- **Diseño Responsivo**: Optimizado para tablets, móviles y escritorio
+- **Registro diario** — Captura ventas, JER y gastos con atajos de teclado (V/J/G) y autocompletado inteligente
+- **Historial** — Filtros avanzados, ordenamiento, búsqueda y exportación CSV
+- **Estadísticas** — 3 gráficos (tendencia, distribución, comparativa), presets de período e insights automáticos
+- **Lista de pedidos** — Checklist con estados, envío por WhatsApp
+- **Modo oscuro** — Persistente, respeta preferencia del sistema operativo
+- **Respaldo** — Exportación/importación JSON con verificación SHA-256 y drag & drop
+- **Reproductor de música** — Playlist de Audius con controles completos y volumen persistente
+- **Offline-first** — Todos los datos en IndexedDB, sin servidor requerido
 
-## 🎨 Mejoras de UI/UX (Diciembre 2025)
+## Stack
 
-### Diseño Minimalista Profesional
-- ✅ Paleta de colores reducida y profesional (azul principal)
-- ✅ Espaciado amplio para mejor legibilidad
-- ✅ Tipografía mejorada con mejor jerarquía visual
-- ✅ Elementos más grandes para facilitar uso en autoservicio
-- ✅ Animaciones sutiles y rápidas
+| Tecnología | Versión |
+|---|---|
+| React | 18 |
+| Vite | 5 |
+| Tailwind CSS | 3 |
+| Chart.js | 4 |
+| idb (IndexedDB) | 8 |
 
-### Experiencia de Usuario Mejorada
-- ✅ Navegación clara con logo de marca "MERKATODO"
-- ✅ Indicadores visuales intuitivos (subrayado activo)
-- ✅ Botones de acción prominentes con mejor contraste
-- ✅ Formularios simplificados con inputs más grandes
-- ✅ Tarjetas de información con jerarquía clara
-- ✅ Sistema de respaldo completo (exportar/importar datos)
+## Desarrollo local
 
-### Rendimiento y Accesibilidad
-- ✅ Colores con suficiente contraste (WCAG AA)
-- ✅ Tamaños de fuente legibles (mínimo 16px en inputs)
-- ✅ Áreas de toque grandes (mínimo 48px)
-- ✅ Feedback visual inmediato en interacciones
-- ✅ Diseño mobile-first optimizado
+```bash
+npm install
+npm run dev        # http://localhost:5173
+npm run build      # Genera dist/
+npm run preview    # Previsualiza el build
+```
 
-## 🚀 Tecnologías
+## Estructura del proyecto
 
-- HTML5 semántico
-- CSS3 moderno (Variables CSS, Grid, Flexbox)
-- JavaScript vanilla
-- IndexedDB para almacenamiento local
-- Chart.js para visualizaciones
+```
+src/
+├── main.jsx
+├── App.jsx
+├── styles/
+│   └── index.css          # Design system completo (tokens, componentes, utilidades)
+├── lib/
+│   ├── constants.js        # Constantes globales y colores de tipos
+│   ├── utils.js            # Formateo de moneda, fechas
+│   ├── db.js               # API IndexedDB (idb)
+│   ├── backup.js           # Exportar/importar con SHA-256
+│   ├── useDarkMode.js      # Hook modo oscuro con persistencia
+│   ├── useRequestState.js  # Hook estado async (idle/loading/success/error)
+│   └── useVirtualList.js   # Virtualización para listas grandes
+├── components/
+│   ├── PageShell.jsx
+│   ├── Navigation.jsx      # Responsive, iconos SVG, dark mode toggle
+│   ├── BackupPanel.jsx     # Drag & drop, progreso paso a paso
+│   ├── ToastProvider.jsx   # Notificaciones con dismiss manual
+│   ├── ConfirmProvider.jsx # Modal accesible con focus trap
+│   └── ui/
+│       ├── KpiCard.jsx
+│       ├── TransactionBadge.jsx
+│       ├── Spinner.jsx
+│       └── EmptyState.jsx
+└── pages/
+    ├── HomePage.jsx        # Dashboard + registro + pedidos
+    ├── HistoryPage.jsx     # Historial con virtualización
+    ├── StatsPage.jsx       # Analítica con 3 gráficos
+    └── AudioPage.jsx       # Reproductor Audius
+```
 
-## 📱 Responsive Design
+## Respaldo de datos
 
-El sistema está optimizado para:
-- 📱 Móviles (320px - 480px)
-- 📱 Tablets (481px - 768px)
-- 💻 Desktop (769px+)
+El sistema exporta un archivo `.json` con:
+- Todos los registros de IndexedDB
+- Configuración de localStorage
+- Checksum SHA-256 de integridad
 
-## 🎯 Uso
+Para restaurar: arrastra el archivo al panel de respaldo o usa el botón "Importar". El sistema valida la integridad antes de sobrescribir y revierte automáticamente si hay un error.
 
-1. **Registro de Operaciones**: Selecciona el tipo (Venta/JER/Gasto), ingresa el monto y descripción
-2. **Consulta de Historial**: Filtra por día, mes o año para ver resúmenes
-3. **Estadísticas**: Visualiza tendencias con gráficos interactivos
-4. **Lista de Pedidos**: Gestiona productos pendientes con el panel lateral
+## Despliegue
 
-## 💾 Respaldo e Importación de Datos
+El proyecto genera un SPA estático en `dist/`. Compatible con Vercel, Netlify, GitHub Pages o cualquier hosting estático.
 
-- En la pantalla principal encontrarás el panel **Respaldo y restauración**.
-- Usa **Exportar datos** para descargar un JSON con todos los datos persistentes:
-  - Registros almacenados en IndexedDB (`counts`)
-  - Datos de `localStorage` de la aplicación
-- Usa **Importar respaldo** (botón o drag & drop) para restaurar el estado completo.
-- El sistema valida:
-  - Estructura del archivo
-  - Versión de formato
-  - Integridad criptográfica (SHA-256)
-  - Registros corruptos o incompatibles
-- Antes de sobrescribir, se solicita confirmación explícita.
-- Si ocurre un error durante la importación, el sistema intenta revertir al estado previo para evitar pérdidas.
+Para Vercel añade un `vercel.json` con rewrites si usas rutas del router:
 
-## 🎨 Sistema de Diseño
-
-### Colores Principales
-- **Primary**: `#2563eb` (Azul profesional)
-- **Success**: `#10b981` (Verde para ventas)
-- **Info**: `#3b82f6` (Azul para JER)
-- **Danger**: `#ef4444` (Rojo para gastos)
-
-### Espaciado
-- Amplio espaciado entre elementos (24px-48px)
-- Padding generoso en botones y tarjetas
-- Márgenes consistentes en todo el sistema
-
-### Tipografía
-- Sistema de fuentes nativas para mejor rendimiento
-- Escala de tamaños clara (0.75rem - 3rem)
-- Pesos de fuente consistentes (600-800)
+```json
+{
+  "rewrites": [{ "source": "/(.*)", "destination": "/" }]
+}
+```
 
 ---
 
-**Desarrollado con ❤️ por Metatech** | Optimizado para Merkatodo 🛒
+Desarrollado por **Metatech** para Merkatodo.
