@@ -162,8 +162,6 @@ const STATIONS = [
   { id: 'on-synthwave',  name: 'Synthwave Radio',       country: 'ON', city: 'Online',          genre: 'Electrónica', flag: '🌐', color: '#9333ea', stream: 'https://stream.zeno.fm/9sba9xgb628uv' },
 ];
 
-const ALL_GENRES = ['Todos', ...Array.from(new Set(STATIONS.map((s) => s.genre))).sort()];
-
 const REGIONS = [
   { key: 'all',    label: '🌍 Todo el mundo', countries: null },
   { key: 'CO',     label: '🇨🇴 Colombia',      countries: ['CO'] },
@@ -173,6 +171,72 @@ const REGIONS = [
   { key: 'world',  label: '🌐 Online',          countries: ['ON'] },
   { key: 'other',  label: '🌏 Asia/Pacífico',   countries: ['JP', 'KR', 'AU', 'IN', 'RU', 'ZA', 'EG', 'TR', 'NZ'] },
 ];
+
+const RADIO_SOURCES = [
+  {
+    id: 'tdt-radio',
+    name: 'TDTChannels Radio',
+    type: 'm3u',
+    url: 'https://www.tdtchannels.com/lists/radio.m3u8',
+  },
+  {
+    id: 'radio-browser-es',
+    name: 'Radio Browser Español',
+    type: 'radio-browser',
+    url: 'https://de1.api.radio-browser.info/json/stations/bylanguage/spanish?hidebroken=true&limit=250&order=clickcount&reverse=true',
+  },
+];
+
+const RADIO_COLORS = ['#0d9488', '#2563eb', '#7c3aed', '#dc2626', '#d97706', '#0891b2', '#16a34a', '#db2777'];
+
+function countryFlag(code) {
+  const clean = (code || 'ON').slice(0, 2).toUpperCase();
+  if (clean === 'ON') return '🌐';
+  return clean.replace(/./g, (char) => String.fromCodePoint(127397 + char.charCodeAt(0)));
+}
+
+function parseAttrs(text) {
+  const attrs = {};
+  const re = /([\w-]+)="([^"]*)"/g;
+  let match;
+  while ((match = re.exec(text))) attrs[match[1]] = match[2];
+  return attrs;
+}
+
+function parseRadioM3U(text, source) {
+  const lines = text.split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
+  const stations = [];
+  let current = null;
+
+  for (const line of lines) {
+    if (line.startsWith('#EXTINF')) {
+      const comma = line.indexOf(',');
+      const attrs = parseAttrs(comma >= 0 ? line.slice(0, comma) : line);
+      current = {
+        name: comma >= 0 ? line.slice(comma + 1).trim() : attrs['tvg-name'] || 'Radio',
+        group: (attrs['group-title'] || 'Radio').replace(/^Radio_?/i, '').replace(/_/g, ' '),
+      };
+      continue;
+    }
+
+    if (!line.startsWith('#') && /^https?:\/\//i.test(line)) {
+      const index = stations.length;
+      stations.push({
+        id: `${source.id}-${index}`,
+        name: current?.name || `Radio ${index + 1}`,
+        country: 'ES',
+        city: source.name,
+        genre: current?.group || 'Radio',
+        flag: '🇪🇸',
+        color: RADIO_COLORS[index % RADIO_COLORS.length],
+        stream: line,
+      });
+      current = null;
+    }
+  }
+
+  return stations;
+}
 
 // ─── ICONS ────────────────────────────────────────────────────────────────────
 function SignalBars({ active, color = '#6366f1' }) {
@@ -208,6 +272,8 @@ export default function AudioPage() {
   const [genre, setGenre]       = useState('Todos');
   const [search, setSearch]     = useState('');
   const [visibleCount, setVisibleCount] = useState(48);
+  const [remoteStations, setRemoteStations] = useState([]);
+  const [radioLoading, setRadioLoading] = useState(false);
   const [recents, setRecents] = useState(() => {
     try { return JSON.parse(localStorage.getItem('audio_recents_v1') || '[]'); }
     catch { return []; }
@@ -218,6 +284,16 @@ export default function AudioPage() {
   const volume = audio.volume;
   const muted = audio.muted;
   const errMsg = audio.error;
+  const allStations = useMemo(() => {
+    const seen = new Set();
+    return [...STATIONS, ...remoteStations].filter((station) => {
+      const key = `${station.name.toLowerCase()}-${station.stream}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  }, [remoteStations]);
+  const allGenres = useMemo(() => ['Todos', ...Array.from(new Set(allStations.map((s) => s.genre))).sort()], [allStations]);
 
   // Inject keyframes once
   useEffect(() => {
@@ -233,6 +309,49 @@ export default function AudioPage() {
     document.head.appendChild(s);
   }, []);
 
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadRemoteRadio() {
+      setRadioLoading(true);
+      const loaded = [];
+      const results = await Promise.allSettled(RADIO_SOURCES.map(async (source) => {
+        const res = await fetch(source.url, { cache: 'no-store' });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        if (source.type === 'm3u') {
+          const text = await res.text();
+          return parseRadioM3U(text, source);
+        }
+        const data = await res.json();
+        return data.map((item, index) => {
+          const code = item.countrycode || 'ON';
+          const tags = String(item.tags || '').split(',').map((tag) => tag.trim()).filter(Boolean);
+          return {
+            id: `rb-${item.stationuuid || index}`,
+            name: item.name || `Radio ${index + 1}`,
+            country: code,
+            city: item.country || source.name,
+            genre: tags[0] || 'Radio',
+            flag: countryFlag(code),
+            color: RADIO_COLORS[index % RADIO_COLORS.length],
+            stream: item.url_resolved || item.url,
+          };
+        }).filter((item) => /^https?:\/\//i.test(item.stream));
+      }));
+
+      for (const result of results) {
+        if (result.status === 'fulfilled') loaded.push(...result.value);
+      }
+      if (!cancelled) {
+        setRemoteStations(loaded.slice(0, 450));
+        setRadioLoading(false);
+      }
+    }
+
+    loadRemoteRadio();
+    return () => { cancelled = true; };
+  }, []);
+
   const play = (station) => {
     playAudio(station);
     const next = [station, ...recents.filter((item) => item.id !== station.id)].slice(0, 10);
@@ -242,7 +361,7 @@ export default function AudioPage() {
 
   // Filter logic
   const regionDef = REGIONS.find((r) => r.key === region);
-  const filtered = useMemo(() => STATIONS.filter((s) => {
+  const filtered = useMemo(() => allStations.filter((s) => {
     if (regionDef?.countries && !regionDef.countries.includes(s.country)) return false;
     if (genre !== 'Todos' && s.genre !== genre) return false;
     if (search) {
@@ -250,10 +369,10 @@ export default function AudioPage() {
       if (!s.name.toLowerCase().includes(q) && !s.city.toLowerCase().includes(q) && !s.genre.toLowerCase().includes(q)) return false;
     }
     return true;
-  }), [genre, regionDef, search]);
+  }), [allStations, genre, regionDef, search]);
 
   const visibleStations = filtered.slice(0, visibleCount);
-  const quickStations = (recents.length ? recents : STATIONS.filter((s) => ['CO', 'ON', 'US'].includes(s.country))).slice(0, 8);
+  const quickStations = (recents.length ? recents : allStations.filter((s) => ['CO', 'ES', 'MX', 'ON'].includes(s.country))).slice(0, 10);
 
   useEffect(() => {
     setVisibleCount(48);
@@ -270,7 +389,8 @@ export default function AudioPage() {
           Radio mundial
         </h1>
         <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-          {STATIONS.length} emisoras de {new Set(STATIONS.map(s => s.country)).size} países, con búsqueda por ciudad, género y región.
+          {allStations.length} emisoras de {new Set(allStations.map(s => s.country)).size} países, con búsqueda por ciudad, género y región.
+          {radioLoading && <span className="ml-2 text-brand-600 dark:text-brand-400">Cargando más radios...</span>}
         </p>
       </div>
 
@@ -359,9 +479,9 @@ export default function AudioPage() {
               {/* Stats pill */}
               <div className="grid grid-cols-3 gap-2">
                 {[
-                  { n: STATIONS.length, l: 'Emisoras' },
-                  { n: new Set(STATIONS.map(s => s.country)).size, l: 'Países' },
-                  { n: ALL_GENRES.length - 1, l: 'Géneros' },
+                  { n: allStations.length, l: 'Emisoras' },
+                  { n: new Set(allStations.map(s => s.country)).size, l: 'Países' },
+                  { n: allGenres.length - 1, l: 'Géneros' },
                 ].map(({ n, l }) => (
                   <div key={l} className="card px-2 py-2.5 text-center">
                     <div className="text-lg font-black text-slate-900 dark:text-white">{n}</div>
@@ -438,7 +558,7 @@ export default function AudioPage() {
                 </div>
                 <select value={genre} onChange={e => setGenre(e.target.value)}
                   className="input w-auto cursor-pointer py-2.5 pl-3 pr-8">
-                  {ALL_GENRES.map(g => <option key={g} value={g}>{g}</option>)}
+                  {allGenres.map(g => <option key={g} value={g}>{g}</option>)}
                 </select>
               </div>
 

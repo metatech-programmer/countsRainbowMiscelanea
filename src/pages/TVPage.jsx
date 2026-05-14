@@ -11,6 +11,86 @@ const PLAYLISTS = [
     url: 'https://iptv-org.github.io/iptv/languages/spa.m3u',
   },
   {
+    id: 'movies-es',
+    name: 'Películas',
+    type: 'Películas',
+    accent: '#f97316',
+    description: 'Canales abiertos de cine filtrados a español/hispano.',
+    url: 'https://iptv-org.github.io/iptv/categories/movies.m3u',
+  },
+  {
+    id: 'series-es',
+    name: 'Series',
+    type: 'Series',
+    accent: '#a855f7',
+    description: 'Canales de series y reruns filtrados a español/hispano.',
+    url: 'https://iptv-org.github.io/iptv/categories/series.m3u',
+  },
+  {
+    id: 'anime-es',
+    name: 'Anime y animación',
+    type: 'Anime',
+    accent: '#ec4899',
+    description: 'Animación, anime e infantiles con señales hispanas.',
+    url: 'https://iptv-org.github.io/iptv/categories/animation.m3u',
+  },
+  {
+    id: 'kids-es',
+    name: 'Infantil',
+    type: 'Kids',
+    accent: '#22c55e',
+    description: 'Canales infantiles y familiares en español.',
+    url: 'https://iptv-org.github.io/iptv/categories/kids.m3u',
+  },
+  {
+    id: 'docs-es',
+    name: 'Documentales',
+    type: 'Docs',
+    accent: '#84cc16',
+    description: 'Documentales, cultura y divulgación en español.',
+    url: 'https://iptv-org.github.io/iptv/categories/documentary.m3u',
+  },
+  {
+    id: 'news-es',
+    name: 'Noticias',
+    type: 'Noticias',
+    accent: '#3b82f6',
+    description: 'Noticias 24/7 en español.',
+    url: 'https://iptv-org.github.io/iptv/categories/news.m3u',
+  },
+  {
+    id: 'sports-es',
+    name: 'Deportes',
+    type: 'Deportes',
+    accent: '#ef4444',
+    description: 'Deportes abiertos con señales hispanas disponibles.',
+    url: 'https://iptv-org.github.io/iptv/categories/sports.m3u',
+  },
+  {
+    id: 'music-es',
+    name: 'Música',
+    type: 'Música',
+    accent: '#d946ef',
+    description: 'Videoclips, música latina y canales musicales en español.',
+    url: 'https://iptv-org.github.io/iptv/categories/music.m3u',
+  },
+  {
+    id: 'entertainment-es',
+    name: 'Entretenimiento',
+    type: 'Variedad',
+    accent: '#06b6d4',
+    description: 'Magazines, variedad y entretenimiento general en español.',
+    url: 'https://iptv-org.github.io/iptv/categories/entertainment.m3u',
+  },
+  {
+    id: 'free-tv-es',
+    name: 'Free-TV español',
+    type: 'Curada',
+    accent: '#0ea5e9',
+    description: 'Lista curada global filtrada a países hispanos.',
+    url: 'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlist.m3u8',
+  },
+  {
     id: 'tdt-spain',
     name: 'TDTChannels España',
     type: 'España',
@@ -140,6 +220,19 @@ const PLAYLISTS = [
   },
 ];
 
+const PLAYLIST_SECTIONS = [
+  { id: 'content', label: 'Contenido' },
+  { id: 'countries', label: 'Países' },
+  { id: 'all', label: 'Todas' },
+];
+
+function getPlaylistSection(playlist) {
+  if (['spanish', 'movies-es', 'series-es', 'anime-es', 'kids-es', 'docs-es', 'news-es', 'sports-es', 'music-es', 'entertainment-es', 'free-tv-es'].includes(playlist.id)) {
+    return 'content';
+  }
+  return 'countries';
+}
+
 const QUICK_STREAMS = [
   {
     id: 'dw-es',
@@ -173,7 +266,8 @@ const SPANISH_COUNTRIES = new Set([
 
 function isSpanishChannel(channel, source) {
   if (source.id === 'tdt-spain' || source.id === 'spanish') return true;
-  const country = (channel.country || '').split(';')[0].trim().toUpperCase();
+  const idCountry = (channel.tvgId || '').match(/\.([a-z]{2})(?:@|$)/i)?.[1]?.toUpperCase() || '';
+  const country = ((channel.country || '').split(';')[0].trim().toUpperCase()) || idCountry;
   const language = (channel.language || '').toLowerCase();
   if (SPANISH_COUNTRIES.has(country)) return true;
   if (/(spanish|español|espanol|castellano|spa)/i.test(language)) return true;
@@ -205,6 +299,7 @@ function parseM3U(text, source) {
       const attrs = parseAttrs(header);
       current = {
         name: name || attrs['tvg-name'] || 'Canal sin nombre',
+        tvgId: attrs['tvg-id'] || '',
         logo: attrs['tvg-logo'] || '',
         group: attrs['group-title'] || attrs['tvg-group'] || source.type || 'Sin grupo',
         country: attrs['tvg-country'] || attrs.country || '',
@@ -222,6 +317,7 @@ function parseM3U(text, source) {
         const channel = {
           id: `${source.id}-${channels.length}-${line}`.replace(/\s+/g, '-'),
           name: current?.name || line,
+          tvgId: current?.tvgId || '',
           logo: current?.logo || '',
           group,
           country: current?.country || '',
@@ -277,6 +373,7 @@ export default function TVPage() {
   const tvStageRef = useRef(null);
   const { tv, playTv, stopTv, setTvSlot } = useMedia();
   const [selectedPlaylist, setSelectedPlaylist] = useState(PLAYLISTS[0]);
+  const [playlistSection, setPlaylistSection] = useState('content');
   const [channels, setChannels] = useState([]);
   const [loadError, setLoadError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -387,6 +484,7 @@ export default function TVPage() {
     { label: 'Cargados', value: channels.length },
     { label: 'Favoritos', value: favorites.length },
   ];
+  const visiblePlaylists = PLAYLISTS.filter((playlist) => playlistSection === 'all' || getPlaylistSection(playlist) === playlistSection);
 
   return (
     <div className="flex flex-col gap-8 animate-fade-in">
@@ -410,14 +508,30 @@ export default function TVPage() {
       </section>
 
       <section className="card p-4">
-        <div className="mb-3 flex items-center justify-between gap-3">
+        <div className="mb-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h2 className="font-display text-base font-bold text-slate-900 dark:text-white">Listas rápidas</h2>
-            <p className="text-xs text-slate-500 dark:text-slate-400">Cambia de catálogo sin recorrer tarjetas grandes.</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400">Películas, series, anime y países hispanos en listas separadas.</p>
+          </div>
+          <div className="flex gap-1 rounded-xl bg-slate-100 p-1 dark:bg-slate-800">
+            {PLAYLIST_SECTIONS.map((section) => (
+              <button
+                key={section.id}
+                type="button"
+                onClick={() => setPlaylistSection(section.id)}
+                className={`rounded-lg px-3 py-1.5 text-xs font-bold transition ${
+                  playlistSection === section.id
+                    ? 'bg-white text-brand-700 shadow-sm dark:bg-slate-950 dark:text-brand-300'
+                    : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'
+                }`}
+              >
+                {section.label}
+              </button>
+            ))}
           </div>
         </div>
         <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-thin">
-        {PLAYLISTS.map((playlist) => {
+        {visiblePlaylists.map((playlist) => {
           const active = selectedPlaylist.id === playlist.id;
           return (
             <button
