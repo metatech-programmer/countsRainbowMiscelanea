@@ -1,4 +1,5 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useMemo } from 'react';
+import { useMedia } from '../components/MediaProvider.jsx';
 
 // ─── STATION DATABASE ────────────────────────────────────────────────────────
 const STATIONS = [
@@ -173,13 +174,6 @@ const REGIONS = [
   { key: 'other',  label: '🌏 Asia/Pacífico',   countries: ['JP', 'KR', 'AU', 'IN', 'RU', 'ZA', 'EG', 'TR', 'NZ'] },
 ];
 
-// ─── AUDIO ENGINE (singleton) ─────────────────────────────────────────────────
-let _audioEl = null;
-function getAudio() {
-  if (!_audioEl) _audioEl = new Audio();
-  return _audioEl;
-}
-
 // ─── ICONS ────────────────────────────────────────────────────────────────────
 function SignalBars({ active, color = '#6366f1' }) {
   return (
@@ -209,14 +203,21 @@ function VolumeIcon({ muted }) {
 
 // ─── MAIN COMPONENT ───────────────────────────────────────────────────────────
 export default function AudioPage() {
-  const [current, setCurrent]   = useState(null);
-  const [status, setStatus]     = useState('idle'); // idle | loading | playing | error
-  const [volume, setVolume]     = useState(() => parseFloat(localStorage.getItem('audio_volume') || '0.8'));
-  const [muted, setMuted]       = useState(false);
+  const { audio, playAudio, stopAudio, setAudioVolume, setAudioMuted } = useMedia();
   const [region, setRegion]     = useState('all');
   const [genre, setGenre]       = useState('Todos');
   const [search, setSearch]     = useState('');
-  const [errMsg, setErrMsg]     = useState('');
+  const [visibleCount, setVisibleCount] = useState(48);
+  const [recents, setRecents] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('audio_recents_v1') || '[]'); }
+    catch { return []; }
+  });
+
+  const current = audio.current;
+  const status = audio.status;
+  const volume = audio.volume;
+  const muted = audio.muted;
+  const errMsg = audio.error;
 
   // Inject keyframes once
   useEffect(() => {
@@ -232,36 +233,16 @@ export default function AudioPage() {
     document.head.appendChild(s);
   }, []);
 
-  useEffect(() => { localStorage.setItem('audio_volume', String(volume)); }, [volume]);
-  useEffect(() => { getAudio().volume = muted ? 0 : volume; }, [volume, muted]);
-
-  // Cleanup on unmount
-  useEffect(() => () => { const a = getAudio(); a.pause(); a.src = ''; }, []);
-
-  const play = useCallback((station) => {
-    const audio = getAudio();
-    audio.pause(); audio.src = '';
-    setCurrent(station); setStatus('loading'); setErrMsg('');
-    audio.src = station.stream;
-    audio.volume = muted ? 0 : volume;
-    audio.load();
-    const onPlay  = () => setStatus('playing');
-    const onError = () => { setStatus('error'); setErrMsg('No se pudo conectar. La emisora puede estar fuera de línea.'); };
-    audio.removeEventListener('playing', onPlay);
-    audio.removeEventListener('error', onError);
-    audio.addEventListener('playing', onPlay, { once: true });
-    audio.addEventListener('error', onError, { once: true });
-    audio.play().catch(onError);
-  }, [volume, muted]);
-
-  const stop = useCallback(() => {
-    const a = getAudio(); a.pause(); a.src = '';
-    setStatus('idle'); setCurrent(null);
-  }, []);
+  const play = (station) => {
+    playAudio(station);
+    const next = [station, ...recents.filter((item) => item.id !== station.id)].slice(0, 10);
+    setRecents(next);
+    localStorage.setItem('audio_recents_v1', JSON.stringify(next));
+  };
 
   // Filter logic
   const regionDef = REGIONS.find((r) => r.key === region);
-  const filtered = STATIONS.filter((s) => {
+  const filtered = useMemo(() => STATIONS.filter((s) => {
     if (regionDef?.countries && !regionDef.countries.includes(s.country)) return false;
     if (genre !== 'Todos' && s.genre !== genre) return false;
     if (search) {
@@ -269,7 +250,14 @@ export default function AudioPage() {
       if (!s.name.toLowerCase().includes(q) && !s.city.toLowerCase().includes(q) && !s.genre.toLowerCase().includes(q)) return false;
     }
     return true;
-  });
+  }), [genre, regionDef, search]);
+
+  const visibleStations = filtered.slice(0, visibleCount);
+  const quickStations = (recents.length ? recents : STATIONS.filter((s) => ['CO', 'ON', 'US'].includes(s.country))).slice(0, 8);
+
+  useEffect(() => {
+    setVisibleCount(48);
+  }, [region, genre, search]);
 
   const isPlaying = status === 'playing';
   const isLoading = status === 'loading';
@@ -337,7 +325,7 @@ export default function AudioPage() {
                       </div>
                     )}
 
-                    <button onClick={stop}
+                    <button onClick={stopAudio}
                       className="mb-4 flex w-full items-center justify-center gap-2 rounded-xl py-2.5 text-sm font-bold text-white transition-all hover:opacity-90 active:scale-95"
                       style={{ background: `linear-gradient(135deg, ${current.color}dd, ${current.color}99)` }}>
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="18" height="18" rx="2" /></svg>
@@ -358,11 +346,11 @@ export default function AudioPage() {
 
                 {/* Volume control */}
                 <div className="mt-2 flex items-center gap-3 border-t border-slate-100 pt-3 dark:border-slate-800">
-                  <button onClick={() => setMuted(m => !m)} className="flex-shrink-0 text-slate-400 transition-colors hover:text-slate-700 dark:text-slate-500 dark:hover:text-slate-300">
+                  <button onClick={() => setAudioMuted(!muted)} className="flex-shrink-0 text-slate-400 transition-colors hover:text-slate-700 dark:text-slate-500 dark:hover:text-slate-300">
                     <VolumeIcon muted={muted} />
                   </button>
                   <input type="range" min="0" max="1" step="0.02" value={muted ? 0 : volume}
-                    onChange={e => { setMuted(false); setVolume(parseFloat(e.target.value)); }}
+                    onChange={e => setAudioVolume(parseFloat(e.target.value))}
                     className="h-1.5 w-full cursor-pointer appearance-none rounded-full bg-slate-200 accent-brand-600 dark:bg-slate-700" />
                   <span className="w-8 flex-shrink-0 text-right text-xs tabular-nums text-slate-400">{Math.round((muted ? 0 : volume) * 100)}%</span>
                 </div>
@@ -386,6 +374,39 @@ export default function AudioPage() {
 
           {/* ── MAIN: Station List ── */}
           <div className="flex-1 min-w-0">
+            <div className="card mb-4 p-4">
+              <div className="mb-3 flex items-center justify-between gap-3">
+                <div>
+                  <h2 className="font-display text-base font-bold text-slate-900 dark:text-white">
+                    {recents.length ? 'Reproducidas recientemente' : 'Accesos rápidos'}
+                  </h2>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">Una fila para escoger sin bajar por toda la lista.</p>
+                </div>
+              </div>
+              <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-thin">
+                {quickStations.map((station) => {
+                  const active = current?.id === station.id;
+                  return (
+                    <button
+                      key={station.id}
+                      onClick={() => play(station)}
+                      className={`flex min-w-[180px] items-center gap-2 rounded-xl border px-3 py-2 text-left transition ${
+                        active
+                          ? 'border-brand-500 bg-brand-50 dark:bg-brand-900/20'
+                          : 'border-slate-100 bg-white hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-900 dark:hover:bg-slate-800'
+                      }`}
+                    >
+                      <span className="text-lg">{station.flag}</span>
+                      <span className="min-w-0">
+                        <span className="block truncate text-xs font-bold text-slate-900 dark:text-white">{station.name}</span>
+                        <span className="block truncate text-[10px] text-slate-500">{station.genre}</span>
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
             {/* Filters */}
             <div className="mb-5 space-y-3">
               {/* Region tabs */}
@@ -422,8 +443,8 @@ export default function AudioPage() {
               </div>
 
               <div className="flex items-center justify-between">
-                <span className="text-xs text-slate-700">
-                  {filtered.length} de {STATIONS.length} emisoras
+                <span className="text-xs text-slate-500 dark:text-slate-400">
+                  Mostrando {visibleStations.length} de {filtered.length} resultados
                 </span>
                 {(region !== 'all' || genre !== 'Todos' || search) && (
                   <button onClick={() => { setRegion('all'); setGenre('Todos'); setSearch(''); }}
@@ -443,13 +464,13 @@ export default function AudioPage() {
               </div>
             ) : (
               <div className="grid gap-2.5 sm:grid-cols-2 xl:grid-cols-3">
-                {filtered.map((station) => {
+                {visibleStations.map((station) => {
                   const active   = current?.id === station.id;
                   const loading  = active && isLoading;
                   const playing  = active && isPlaying;
                   return (
                     <button key={station.id}
-                      onClick={() => active && isPlaying ? stop() : play(station)}
+                      onClick={() => active && isPlaying ? stopAudio() : play(station)}
                       className={`group relative flex items-center gap-3 rounded-xl border p-3 text-left transition-all duration-200 hover:-translate-y-0.5 ${
                         active
                           ? 'border-brand-300 bg-brand-50 shadow-glow-sm dark:border-brand-700 dark:bg-brand-900/20'
@@ -497,6 +518,13 @@ export default function AudioPage() {
                     </button>
                   );
                 })}
+              </div>
+            )}
+            {filtered.length > visibleStations.length && (
+              <div className="mt-5 flex justify-center">
+                <button type="button" className="btn-ghost" onClick={() => setVisibleCount((n) => n + 48)}>
+                  Ver 48 emisoras más
+                </button>
               </div>
             )}
           </div>

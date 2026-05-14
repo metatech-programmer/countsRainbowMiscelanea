@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import Hls from 'hls.js';
+import { useMedia } from '../components/MediaProvider.jsx';
 
 const PLAYLISTS = [
   {
@@ -269,28 +269,32 @@ function StarIcon({ filled }) {
 }
 
 export default function TVPage() {
-  const videoRef = useRef(null);
-  const hlsRef = useRef(null);
+  const tvStageRef = useRef(null);
+  const { tv, playTv, stopTv, setTvSlot } = useMedia();
   const [selectedPlaylist, setSelectedPlaylist] = useState(PLAYLISTS[0]);
   const [channels, setChannels] = useState([]);
-  const [selected, setSelected] = useState(null);
-  const [status, setStatus] = useState('idle');
-  const [error, setError] = useState('');
+  const [loadError, setLoadError] = useState('');
   const [loading, setLoading] = useState(false);
   const [query, setQuery] = useState('');
   const [group, setGroup] = useState('Todos');
+  const [visibleCount, setVisibleCount] = useState(80);
   const [customUrl, setCustomUrl] = useState(() => localStorage.getItem(CUSTOM_KEY) || '');
   const [favorites, setFavorites] = useState(() => readJson(FAVORITES_KEY, []));
   const [recent, setRecent] = useState(() => readJson(RECENT_KEY, []));
 
-  useEffect(() => () => {
-    if (hlsRef.current) hlsRef.current.destroy();
-  }, []);
+  const selected = tv.current;
+  const status = tv.status;
+  const error = loadError || tv.error;
+
+  useEffect(() => {
+    setTvSlot(tvStageRef.current);
+    return () => setTvSlot(null);
+  }, [setTvSlot]);
 
   const loadPlaylist = useCallback(async (playlist) => {
     setSelectedPlaylist(playlist);
     setLoading(true);
-    setError('');
+    setLoadError('');
     setGroup('Todos');
     try {
       const res = await fetch(playlist.url, { cache: 'no-store' });
@@ -301,7 +305,7 @@ export default function TVPage() {
       setChannels(parsed);
     } catch (err) {
       setChannels([]);
-      setError(`No se pudo cargar ${playlist.name}. Puede ser CORS, red o una lista temporalmente caida.`);
+      setLoadError(`No se pudo cargar ${playlist.name}. Puede ser CORS, red o una lista temporalmente caida.`);
     } finally {
       setLoading(false);
     }
@@ -312,62 +316,12 @@ export default function TVPage() {
   }, [loadPlaylist]);
 
   const playChannel = useCallback((channel) => {
-    const video = videoRef.current;
-    if (!video) return;
-
-    setSelected(channel);
-    setStatus('loading');
-    setError('');
-
-    if (hlsRef.current) {
-      hlsRef.current.destroy();
-      hlsRef.current = null;
-    }
-    video.pause();
-    video.removeAttribute('src');
-    video.load();
-
-    const markPlaying = () => setStatus('playing');
-    const markError = () => {
-      setStatus('error');
-      setError('No se pudo reproducir este stream. Puede estar caido, geobloqueado o bloqueado por CORS.');
-    };
-
-    video.onplaying = markPlaying;
-    video.onerror = markError;
-
-    if (/\.m3u8($|\?)/i.test(channel.url) && Hls.isSupported()) {
-      const hls = new Hls({ enableWorker: true, lowLatencyMode: true });
-      hlsRef.current = hls;
-      hls.on(Hls.Events.ERROR, (_, data) => {
-        if (data.fatal) markError();
-      });
-      hls.loadSource(channel.url);
-      hls.attachMedia(video);
-      hls.on(Hls.Events.MANIFEST_PARSED, () => video.play().catch(markError));
-    } else {
-      video.src = channel.url;
-      video.play().catch(markError);
-    }
-
+    setLoadError('');
+    playTv(channel);
     const nextRecent = [channel, ...recent.filter((item) => item.url !== channel.url)].slice(0, 12);
     setRecent(nextRecent);
     localStorage.setItem(RECENT_KEY, JSON.stringify(nextRecent));
-  }, [recent]);
-
-  const stop = () => {
-    const video = videoRef.current;
-    if (hlsRef.current) {
-      hlsRef.current.destroy();
-      hlsRef.current = null;
-    }
-    if (video) {
-      video.pause();
-      video.removeAttribute('src');
-      video.load();
-    }
-    setStatus('idle');
-  };
+  }, [playTv, recent]);
 
   const groups = useMemo(() => {
     const unique = Array.from(new Set(channels.map((item) => item.group || 'Sin grupo'))).sort();
@@ -393,6 +347,11 @@ export default function TVPage() {
     }
     return base;
   }, [channels, favorites, group, query, recent]);
+  const visibleChannelPage = visibleChannels.slice(0, visibleCount);
+
+  useEffect(() => {
+    setVisibleCount(80);
+  }, [group, query, selectedPlaylist.id]);
 
   const toggleFavorite = (channel) => {
     const exists = favoriteUrls.has(channel.url);
@@ -404,7 +363,7 @@ export default function TVPage() {
   const loadCustom = () => {
     const url = customUrl.trim();
     if (!/^https?:\/\/.+/i.test(url)) {
-      setError('Pega una URL M3U valida que empiece por http:// o https://.');
+      setLoadError('Pega una URL M3U valida que empiece por http:// o https://.');
       return;
     }
     localStorage.setItem(CUSTOM_KEY, url);
@@ -445,20 +404,27 @@ export default function TVPage() {
         ))}
       </section>
 
-      <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <section className="card p-4">
+        <div className="mb-3 flex items-center justify-between gap-3">
+          <div>
+            <h2 className="font-display text-base font-bold text-slate-900 dark:text-white">Listas rápidas</h2>
+            <p className="text-xs text-slate-500 dark:text-slate-400">Cambia de catálogo sin recorrer tarjetas grandes.</p>
+          </div>
+        </div>
+        <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-thin">
         {PLAYLISTS.map((playlist) => {
           const active = selectedPlaylist.id === playlist.id;
           return (
             <button
               key={playlist.id}
               onClick={() => loadPlaylist(playlist)}
-              className={`group rounded-2xl border p-4 text-left transition-all hover:-translate-y-0.5 ${
+              className={`group flex min-w-[170px] flex-col rounded-xl border px-3 py-2.5 text-left transition-all hover:-translate-y-0.5 ${
                 active
                   ? 'border-brand-500 bg-brand-50 shadow-glow-sm dark:bg-brand-900/20'
                   : 'border-slate-100 bg-white shadow-card hover:shadow-card-hover dark:border-slate-800 dark:bg-slate-900'
               }`}
             >
-              <div className="mb-3 flex items-center justify-between gap-3">
+              <div className="mb-1.5 flex items-center justify-between gap-3">
                 <span className={`rounded-full px-2 py-0.5 text-[10px] font-black uppercase tracking-widest ${
                   active ? 'bg-brand-600 text-white' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
                 }`}>
@@ -466,18 +432,19 @@ export default function TVPage() {
                 </span>
                 <span className={`${active ? 'text-brand-600 dark:text-brand-400' : 'text-slate-300 dark:text-slate-600'} group-hover:text-brand-500`}><TvIcon /></span>
               </div>
-              <div className="font-display text-base font-bold text-slate-900 dark:text-white">{playlist.name}</div>
-              <p className="mt-1 line-clamp-2 text-xs leading-5 text-slate-500 dark:text-slate-400">{playlist.description}</p>
+              <div className="truncate font-display text-sm font-bold text-slate-900 dark:text-white">{playlist.name}</div>
+              <p className="mt-0.5 truncate text-xs text-slate-500 dark:text-slate-400">{playlist.description}</p>
             </button>
           );
         })}
+        </div>
       </section>
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_390px]">
         <section className="min-w-0 space-y-4">
           <div className="overflow-hidden rounded-2xl border border-slate-200 bg-black shadow-card dark:border-slate-800">
             <div className="relative aspect-video bg-black">
-              <video ref={videoRef} className="h-full w-full bg-black" controls playsInline />
+              <div ref={tvStageRef} className="h-full w-full bg-black" />
               {!selected && (
                 <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-100 text-center dark:bg-slate-950">
                   <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl border border-brand-200 bg-brand-50 text-brand-600 dark:border-brand-800 dark:bg-brand-900/30 dark:text-brand-300">
@@ -510,7 +477,7 @@ export default function TVPage() {
                     Favorito
                   </button>
                 )}
-                <button onClick={stop} className="btn-ghost">
+                <button onClick={stopTv} className="btn-ghost">
                   Detener
                 </button>
               </div>
@@ -565,7 +532,7 @@ export default function TVPage() {
           <div className="mb-3 flex items-center justify-between gap-3">
             <div>
               <h2 className="font-display text-lg font-bold text-slate-900 dark:text-white">{selectedPlaylist.name}</h2>
-              <p className="text-xs text-slate-500 dark:text-slate-400">{loading ? 'Cargando canales...' : `${visibleChannels.length} visibles de ${channels.length}`}</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400">{loading ? 'Cargando canales...' : `${visibleChannelPage.length} de ${visibleChannels.length} visibles`}</p>
             </div>
             {loading && <div className="h-5 w-5 animate-spin rounded-full border-2 border-slate-200 border-t-brand-600 dark:border-slate-700 dark:border-t-brand-400" />}
           </div>
@@ -600,7 +567,7 @@ export default function TVPage() {
                 <p className="mt-1 text-xs text-slate-400 dark:text-slate-600">Cambia filtros o carga otra lista.</p>
               </div>
             ) : (
-              visibleChannels.map((channel) => {
+              visibleChannelPage.map((channel) => {
                 const active = selected?.url === channel.url;
                 const fav = favoriteUrls.has(channel.url);
                 return (
@@ -624,6 +591,11 @@ export default function TVPage() {
               })
             )}
           </div>
+          {visibleChannels.length > visibleChannelPage.length && (
+            <button type="button" className="btn-ghost mt-4 w-full" onClick={() => setVisibleCount((n) => n + 80)}>
+              Ver 80 canales más
+            </button>
+          )}
         </aside>
       </div>
     </div>
