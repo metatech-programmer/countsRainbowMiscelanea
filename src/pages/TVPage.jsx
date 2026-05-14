@@ -3,152 +3,144 @@ import { useMedia } from '../components/MediaProvider.jsx';
 
 const PLAYLISTS = [
   {
-    id: 'free-tv',
-    name: 'Free-TV curada',
-    type: 'Curada',
-    accent: '#14b8a6',
-    description: 'Canales gratuitos y mainstream mantenidos por Free-TV/IPTV.',
-    url: 'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlist.m3u8',
-  },
-  {
-    id: 'all',
-    name: 'IPTV global',
-    type: 'Todo',
-    accent: '#6366f1',
-    description: 'Indice completo de canales publicos de iptv-org.',
-    url: 'https://iptv-org.github.io/iptv/index.m3u',
-  },
-  {
-    id: 'movies',
-    name: 'Peliculas',
-    type: 'Categoria',
-    accent: '#f97316',
-    description: 'Canales abiertos orientados a cine y clasicos.',
-    url: 'https://iptv-org.github.io/iptv/categories/movies.m3u',
-  },
-  {
-    id: 'series',
-    name: 'Series',
-    type: 'Categoria',
-    accent: '#a855f7',
-    description: 'Canales abiertos de series, entretenimiento serial y reruns.',
-    url: 'https://iptv-org.github.io/iptv/categories/series.m3u',
-  },
-  {
-    id: 'animation',
-    name: 'Anime y animacion',
-    type: 'Categoria',
-    accent: '#ec4899',
-    description: 'Animacion, kids y canales tematicos afines.',
-    url: 'https://iptv-org.github.io/iptv/categories/animation.m3u',
-  },
-  {
-    id: 'kids',
-    name: 'Kids',
-    type: 'Categoria',
-    accent: '#22c55e',
-    description: 'Canales infantiles y familiares abiertos.',
-    url: 'https://iptv-org.github.io/iptv/categories/kids.m3u',
-  },
-  {
-    id: 'entertainment',
-    name: 'Entretenimiento',
-    type: 'Categoria',
-    accent: '#06b6d4',
-    description: 'Variedad, magazines, realities y entretenimiento general.',
-    url: 'https://iptv-org.github.io/iptv/categories/entertainment.m3u',
-  },
-  {
-    id: 'documentary',
-    name: 'Documentales',
-    type: 'Categoria',
-    accent: '#84cc16',
-    description: 'Documentales, cultura y divulgacion.',
-    url: 'https://iptv-org.github.io/iptv/categories/documentary.m3u',
-  },
-  {
-    id: 'sports',
-    name: 'Deportes',
-    type: 'Categoria',
-    accent: '#ef4444',
-    description: 'Canales deportivos disponibles como stream publico.',
-    url: 'https://iptv-org.github.io/iptv/categories/sports.m3u',
-  },
-  {
-    id: 'news',
-    name: 'Noticias',
-    type: 'Categoria',
-    accent: '#3b82f6',
-    description: 'Noticias en vivo de todo el mundo.',
-    url: 'https://iptv-org.github.io/iptv/categories/news.m3u',
-  },
-  {
-    id: 'music',
-    name: 'Musica TV',
-    type: 'Categoria',
-    accent: '#d946ef',
-    description: 'Canales musicales, videoclips y radio visual.',
-    url: 'https://iptv-org.github.io/iptv/categories/music.m3u',
-  },
-  {
-    id: 'latam',
-    name: 'Latinoamerica',
-    type: 'Region',
-    accent: '#f59e0b',
-    description: 'Canales publicos agrupados por region LATAM.',
-    url: 'https://iptv-org.github.io/iptv/regions/latam.m3u',
-  },
-  {
     id: 'spanish',
-    name: 'Espanol',
+    name: 'Todo en español',
     type: 'Idioma',
-    accent: '#e11d48',
-    description: 'Canales que transmiten en espanol.',
+    accent: '#14b8a6',
+    description: 'Canales publicos marcados en español por iptv-org.',
     url: 'https://iptv-org.github.io/iptv/languages/spa.m3u',
   },
   {
-    id: 'english',
-    name: 'Ingles',
-    type: 'Idioma',
-    accent: '#2563eb',
-    description: 'Canales que transmiten en ingles.',
-    url: 'https://iptv-org.github.io/iptv/languages/eng.m3u',
+    id: 'tdt-spain',
+    name: 'TDTChannels España',
+    type: 'España',
+    accent: '#6366f1',
+    description: 'TDT española abierta desde la lista oficial de TDTChannels.',
+    url: 'https://www.tdtchannels.com/lists/tv.m3u8',
+  },
+  {
+    id: 'spain',
+    name: 'España iptv-org',
+    type: 'País',
+    accent: '#f97316',
+    description: 'Canales españoles disponibles en iptv-org.',
+    url: 'https://iptv-org.github.io/iptv/countries/es.m3u',
   },
   {
     id: 'colombia',
     name: 'Colombia',
-    type: 'Pais',
-    accent: '#facc15',
-    description: 'Canales colombianos disponibles en iptv-org.',
+    type: 'País',
+    accent: '#a855f7',
+    description: 'Canales colombianos en abierto.',
     url: 'https://iptv-org.github.io/iptv/countries/co.m3u',
   },
   {
-    id: 'usa',
-    name: 'Estados Unidos',
-    type: 'Pais',
+    id: 'mexico',
+    name: 'México',
+    type: 'País',
+    accent: '#ec4899',
+    description: 'Canales mexicanos de TV abierta y online.',
+    url: 'https://iptv-org.github.io/iptv/countries/mx.m3u',
+  },
+  {
+    id: 'argentina',
+    name: 'Argentina',
+    type: 'País',
+    accent: '#22c55e',
+    description: 'Canales argentinos disponibles publicamente.',
+    url: 'https://iptv-org.github.io/iptv/countries/ar.m3u',
+  },
+  {
+    id: 'chile',
+    name: 'Chile',
+    type: 'País',
+    accent: '#06b6d4',
+    description: 'Canales chilenos abiertos.',
+    url: 'https://iptv-org.github.io/iptv/countries/cl.m3u',
+  },
+  {
+    id: 'peru',
+    name: 'Perú',
+    type: 'País',
+    accent: '#84cc16',
+    description: 'Canales peruanos publicos y gratuitos.',
+    url: 'https://iptv-org.github.io/iptv/countries/pe.m3u',
+  },
+  {
+    id: 'venezuela',
+    name: 'Venezuela',
+    type: 'País',
+    accent: '#ef4444',
+    description: 'Canales venezolanos disponibles en abierto.',
+    url: 'https://iptv-org.github.io/iptv/countries/ve.m3u',
+  },
+  {
+    id: 'ecuador',
+    name: 'Ecuador',
+    type: 'País',
+    accent: '#3b82f6',
+    description: 'Canales ecuatorianos de iptv-org.',
+    url: 'https://iptv-org.github.io/iptv/countries/ec.m3u',
+  },
+  {
+    id: 'uruguay',
+    name: 'Uruguay',
+    type: 'País',
+    accent: '#d946ef',
+    description: 'Canales uruguayos disponibles publicamente.',
+    url: 'https://iptv-org.github.io/iptv/countries/uy.m3u',
+  },
+  {
+    id: 'bolivia',
+    name: 'Bolivia',
+    type: 'País',
+    accent: '#f59e0b',
+    description: 'Canales bolivianos publicos.',
+    url: 'https://iptv-org.github.io/iptv/countries/bo.m3u',
+  },
+  {
+    id: 'paraguay',
+    name: 'Paraguay',
+    type: 'País',
+    accent: '#e11d48',
+    description: 'Canales paraguayos de TV abierta online.',
+    url: 'https://iptv-org.github.io/iptv/countries/py.m3u',
+  },
+  {
+    id: 'costa-rica',
+    name: 'Costa Rica',
+    type: 'País',
+    accent: '#2563eb',
+    description: 'Canales costarricenses disponibles en abierto.',
+    url: 'https://iptv-org.github.io/iptv/countries/cr.m3u',
+  },
+  {
+    id: 'dominicana',
+    name: 'Rep. Dominicana',
+    type: 'País',
+    accent: '#facc15',
+    description: 'Canales dominicanos publicos.',
+    url: 'https://iptv-org.github.io/iptv/countries/do.m3u',
+  },
+  {
+    id: 'puerto-rico',
+    name: 'Puerto Rico',
+    type: 'País',
     accent: '#0ea5e9',
-    description: 'Canales de Estados Unidos en playlist publica.',
-    url: 'https://iptv-org.github.io/iptv/countries/us.m3u',
+    description: 'Canales puertorriqueños en abierto.',
+    url: 'https://iptv-org.github.io/iptv/countries/pr.m3u',
+  },
+  {
+    id: 'latam',
+    name: 'Latinoamérica',
+    type: 'Región',
+    accent: '#10b981',
+    description: 'Canales publicos agrupados por region LATAM.',
+    url: 'https://iptv-org.github.io/iptv/regions/latam.m3u',
   },
 ];
 
 const QUICK_STREAMS = [
-  {
-    id: 'nasa-tv',
-    name: 'NASA TV Public',
-    group: 'Ciencia',
-    country: 'US',
-    logo: 'https://i.imgur.com/rmyfoOI.png',
-    url: 'https://ntv1.akamaized.net/hls/live/2014075/NASA-NTV1-Public/master.m3u8',
-  },
-  {
-    id: 'nasa-media',
-    name: 'NASA TV Media',
-    group: 'Ciencia',
-    country: 'US',
-    logo: 'https://i.imgur.com/rmyfoOI.png',
-    url: 'https://ntv1.akamaized.net/hls/live/2014075/NASA-NTV2-Media/master.m3u8',
-  },
   {
     id: 'dw-es',
     name: 'DW Espanol',
@@ -166,14 +158,27 @@ const QUICK_STREAMS = [
     url: 'https://static.france24.com/live/F24_ES_HI_HLS/live_web.m3u8',
   },
   {
-    id: 'aljazeera',
-    name: 'Al Jazeera English',
+    id: 'euronews-es',
+    name: 'Euronews Español',
     group: 'Noticias',
-    country: 'QA',
-    logo: 'https://i.imgur.com/8eB0R0Z.png',
-    url: 'https://live-hls-web-aje.getaj.net/AJE/index.m3u8',
+    country: 'ES',
+    logo: 'https://i.imgur.com/8RduwWt.png',
+    url: 'https://euronews-euronews-spanish-2-mx.samsung.wurl.tv/manifest/playlist.m3u8',
   },
 ];
+
+const SPANISH_COUNTRIES = new Set([
+  'AR', 'BO', 'CL', 'CO', 'CR', 'CU', 'DO', 'EC', 'ES', 'GT', 'HN', 'MX', 'NI', 'PA', 'PE', 'PR', 'PY', 'SV', 'UY', 'VE',
+]);
+
+function isSpanishChannel(channel, source) {
+  if (source.id === 'tdt-spain' || source.id === 'spanish') return true;
+  const country = (channel.country || '').split(';')[0].trim().toUpperCase();
+  const language = (channel.language || '').toLowerCase();
+  if (SPANISH_COUNTRIES.has(country)) return true;
+  if (/(spanish|español|espanol|castellano|spa)/i.test(language)) return true;
+  return false;
+}
 
 const FAVORITES_KEY = 'tv_favorites_v1';
 const RECENT_KEY = 'tv_recent_v1';
@@ -225,7 +230,7 @@ function parseM3U(text, source) {
           sourceId: source.id,
           url: line,
         };
-        channels.push(channel);
+        if (isSpanishChannel(channel, source)) channels.push(channel);
       }
       current = null;
     }
