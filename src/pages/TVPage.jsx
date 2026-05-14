@@ -425,96 +425,92 @@ export default function TVPage() {
   ];
 
   return (
-    <div className="-mx-4 -mt-8 min-h-screen bg-slate-950 text-white sm:-mx-6 lg:-mx-8">
-      <div className="relative overflow-hidden border-b border-white/10 bg-[radial-gradient(circle_at_top_left,rgba(20,184,166,0.22),transparent_34%),linear-gradient(135deg,#020617_0%,#0f172a_48%,#111827_100%)]">
-        <div className="mx-auto flex max-w-7xl flex-col gap-6 px-4 py-8 sm:px-6 lg:px-8">
-          <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
-            <div>
-              <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-teal-400/25 bg-teal-400/10 px-3 py-1 text-xs font-bold uppercase tracking-widest text-teal-200">
-                <span className="h-2 w-2 rounded-full bg-teal-300" />
-                TV, peliculas, series y mas
-              </div>
-              <h1 className="font-display text-4xl font-black tracking-tight sm:text-5xl">
-                Centro IPTV abierto
-              </h1>
-              <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-300">
-                Reproductor para listas M3U publicas: television global, peliculas, series, animacion, deportes, noticias, musica, paises e idiomas. Algunas senales pueden tener bloqueo regional o caidas temporales.
-              </p>
-            </div>
-            <div className="grid grid-cols-3 gap-2 sm:w-80">
-              {heroStats.map((stat) => (
-                <div key={stat.label} className="rounded-xl border border-white/10 bg-white/5 px-3 py-3 text-center backdrop-blur">
-                  <div className="text-2xl font-black">{stat.value}</div>
-                  <div className="text-[10px] font-bold uppercase tracking-widest text-slate-500">{stat.label}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            {PLAYLISTS.map((playlist) => (
-              <button
-                key={playlist.id}
-                onClick={() => loadPlaylist(playlist)}
-                className="group rounded-2xl border p-4 text-left transition-all hover:-translate-y-0.5"
-                style={{
-                  borderColor: selectedPlaylist.id === playlist.id ? `${playlist.accent}aa` : 'rgba(255,255,255,0.1)',
-                  background: selectedPlaylist.id === playlist.id ? `${playlist.accent}18` : 'rgba(255,255,255,0.04)',
-                  boxShadow: selectedPlaylist.id === playlist.id ? `0 14px 40px ${playlist.accent}18` : 'none',
-                }}
-              >
-                <div className="mb-3 flex items-center justify-between gap-3">
-                  <span className="rounded-full px-2 py-0.5 text-[10px] font-black uppercase tracking-widest" style={{ background: `${playlist.accent}24`, color: playlist.accent }}>
-                    {playlist.type}
-                  </span>
-                  <span className="text-slate-600 group-hover:text-slate-400"><TvIcon /></span>
-                </div>
-                <div className="font-display text-base font-bold">{playlist.name}</div>
-                <p className="mt-1 line-clamp-2 text-xs leading-5 text-slate-500">{playlist.description}</p>
-              </button>
-            ))}
-          </div>
-        </div>
+    <div className="flex flex-col gap-8 animate-fade-in">
+      <div>
+        <p className="section-eyebrow">TV y streaming abierto</p>
+        <h1 className="font-display text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
+          Centro IPTV abierto
+        </h1>
+        <p className="mt-1 max-w-3xl text-sm leading-6 text-slate-500 dark:text-slate-400">
+          Reproductor para listas M3U publicas: television global, peliculas, series, animacion, deportes, noticias, musica, paises e idiomas. Algunas senales pueden tener bloqueo regional o caidas temporales.
+        </p>
       </div>
 
-      <div className="mx-auto grid max-w-7xl gap-6 px-4 py-6 sm:px-6 lg:grid-cols-[minmax(0,1fr)_390px] lg:px-8">
+      <section className="grid gap-4 sm:grid-cols-3">
+        {heroStats.map((stat) => (
+          <div key={stat.label} className="card p-4">
+            <div className="text-2xl font-black text-slate-900 dark:text-white">{stat.value}</div>
+            <div className="text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">{stat.label}</div>
+          </div>
+        ))}
+      </section>
+
+      <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        {PLAYLISTS.map((playlist) => {
+          const active = selectedPlaylist.id === playlist.id;
+          return (
+            <button
+              key={playlist.id}
+              onClick={() => loadPlaylist(playlist)}
+              className={`group rounded-2xl border p-4 text-left transition-all hover:-translate-y-0.5 ${
+                active
+                  ? 'border-brand-500 bg-brand-50 shadow-glow-sm dark:bg-brand-900/20'
+                  : 'border-slate-100 bg-white shadow-card hover:shadow-card-hover dark:border-slate-800 dark:bg-slate-900'
+              }`}
+            >
+              <div className="mb-3 flex items-center justify-between gap-3">
+                <span className={`rounded-full px-2 py-0.5 text-[10px] font-black uppercase tracking-widest ${
+                  active ? 'bg-brand-600 text-white' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                }`}>
+                  {playlist.type}
+                </span>
+                <span className={`${active ? 'text-brand-600 dark:text-brand-400' : 'text-slate-300 dark:text-slate-600'} group-hover:text-brand-500`}><TvIcon /></span>
+              </div>
+              <div className="font-display text-base font-bold text-slate-900 dark:text-white">{playlist.name}</div>
+              <p className="mt-1 line-clamp-2 text-xs leading-5 text-slate-500 dark:text-slate-400">{playlist.description}</p>
+            </button>
+          );
+        })}
+      </section>
+
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_390px]">
         <section className="min-w-0 space-y-4">
-          <div className="overflow-hidden rounded-2xl border border-white/10 bg-black shadow-2xl">
+          <div className="overflow-hidden rounded-2xl border border-slate-200 bg-black shadow-card dark:border-slate-800">
             <div className="relative aspect-video bg-black">
               <video ref={videoRef} className="h-full w-full bg-black" controls playsInline />
               {!selected && (
-                <div className="absolute inset-0 flex flex-col items-center justify-center bg-[radial-gradient(circle_at_center,rgba(20,184,166,0.16),transparent_42%),#020617] text-center">
-                  <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl border border-teal-400/25 bg-teal-400/10 text-teal-200">
+                <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-100 text-center dark:bg-slate-950">
+                  <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl border border-brand-200 bg-brand-50 text-brand-600 dark:border-brand-800 dark:bg-brand-900/30 dark:text-brand-300">
                     <TvIcon />
                   </div>
-                  <p className="font-display text-xl font-bold">Selecciona un canal</p>
-                  <p className="mt-2 max-w-sm text-sm text-slate-500">Carga una lista, busca lo que quieres ver y reproduce desde el panel lateral.</p>
+                  <p className="font-display text-xl font-bold text-slate-900 dark:text-white">Selecciona un canal</p>
+                  <p className="mt-2 max-w-sm text-sm text-slate-500 dark:text-slate-400">Carga una lista, busca lo que quieres ver y reproduce desde el panel lateral.</p>
                 </div>
               )}
               {status === 'loading' && selected && (
                 <div className="absolute inset-0 flex items-center justify-center bg-black/45">
-                  <div className="h-10 w-10 animate-spin rounded-full border-2 border-white/20 border-t-teal-300" />
+                  <div className="h-10 w-10 animate-spin rounded-full border-2 border-white/20 border-t-brand-300" />
                 </div>
               )}
             </div>
-            <div className="flex flex-col gap-3 border-t border-white/10 bg-slate-950 p-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-col gap-3 border-t border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900 sm:flex-row sm:items-center sm:justify-between">
               <div className="min-w-0">
                 <div className="flex items-center gap-2">
                   <span className={`h-2 w-2 rounded-full ${status === 'playing' ? 'bg-emerald-400' : status === 'error' ? 'bg-red-400' : 'bg-slate-600'}`} />
-                  <h2 className="truncate font-display text-lg font-bold">{selected?.name || 'Sin reproduccion'}</h2>
+                  <h2 className="truncate font-display text-lg font-bold text-slate-900 dark:text-white">{selected?.name || 'Sin reproduccion'}</h2>
                 </div>
-                <p className="mt-1 truncate text-xs text-slate-500">
+                <p className="mt-1 truncate text-xs text-slate-500 dark:text-slate-400">
                   {selected ? `${selected.group || 'Sin grupo'} · ${selected.source || selectedPlaylist.name}` : selectedPlaylist.description}
                 </p>
               </div>
               <div className="flex gap-2">
                 {selected && (
-                  <button onClick={() => toggleFavorite(selected)} className="btn btn-secondary border-teal-500/30 bg-teal-500/10 text-teal-100 hover:bg-teal-500/20">
+                  <button onClick={() => toggleFavorite(selected)} className="btn-secondary">
                     <StarIcon filled={favoriteUrls.has(selected.url)} />
                     Favorito
                   </button>
                 )}
-                <button onClick={stop} className="btn btn-ghost border-white/10 text-slate-300 hover:bg-white/10">
+                <button onClick={stop} className="btn-ghost">
                   Detener
                 </button>
               </div>
@@ -522,72 +518,72 @@ export default function TVPage() {
           </div>
 
           {error && (
-            <div className="rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+            <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600 dark:border-red-800/60 dark:bg-red-900/20 dark:text-red-300">
               {error}
             </div>
           )}
 
-          <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+          <div className="card p-4">
             <div className="mb-3 flex items-center justify-between gap-3">
               <div>
-                <h3 className="font-display text-base font-bold">Accesos rapidos verificados</h3>
-                <p className="text-xs text-slate-500">Streams publicos para probar el reproductor al instante.</p>
+                <h3 className="font-display text-base font-bold text-slate-900 dark:text-white">Accesos rapidos verificados</h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400">Streams publicos para probar el reproductor al instante.</p>
               </div>
             </div>
             <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
               {QUICK_STREAMS.map((channel) => (
                 <button key={channel.id} onClick={() => playChannel({ ...channel, source: 'Acceso rapido', sourceId: 'quick' })}
-                  className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.03] p-3 text-left transition hover:bg-white/[0.07]">
-                  <img src={channel.logo} alt="" className="h-9 w-9 rounded-lg bg-slate-900 object-contain" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
+                  className="flex items-center gap-3 rounded-xl border border-slate-100 bg-white p-3 text-left transition hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-900/50 dark:hover:bg-slate-800">
+                  <img src={channel.logo} alt="" className="h-9 w-9 rounded-lg bg-slate-100 object-contain dark:bg-slate-950" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
                   <div className="min-w-0">
-                    <div className="truncate text-sm font-bold">{channel.name}</div>
-                    <div className="text-xs text-slate-500">{channel.group} · {channel.country}</div>
+                    <div className="truncate text-sm font-bold text-slate-900 dark:text-white">{channel.name}</div>
+                    <div className="text-xs text-slate-500 dark:text-slate-400">{channel.group} · {channel.country}</div>
                   </div>
                 </button>
               ))}
             </div>
           </div>
 
-          <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
-            <h3 className="font-display text-base font-bold">Cargar una lista propia</h3>
+          <div className="card p-4">
+            <h3 className="font-display text-base font-bold text-slate-900 dark:text-white">Cargar una lista propia</h3>
             <div className="mt-3 flex flex-col gap-2 sm:flex-row">
               <input
                 value={customUrl}
                 onChange={(e) => setCustomUrl(e.target.value)}
                 placeholder="https://ejemplo.com/playlist.m3u"
-                className="min-w-0 flex-1 rounded-xl border border-white/10 bg-slate-900 px-4 py-3 text-sm text-slate-200 placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-teal-400/30"
+                className="input min-w-0 flex-1"
               />
-              <button onClick={loadCustom} className="btn btn-primary bg-teal-600 hover:bg-teal-500">
+              <button onClick={loadCustom} className="btn-primary">
                 Cargar M3U
               </button>
             </div>
-            <p className="mt-2 text-xs text-slate-600">Usa solo listas que tengas derecho a reproducir. El navegador puede bloquear algunas por CORS o geolocalizacion.</p>
+            <p className="mt-2 text-xs text-slate-400 dark:text-slate-500">Usa solo listas que tengas derecho a reproducir. El navegador puede bloquear algunas por CORS o geolocalizacion.</p>
           </div>
         </section>
 
-        <aside className="min-w-0 rounded-2xl border border-white/10 bg-slate-900/80 p-4 shadow-2xl lg:sticky lg:top-20 lg:max-h-[calc(100vh-6rem)]">
+        <aside className="card min-w-0 p-4 lg:sticky lg:top-20 lg:max-h-[calc(100vh-6rem)]">
           <div className="mb-3 flex items-center justify-between gap-3">
             <div>
-              <h2 className="font-display text-lg font-bold">{selectedPlaylist.name}</h2>
-              <p className="text-xs text-slate-500">{loading ? 'Cargando canales...' : `${visibleChannels.length} visibles de ${channels.length}`}</p>
+              <h2 className="font-display text-lg font-bold text-slate-900 dark:text-white">{selectedPlaylist.name}</h2>
+              <p className="text-xs text-slate-500 dark:text-slate-400">{loading ? 'Cargando canales...' : `${visibleChannels.length} visibles de ${channels.length}`}</p>
             </div>
-            {loading && <div className="h-5 w-5 animate-spin rounded-full border-2 border-white/20 border-t-teal-300" />}
+            {loading && <div className="h-5 w-5 animate-spin rounded-full border-2 border-slate-200 border-t-brand-600 dark:border-slate-700 dark:border-t-brand-400" />}
           </div>
 
           <div className="space-y-2">
             <div className="relative">
-              <span className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-slate-600"><SearchIcon /></span>
+              <span className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-slate-400 dark:text-slate-600"><SearchIcon /></span>
               <input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Buscar canal, pais, categoria..."
-                className="w-full rounded-xl border border-white/10 bg-slate-950 py-2.5 pl-9 pr-3 text-sm text-slate-200 placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-teal-400/30"
+                className="input py-2.5 pl-9 pr-3"
               />
             </div>
             <select
               value={group}
               onChange={(e) => setGroup(e.target.value)}
-              className="w-full rounded-xl border border-white/10 bg-slate-950 px-3 py-2.5 text-sm text-slate-300 focus:outline-none focus:ring-2 focus:ring-teal-400/30"
+              className="input py-2.5"
             >
               {groups.map((item) => <option key={item} value={item}>{item}</option>)}
             </select>
@@ -596,31 +592,31 @@ export default function TVPage() {
           <div className="scrollbar-thin mt-4 max-h-[58vh] space-y-2 overflow-y-auto pr-1">
             {loading ? (
               Array.from({ length: 9 }).map((_, index) => (
-                <div key={index} className="h-16 animate-pulse rounded-xl bg-white/[0.04]" />
+                <div key={index} className="h-16 animate-pulse rounded-xl bg-slate-100 dark:bg-slate-800" />
               ))
             ) : visibleChannels.length === 0 ? (
-              <div className="rounded-xl border border-white/10 bg-white/[0.03] p-6 text-center">
-                <p className="text-sm font-semibold text-slate-300">No hay resultados</p>
-                <p className="mt-1 text-xs text-slate-600">Cambia filtros o carga otra lista.</p>
+              <div className="rounded-xl border border-slate-100 bg-slate-50 p-6 text-center dark:border-slate-800 dark:bg-slate-900/50">
+                <p className="text-sm font-semibold text-slate-700 dark:text-slate-300">No hay resultados</p>
+                <p className="mt-1 text-xs text-slate-400 dark:text-slate-600">Cambia filtros o carga otra lista.</p>
               </div>
             ) : (
               visibleChannels.map((channel) => {
                 const active = selected?.url === channel.url;
                 const fav = favoriteUrls.has(channel.url);
                 return (
-                  <div key={`${channel.sourceId}-${channel.url}`} className={`group flex items-center gap-3 rounded-xl border p-2.5 transition ${active ? 'border-teal-400/50 bg-teal-400/10' : 'border-white/10 bg-white/[0.03] hover:bg-white/[0.07]'}`}>
+                  <div key={`${channel.sourceId}-${channel.url}`} className={`group flex items-center gap-3 rounded-xl border p-2.5 transition ${active ? 'border-brand-400 bg-brand-50 dark:border-brand-700 dark:bg-brand-900/20' : 'border-slate-100 bg-white hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-900/50 dark:hover:bg-slate-800'}`}>
                     <button onClick={() => playChannel(channel)} className="flex min-w-0 flex-1 items-center gap-3 text-left">
                       {channel.logo ? (
-                        <img src={channel.logo} alt="" className="h-10 w-10 flex-shrink-0 rounded-lg bg-slate-950 object-contain" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
+                        <img src={channel.logo} alt="" className="h-10 w-10 flex-shrink-0 rounded-lg bg-slate-100 object-contain dark:bg-slate-950" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
                       ) : (
-                        <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-slate-950 text-slate-500"><TvIcon /></span>
+                        <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-400 dark:bg-slate-950 dark:text-slate-500"><TvIcon /></span>
                       )}
                       <span className="min-w-0">
-                        <span className={`block truncate text-sm font-bold ${active ? 'text-white' : 'text-slate-200'}`}>{channel.name}</span>
-                        <span className="mt-0.5 block truncate text-xs text-slate-500">{channel.group || 'Sin grupo'}{channel.country ? ` · ${channel.country}` : ''}</span>
+                        <span className={`block truncate text-sm font-bold ${active ? 'text-slate-900 dark:text-white' : 'text-slate-700 dark:text-slate-200'}`}>{channel.name}</span>
+                        <span className="mt-0.5 block truncate text-xs text-slate-500 dark:text-slate-400">{channel.group || 'Sin grupo'}{channel.country ? ` · ${channel.country}` : ''}</span>
                       </span>
                     </button>
-                    <button onClick={() => toggleFavorite(channel)} className={`rounded-lg p-2 transition ${fav ? 'text-amber-300' : 'text-slate-600 hover:text-slate-300'}`} aria-label="Marcar favorito">
+                    <button onClick={() => toggleFavorite(channel)} className={`rounded-lg p-2 transition ${fav ? 'text-amber-500' : 'text-slate-300 hover:text-slate-600 dark:text-slate-600 dark:hover:text-slate-300'}`} aria-label="Marcar favorito">
                       <StarIcon filled={fav} />
                     </button>
                   </div>

@@ -275,32 +275,18 @@ export default function AudioPage() {
   const isLoading = status === 'loading';
 
   return (
-    <div className="min-h-screen" style={{ background: 'linear-gradient(135deg, #0f0f1a 0%, #0d1117 50%, #0f0f2a 100%)' }}>
-      {/* ── HERO ── */}
-      <div className="relative overflow-hidden px-4 pb-8 pt-10 text-center sm:pt-16">
-        <div className="pointer-events-none absolute inset-0 overflow-hidden">
-          <div className="absolute -left-20 -top-20 h-80 w-80 rounded-full opacity-20" style={{ background: 'radial-gradient(circle, #6366f1, transparent)' }} />
-          <div className="absolute -right-20 top-10 h-60 w-60 rounded-full opacity-15" style={{ background: 'radial-gradient(circle, #a855f7, transparent)' }} />
-          <div className="absolute bottom-0 left-1/2 h-40 w-96 -translate-x-1/2 opacity-10" style={{ background: 'radial-gradient(ellipse, #3b82f6, transparent)' }} />
-        </div>
-        <div className="relative">
-          <div className="mb-4 inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-indigo-300"
-            style={{ background: 'rgba(99,102,241,0.12)', border: '1px solid rgba(99,102,241,0.25)' }}>
-            <span className="h-2 w-2 animate-pulse rounded-full bg-indigo-400" />
-            En Vivo · Live Radio
-          </div>
-          <h1 className="mb-3 text-4xl font-black tracking-tight text-white sm:text-5xl">
-            Radio <span style={{ background: 'linear-gradient(135deg,#818cf8,#a78bfa,#c084fc)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Mundial</span>
-          </h1>
-          <p className="text-slate-400">
-            <span className="font-bold text-white">{STATIONS.length}</span> emisoras de{' '}
-            <span className="font-bold text-white">{new Set(STATIONS.map(s => s.country)).size}</span> países — streaming en vivo
-          </p>
-        </div>
+    <div className="flex flex-col gap-8 animate-fade-in">
+      <div>
+        <p className="section-eyebrow">Audio en vivo</p>
+        <h1 className="font-display text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
+          Radio mundial
+        </h1>
+        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+          {STATIONS.length} emisoras de {new Set(STATIONS.map(s => s.country)).size} países, con búsqueda por ciudad, género y región.
+        </p>
       </div>
 
-      {/* ── LAYOUT ── */}
-      <div className="mx-auto max-w-7xl px-4 pb-32 sm:px-6 lg:px-8">
+      <section>
         <div className="flex flex-col gap-6 lg:flex-row">
 
           {/* ── SIDEBAR: Now Playing ── */}
@@ -308,7 +294,7 @@ export default function AudioPage() {
             <div className="lg:sticky lg:top-20 space-y-3">
 
               {/* Player card */}
-              <div className="rounded-2xl p-5" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)', backdropFilter: 'blur(20px)' }}>
+              <div className="card p-5">
                 {current ? (
                   <>
                     {/* Status bar */}
@@ -336,16 +322,16 @@ export default function AudioPage() {
                       <span className="relative text-5xl drop-shadow-lg">{current.flag}</span>
                     </div>
 
-                    <div className="mb-0.5 text-base font-bold text-white leading-snug">{current.name}</div>
+                    <div className="mb-0.5 text-base font-bold leading-snug text-slate-900 dark:text-white">{current.name}</div>
                     <div className="mb-4 flex flex-wrap items-center gap-1.5">
                       <span className="text-xs text-slate-500">{current.city}</span>
-                      <span className="text-slate-700">·</span>
+                      <span className="text-slate-300 dark:text-slate-700">·</span>
                       <span className="rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide"
                         style={{ background: `${current.color}22`, color: current.color }}>{current.genre}</span>
                     </div>
 
                     {status === 'error' && (
-                      <div className="mb-3 rounded-lg px-3 py-2 text-xs text-red-300" style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)' }}>
+                      <div className="mb-3 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-600 dark:border-red-800/60 dark:bg-red-900/20 dark:text-red-300">
                         {errMsg}
                         <button onClick={() => play(current)} className="mt-1.5 block font-semibold underline">Reintentar</button>
                       </div>
@@ -365,21 +351,20 @@ export default function AudioPage() {
                         <path d="M3 18v-6a9 9 0 0 1 18 0v6" /><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z" />
                       </svg>
                     </div>
-                    <p className="text-sm font-semibold text-slate-300">Elige una emisora</p>
-                    <p className="mt-1 text-xs text-slate-600">Haz clic en cualquier estación</p>
+                    <p className="text-sm font-semibold text-slate-700 dark:text-slate-300">Elige una emisora</p>
+                    <p className="mt-1 text-xs text-slate-400 dark:text-slate-600">Haz clic en cualquier estación</p>
                   </div>
                 )}
 
                 {/* Volume control */}
-                <div className="flex items-center gap-3 pt-1 border-t border-white/5 mt-2">
-                  <button onClick={() => setMuted(m => !m)} className="flex-shrink-0 text-slate-500 hover:text-slate-300 transition-colors">
+                <div className="mt-2 flex items-center gap-3 border-t border-slate-100 pt-3 dark:border-slate-800">
+                  <button onClick={() => setMuted(m => !m)} className="flex-shrink-0 text-slate-400 transition-colors hover:text-slate-700 dark:text-slate-500 dark:hover:text-slate-300">
                     <VolumeIcon muted={muted} />
                   </button>
                   <input type="range" min="0" max="1" step="0.02" value={muted ? 0 : volume}
                     onChange={e => { setMuted(false); setVolume(parseFloat(e.target.value)); }}
-                    className="h-1 w-full cursor-pointer appearance-none rounded-full accent-indigo-500"
-                    style={{ background: `linear-gradient(to right, #6366f1 ${(muted ? 0 : volume) * 100}%, #334155 0)` }} />
-                  <span className="w-8 flex-shrink-0 text-right text-xs tabular-nums text-slate-600">{Math.round((muted ? 0 : volume) * 100)}%</span>
+                    className="h-1.5 w-full cursor-pointer appearance-none rounded-full bg-slate-200 accent-brand-600 dark:bg-slate-700" />
+                  <span className="w-8 flex-shrink-0 text-right text-xs tabular-nums text-slate-400">{Math.round((muted ? 0 : volume) * 100)}%</span>
                 </div>
               </div>
 
@@ -390,9 +375,9 @@ export default function AudioPage() {
                   { n: new Set(STATIONS.map(s => s.country)).size, l: 'Países' },
                   { n: ALL_GENRES.length - 1, l: 'Géneros' },
                 ].map(({ n, l }) => (
-                  <div key={l} className="rounded-xl py-2.5 text-center" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
-                    <div className="text-lg font-black text-white">{n}</div>
-                    <div className="text-[9px] uppercase tracking-wider text-slate-600">{l}</div>
+                  <div key={l} className="card px-2 py-2.5 text-center">
+                    <div className="text-lg font-black text-slate-900 dark:text-white">{n}</div>
+                    <div className="text-[9px] uppercase tracking-wider text-slate-400 dark:text-slate-500">{l}</div>
                   </div>
                 ))}
               </div>
@@ -409,13 +394,10 @@ export default function AudioPage() {
                   <button key={r.key} onClick={() => setRegion(r.key)}
                     className={`flex-shrink-0 rounded-full px-3.5 py-1.5 text-xs font-bold transition-all ${
                       region === r.key
-                        ? 'text-white shadow-lg shadow-indigo-500/25'
-                        : 'text-slate-500 hover:text-slate-300'
+                        ? 'border-brand-600 bg-brand-600 text-white shadow-glow-sm'
+                        : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300'
                     }`}
-                    style={region === r.key
-                      ? { background: 'linear-gradient(135deg, #6366f1, #8b5cf6)' }
-                      : { background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)' }
-                    }>
+                  >
                     {r.label}
                   </button>
                 ))}
@@ -431,12 +413,10 @@ export default function AudioPage() {
                   </span>
                   <input type="text" value={search} onChange={e => setSearch(e.target.value)}
                     placeholder="Buscar emisora, ciudad, género…"
-                    className="w-full rounded-xl py-2.5 pl-9 pr-4 text-sm text-slate-200 placeholder-slate-700 focus:outline-none focus:ring-1 focus:ring-indigo-500/40"
-                    style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.07)' }} />
+                    className="input py-2.5 pl-9 pr-4" />
                 </div>
                 <select value={genre} onChange={e => setGenre(e.target.value)}
-                  className="rounded-xl py-2.5 pl-3 pr-8 text-sm text-slate-300 focus:outline-none focus:ring-1 focus:ring-indigo-500/40 cursor-pointer"
-                  style={{ background: '#0f172a', border: '1px solid rgba(255,255,255,0.08)' }}>
+                  className="input w-auto cursor-pointer py-2.5 pl-3 pr-8">
                   {ALL_GENRES.map(g => <option key={g} value={g}>{g}</option>)}
                 </select>
               </div>
@@ -447,7 +427,7 @@ export default function AudioPage() {
                 </span>
                 {(region !== 'all' || genre !== 'Todos' || search) && (
                   <button onClick={() => { setRegion('all'); setGenre('Todos'); setSearch(''); }}
-                    className="text-xs text-indigo-400 hover:text-indigo-300 underline underline-offset-2 transition-colors">
+                    className="text-xs text-brand-600 underline underline-offset-2 transition-colors hover:text-brand-700 dark:text-brand-400">
                     Limpiar filtros
                   </button>
                 )}
@@ -458,8 +438,8 @@ export default function AudioPage() {
             {filtered.length === 0 ? (
               <div className="flex flex-col items-center py-24 text-center">
                 <span className="text-5xl mb-4">📻</span>
-                <p className="text-slate-400 font-semibold">Sin resultados</p>
-                <p className="mt-1 text-sm text-slate-600">Prueba otros filtros</p>
+                <p className="font-semibold text-slate-600 dark:text-slate-400">Sin resultados</p>
+                <p className="mt-1 text-sm text-slate-400 dark:text-slate-600">Prueba otros filtros</p>
               </div>
             ) : (
               <div className="grid gap-2.5 sm:grid-cols-2 xl:grid-cols-3">
@@ -470,17 +450,21 @@ export default function AudioPage() {
                   return (
                     <button key={station.id}
                       onClick={() => active && isPlaying ? stop() : play(station)}
-                      className="group relative flex items-center gap-3 rounded-xl p-3 text-left transition-all duration-200 hover:-translate-y-0.5"
+                      className={`group relative flex items-center gap-3 rounded-xl border p-3 text-left transition-all duration-200 hover:-translate-y-0.5 ${
+                        active
+                          ? 'border-brand-300 bg-brand-50 shadow-glow-sm dark:border-brand-700 dark:bg-brand-900/20'
+                          : 'border-slate-100 bg-white shadow-card hover:shadow-card-hover dark:border-slate-800 dark:bg-slate-900'
+                      }`}
                       style={active
-                        ? { background: `${station.color}18`, border: `1px solid ${station.color}50`, boxShadow: `0 0 20px ${station.color}18` }
-                        : { background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.05)' }
+                        ? { boxShadow: `0 0 16px ${station.color}18` }
+                        : undefined
                       }
                     >
                       {/* Icon */}
                       <div className="relative flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl text-xl"
                         style={{ background: `${station.color}18`, border: `1px solid ${station.color}30` }}>
                         {loading ? (
-                          <div className="h-5 w-5 rounded-full border-2 border-white/20 border-t-white/70" style={{ animation: 'spin 0.8s linear infinite' }} />
+                          <div className="h-5 w-5 rounded-full border-2 border-slate-200 border-t-brand-600 dark:border-slate-700 dark:border-t-brand-400" style={{ animation: 'spin 0.8s linear infinite' }} />
                         ) : playing ? (
                           <SignalBars active color={station.color} />
                         ) : (
@@ -498,12 +482,12 @@ export default function AudioPage() {
                       </div>
 
                       <div className="flex-1 min-w-0">
-                        <div className={`truncate text-sm font-semibold leading-snug ${active ? 'text-white' : 'text-slate-300 group-hover:text-white'} transition-colors`}>
+                        <div className={`truncate text-sm font-semibold leading-snug ${active ? 'text-slate-900 dark:text-white' : 'text-slate-700 group-hover:text-slate-900 dark:text-slate-300 dark:group-hover:text-white'} transition-colors`}>
                           {station.name}
                         </div>
                         <div className="mt-0.5 flex items-center gap-1.5">
-                          <span className="truncate text-xs text-slate-600">{station.city}</span>
-                          <span className="text-slate-800">·</span>
+                          <span className="truncate text-xs text-slate-400 dark:text-slate-500">{station.city}</span>
+                          <span className="text-slate-300 dark:text-slate-700">·</span>
                           <span className="flex-shrink-0 rounded px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide"
                             style={{ background: `${station.color}18`, color: station.color }}>
                             {station.genre}
@@ -517,7 +501,7 @@ export default function AudioPage() {
             )}
           </div>
         </div>
-      </div>
+      </section>
     </div>
   );
 }
