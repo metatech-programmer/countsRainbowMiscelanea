@@ -157,10 +157,13 @@ const StationCard = memo(function StationCard({ station, isActive, isPlaying, is
 
       {/* ── Favorite star ── */}
       {onToggleFavorite && !isOffline && (
-        <button
+        <span
+          role="button"
+          tabIndex={0}
           onClick={handleFav}
+          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleFav(e); } }}
           className={[
-            'ml-auto flex-shrink-0 rounded-lg p-1 transition-all',
+            'ml-auto flex-shrink-0 rounded-lg p-1 transition-all cursor-pointer',
             isFavorite
               ? 'text-amber-400'
               : 'text-slate-200 opacity-0 group-hover:opacity-100 dark:text-slate-700',
@@ -170,7 +173,7 @@ const StationCard = memo(function StationCard({ station, isActive, isPlaying, is
           <svg width="14" height="14" viewBox="0 0 24 24" fill={isFavorite ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2">
             <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
           </svg>
-        </button>
+        </span>
       )}
 
       {/* ── Online pulse dot ── */}

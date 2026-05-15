@@ -1,7 +1,10 @@
 import { createContext, useCallback, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
+import Hls from 'hls.js';
 import SmartPlayer from '../tv/components/SmartPlayer';
 import { useTvStore } from '../tv/store/tvStore';
+
+const HLS_RE = /\.(m3u8?)(\?|$)/i;
 
 const MediaContext = createContext(null);
 
@@ -27,6 +30,7 @@ function PlayIcon({ stop = false }) {
 export function MediaProvider({ children }) {
   const location    = useLocation();
   const audioRef    = useRef(null);
+  const hlsRef      = useRef(null);   // hls.js instance for HLS streams
   const retryRef    = useRef(null);   // retry timeout handle
   const retriesRef  = useRef(0);      // auto-retry counter
   const timeoutRef  = useRef(null);   // load-timeout handle
@@ -59,9 +63,17 @@ export function MediaProvider({ children }) {
     if (retryRef.current)   { clearTimeout(retryRef.current);   retryRef.current   = null; }
   }, []);
 
+  const destroyHls = useCallback(() => {
+    if (hlsRef.current) {
+      hlsRef.current.destroy();
+      hlsRef.current = null;
+    }
+  }, []);
+
   // ── Stop audio ────────────────────────────────────────────────────────────
   const stopAudio = useCallback(() => {
     clearTimers();
+    destroyHls();
     retriesRef.current = 0;
     const player = ensureAudio();
     player.onplaying = null;
@@ -69,11 +81,12 @@ export function MediaProvider({ children }) {
     player.pause();
     player.src = '';
     setAudio((prev) => ({ ...prev, status: 'idle', current: null, error: '' }));
-  }, [clearTimers, ensureAudio]);
+  }, [clearTimers, destroyHls, ensureAudio]);
 
   // ── Core play logic (also used by auto-retry) ─────────────────────────────
   const _doPlay = useCallback((station) => {
     clearTimers();
+    destroyHls();
     const player = ensureAudio();
     player.pause();
     player.onplaying = null;
@@ -84,8 +97,6 @@ export function MediaProvider({ children }) {
 
     const { volume, muted } = audioStateRef.current;
     player.volume = muted ? 0 : volume;
-    player.src = station.stream;
-    player.load();
 
     const onPlaying = () => {
       clearTimers();
@@ -95,10 +106,10 @@ export function MediaProvider({ children }) {
 
     const onFail = (message) => {
       clearTimers();
+      destroyHls();
       player.onplaying = null;
       player.onerror   = null;
 
-      // Auto-retry on transient failures
       if (retriesRef.current < MAX_AUTO_RETRIES) {
         retriesRef.current += 1;
         setAudio((prev) => ({ ...prev, status: 'loading', error: '' }));
@@ -113,16 +124,37 @@ export function MediaProvider({ children }) {
       }
     };
 
-    // Hard timeout — some streams stall indefinitely without erroring
     timeoutRef.current = setTimeout(
       () => onFail('Sin respuesta del servidor. La emisora puede estar fuera de línea.'),
       AUDIO_TIMEOUT_MS
     );
 
-    player.onplaying = onPlaying;
-    player.onerror   = () => onFail('No se pudo conectar. La emisora puede estar fuera de línea.');
-    player.play().catch(() => onFail('No se pudo iniciar la reproducción.'));
-  }, [clearTimers, ensureAudio]);
+    if (HLS_RE.test(station.stream) && !player.canPlayType('application/vnd.apple.mpegurl')) {
+      // Use hls.js for HLS streams in browsers without native HLS support
+      if (!Hls.isSupported()) {
+        onFail('Tu navegador no soporta este formato de stream.');
+        return;
+      }
+      const hls = new Hls({ enableWorker: false });
+      hlsRef.current = hls;
+      hls.loadSource(station.stream);
+      hls.attachMedia(player);
+      hls.on(Hls.Events.MANIFEST_PARSED, () => {
+        player.onplaying = onPlaying;
+        player.onerror = () => onFail('No se pudo conectar. La emisora puede estar fuera de línea.');
+        player.play().catch(() => onFail('No se pudo iniciar la reproducción.'));
+      });
+      hls.on(Hls.Events.ERROR, (_, data) => {
+        if (data.fatal) onFail('Error en el stream HLS. La emisora puede estar fuera de línea.');
+      });
+    } else {
+      player.src = station.stream;
+      player.load();
+      player.onplaying = onPlaying;
+      player.onerror   = () => onFail('No se pudo conectar. La emisora puede estar fuera de línea.');
+      player.play().catch(() => onFail('No se pudo iniciar la reproducción.'));
+    }
+  }, [clearTimers, destroyHls, ensureAudio]);
 
   // ── Public playAudio ──────────────────────────────────────────────────────
   const playAudio = useCallback((station) => {
@@ -184,7 +216,7 @@ export function MediaProvider({ children }) {
   }, [location.pathname, tvSlot]);
 
   // ── Cleanup on unmount ────────────────────────────────────────────────────
-  useEffect(() => () => clearTimers(), [clearTimers]);
+  useEffect(() => () => { clearTimers(); destroyHls(); }, [clearTimers, destroyHls]);
 
   // ── Context value ─────────────────────────────────────────────────────────
   const value = useMemo(() => ({
