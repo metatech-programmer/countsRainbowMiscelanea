@@ -210,8 +210,8 @@ export default function AudioPage() {
     else if (tab === 'favs') base = allStations.filter((s) => favorites.has(s.id));
 
     return base.filter((s) => {
-      // Always filter offline static stations — only show what's working
-      if (!s.isRemote && isOffline(s)) return false;
+      // Hide any station confirmed offline (static or remote)
+      if (isOffline(s)) return false;
 
       if (regionDef?.countries && !regionDef.countries.includes(s.country)) return false;
       if (genre !== 'Todos' && s.genre !== genre) return false;

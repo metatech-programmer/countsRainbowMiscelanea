@@ -78,8 +78,12 @@ interface TVState {
   // ── Metrics ──
   metrics: TVMetrics;
 
+  // ── Validation ──
+  validationDone: boolean;
+
   // ── Actions ──
   setChannels: (channels: Channel[]) => void;
+  setValidationDone: (done: boolean) => void;
   addChannels: (channels: Channel[]) => void;
   setLoading: (loading: boolean) => void;
   setLoadError: (error: string | null) => void;
@@ -153,6 +157,7 @@ export const useTvStore = create<TVState>((set, get) => ({
   isLoading: false,
   loadError: null,
   sources: [],
+  validationDone: false,
 
   currentChannel: null,
   playbackStatus: 'idle',
@@ -204,6 +209,7 @@ export const useTvStore = create<TVState>((set, get) => ({
   setLoading: (isLoading) => set({ isLoading }),
   setLoadError: (loadError) => set({ loadError }),
   setSources: (sources) => set({ sources }),
+  setValidationDone: (validationDone) => set({ validationDone }),
 
   // ── Playback actions ──
   setCurrentChannel: (channel) => set({ currentChannel: channel }),

@@ -20,7 +20,7 @@ function fuzzyMatch(text: string, query: string): boolean {
 
 export function useChannels() {
   const {
-    channels, isLoading, loadError, sources, filters, favorites, recents,
+    channels, isLoading, loadError, sources, filters, favorites, recents, validationDone,
     setChannels, setLoading, setLoadError, setSources,
   } = useTvStore();
 
@@ -74,6 +74,11 @@ export function useChannels() {
   const filtered = useMemo(() => {
     let result = channels;
 
+    // Hide confirmed-offline channels once validation has run at least once
+    if (validationDone) {
+      result = result.filter((c) => c.status !== 'offline');
+    }
+
     // Tab filter
     if (filters.tab === 'favs') {
       result = result.filter((c) => favorites.has(c.id));
@@ -120,7 +125,7 @@ export function useChannels() {
       if (diff !== 0) return diff;
       return a.name.localeCompare(b.name);
     });
-  }, [channels, filters, favorites, recents]);
+  }, [channels, filters, favorites, recents, validationDone]);
 
   // ── Dynamic filter options ──
   const categories = useMemo(() => extractCategories(channels), [channels]);

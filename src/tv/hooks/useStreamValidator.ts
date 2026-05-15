@@ -11,7 +11,7 @@ const REVALIDATE_INTERVAL = 5 * 60 * 1000; // Re-check every 5 min
 const MAX_VALIDATE_BATCH = 100;              // Don't validate more than 100 at once
 
 export function useStreamValidator() {
-  const { channels, batchUpdateStatus } = useTvStore();
+  const { channels, batchUpdateStatus, setValidationDone } = useTvStore();
   const [validating, setValidating] = useState(false);
   const [validatedCount, setValidatedCount] = useState(0);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -49,7 +49,8 @@ export function useStreamValidator() {
     }
 
     setValidating(false);
-  }, [channels, batchUpdateStatus]);
+    setValidationDone(true);
+  }, [channels, batchUpdateStatus, setValidationDone]);
 
   // Auto-validate on mount and periodically
   useEffect(() => {

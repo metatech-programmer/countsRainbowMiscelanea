@@ -22,7 +22,7 @@ export const STATIONS = [
   { id: 'co-besame',     name: 'Bésame',                country: 'CO', city: 'Medellín',         genre: 'Romántica',   flag: '🇨🇴', color: '#be185d', stream: 'https://playerservices.streamtheworld.com/api/livestream-redirect/BESAME_MEDELLINAAC.aac' },
   { id: 'co-luna',       name: 'Luna Estéreo',          country: 'CO', city: 'Bogotá',           genre: 'Baladas',     flag: '🇨🇴', color: '#9333ea', stream: 'https://playerservices.streamtheworld.com/api/livestream-redirect/LUNA_SC' },
   { id: 'co-oxigeno',    name: 'Oxígeno',               country: 'CO', city: 'Bogotá',           genre: 'Rock',        flag: '🇨🇴', color: '#16a34a', stream: 'https://playerservices.streamtheworld.com/api/livestream-redirect/OXIGENO_SC' },
-  { id: 'co-radionica',  name: 'Radiónica',             country: 'CO', city: 'Bogotá',           genre: 'Alternativo', flag: '🇨🇴', color: '#0891b2', stream: 'http://shoutcast.rtvc.gov.co:8010/;' },
+  { id: 'co-radionica',  name: 'Radiónica',             country: 'CO', city: 'Bogotá',           genre: 'Alternativo', flag: '🇨🇴', color: '#0891b2', stream: 'https://stream.zeno.fm/0r0xa792kwzuv' },
   { id: 'co-javeriana',  name: 'Javeriana Estéreo',     country: 'CO', city: 'Bogotá',           genre: 'Cultural',    flag: '🇨🇴', color: '#0369a1', stream: 'https://radio06.cehis.net:9001/stream' },
   { id: 'co-unal',       name: 'UN Radio',              country: 'CO', city: 'Bogotá',           genre: 'Cultural',    flag: '🇨🇴', color: '#15803d', stream: 'https://radio.unal.edu.co/streaming/bogota/;stream.mp3' },
   { id: 'co-candela',    name: 'Candela Estéreo',       country: 'CO', city: 'Bogotá',           genre: 'Tropical',    flag: '🇨🇴', color: '#ea580c', stream: 'https://playerservices.streamtheworld.com/api/livestream-redirect/CANDELAESTEREO.aac' },
@@ -55,7 +55,7 @@ export const STATIONS = [
   { id: 'mx-rock101',    name: 'Rock 101',              country: 'MX', city: 'Ciudad de México', genre: 'Rock',        flag: '🇲🇽', color: '#dc2626', stream: 'https://s3.radio.co/s2c1cebae5/listen' },
   { id: 'mx-exa',        name: 'Exa FM',                country: 'MX', city: 'Ciudad de México', genre: 'Pop',         flag: '🇲🇽', color: '#7c3aed', stream: 'https://playerservices.streamtheworld.com/api/livestream-redirect/XHEXA_SC' },
   { id: 'mx-formula',    name: 'Radio Fórmula',         country: 'MX', city: 'Ciudad de México', genre: 'Noticias',    flag: '🇲🇽', color: '#0284c7', stream: 'https://mdstrm.com/audio/6102ce7ef33d0b0830ec3adc/live.m3u8' },
-  { id: 'mx-horizonte',  name: 'Horizonte 107.9',       country: 'MX', city: 'Ciudad de México', genre: 'Jazz/Blues',  flag: '🇲🇽', color: '#0891b2', stream: 'https://s2.mexside.net:8014/stream' },
+  { id: 'mx-horizonte',  name: 'Horizonte 107.9',       country: 'MX', city: 'Ciudad de México', genre: 'Jazz/Blues',  flag: '🇲🇽', color: '#0891b2', stream: 'https://playerservices.streamtheworld.com/api/livestream-redirect/XHFMX_SC' },
   { id: 'mx-mvs',        name: 'MVS Noticias',          country: 'MX', city: 'Ciudad de México', genre: 'Noticias',    flag: '🇲🇽', color: '#1d4ed8', stream: 'https://playerservices.streamtheworld.com/api/livestream-redirect/XHMVSFM_SC' },
 
   // ══════════════════════════════════════════════════════════════════════════
@@ -83,7 +83,7 @@ export const STATIONS = [
   // ══════════════════════════════════════════════════════════════════════════
   // OTROS LATAM
   // ══════════════════════════════════════════════════════════════════════════
-  { id: 'uy-sport890',   name: 'Sport 890',             country: 'UY', city: 'Montevideo',       genre: 'Deportes',    flag: '🇺🇾', color: '#1d4ed8', stream: 'https://icecast.sport890.com.uy/sport890' },
+  { id: 'uy-sport890',   name: 'Sport 890',             country: 'UY', city: 'Montevideo',       genre: 'Deportes',    flag: '🇺🇾', color: '#1d4ed8', stream: 'https://stream.zeno.fm/xetgkw1n6k0uv' },
   { id: 'do-z101',       name: 'Z101 FM',               country: 'DO', city: 'Santo Domingo',    genre: 'Pop/Hits',    flag: '🇩🇴', color: '#7c3aed', stream: 'https://playerservices.streamtheworld.com/api/livestream-redirect/Z101FM_SC' },
 
   // ══════════════════════════════════════════════════════════════════════════
@@ -92,18 +92,18 @@ export const STATIONS = [
   { id: 'br-jovempan',   name: 'Jovem Pan News',        country: 'BR', city: 'São Paulo',        genre: 'Noticias',    flag: '🇧🇷', color: '#dc2626', stream: 'https://stream.zeno.fm/vlcraijc6yiuv' },
   { id: 'br-89fm',       name: '89 FM A Rádio Rock',    country: 'BR', city: 'São Paulo',        genre: 'Rock',        flag: '🇧🇷', color: '#991b1b', stream: 'https://playerservices.streamtheworld.com/api/livestream-redirect/RADIO_89FM_ADP.aac' },
   { id: 'br-bandnews',   name: 'BandNews FM',           country: 'BR', city: 'São Paulo',        genre: 'Noticias',    flag: '🇧🇷', color: '#1d4ed8', stream: 'https://playerservices.streamtheworld.com/api/livestream-redirect/BANDNEWSFM_SPAAC.m3u8' },
-  { id: 'br-antena1',    name: 'Antena 1',              country: 'BR', city: 'São Paulo',        genre: 'Baladas',     flag: '🇧🇷', color: '#9333ea', stream: 'http://antena1.newradio.it/stream?ext=.mp3' },
+  { id: 'br-antena1',    name: 'Antena 1',              country: 'BR', city: 'São Paulo',        genre: 'Baladas',     flag: '🇧🇷', color: '#9333ea', stream: 'https://stream.zeno.fm/yt0yqtbr2k0uv' },
   { id: 'br-mix',        name: 'Mix FM Brasil',         country: 'BR', city: 'São Paulo',        genre: 'Pop/Hits',    flag: '🇧🇷', color: '#ea580c', stream: 'https://playerservices.streamtheworld.com/api/livestream-redirect/MIXFM_SAOPAULOAAC.aac' },
 
   // ══════════════════════════════════════════════════════════════════════════
   // ESPAÑA (verificado vía radio-browser.info)
   // ══════════════════════════════════════════════════════════════════════════
-  { id: 'es-cadena100',  name: 'Cadena 100',            country: 'ES', city: 'Madrid',           genre: 'Pop/Hits',    flag: '🇪🇸', color: '#dc2626', stream: 'http://cadena100-streamers-mp3.flumotion.com/cope/cadena100.mp3' },
+  { id: 'es-cadena100',  name: 'Cadena 100',            country: 'ES', city: 'Madrid',           genre: 'Pop/Hits',    flag: '🇪🇸', color: '#dc2626', stream: 'https://playerservices.streamtheworld.com/api/livestream-redirect/CADENA100.mp3' },
   { id: 'es-los40',      name: 'Los 40 España',         country: 'ES', city: 'Madrid',           genre: 'Pop/Hits',    flag: '🇪🇸', color: '#7c3aed', stream: 'https://playerservices.streamtheworld.com/api/livestream-redirect/Los40.mp3' },
   { id: 'es-ser',        name: 'Cadena SER',            country: 'ES', city: 'Madrid',           genre: 'Noticias',    flag: '🇪🇸', color: '#dc2626', stream: 'https://playerservices.streamtheworld.com/api/livestream-redirect/CADENASER.mp3' },
-  { id: 'es-rockfm',     name: 'Rock FM España',        country: 'ES', city: 'Madrid',           genre: 'Rock',        flag: '🇪🇸', color: '#b91c1c', stream: 'http://flucast31-h-cloud.flumotion.com/cope/rockfm-low.mp3' },
+  { id: 'es-rockfm',     name: 'Rock FM España',        country: 'ES', city: 'Madrid',           genre: 'Rock',        flag: '🇪🇸', color: '#b91c1c', stream: 'https://playerservices.streamtheworld.com/api/livestream-redirect/ROCKFM.mp3' },
   { id: 'es-ondacero',   name: 'Onda Cero',             country: 'ES', city: 'Madrid',           genre: 'Noticias',    flag: '🇪🇸', color: '#16a34a', stream: 'https://atres-live.ondacero.es/live/ondacero/bitrate_1.m3u8' },
-  { id: 'es-cope',       name: 'COPE',                  country: 'ES', city: 'Madrid',           genre: 'Noticias',    flag: '🇪🇸', color: '#1d4ed8', stream: 'http://wecast-bl02.flumotion.com/copesedes/sevilla.mp3' },
+  { id: 'es-cope',       name: 'COPE',                  country: 'ES', city: 'Madrid',           genre: 'Noticias',    flag: '🇪🇸', color: '#1d4ed8', stream: 'https://playerservices.streamtheworld.com/api/livestream-redirect/COPE.mp3' },
   { id: 'es-dial',       name: 'Cadena Dial',           country: 'ES', city: 'Madrid',           genre: 'Romántica',   flag: '🇪🇸', color: '#be185d', stream: 'https://playerservices.streamtheworld.com/api/livestream-redirect/CADENADIAL.mp3' },
   { id: 'es-rac1',       name: 'RAC1',                  country: 'ES', city: 'Barcelona',        genre: 'Noticias',    flag: '🇪🇸', color: '#ea580c', stream: 'https://playerservices.streamtheworld.com/api/livestream-redirect/RAC_1.mp3' },
   { id: 'es-flaix',      name: 'Flaix FM',              country: 'ES', city: 'Barcelona',        genre: 'Electrónica', flag: '🇪🇸', color: '#0891b2', stream: 'https://stream.flaixfm.cat/icecast' },
@@ -111,74 +111,74 @@ export const STATIONS = [
   // ══════════════════════════════════════════════════════════════════════════
   // REINO UNIDO (verificado vía radio-browser.info)
   // ══════════════════════════════════════════════════════════════════════════
-  { id: 'uk-bbc1',       name: 'BBC Radio 1',           country: 'GB', city: 'Londres',          genre: 'Pop/Hits',    flag: '🇬🇧', color: '#1d4ed8', stream: 'http://a.files.bbci.co.uk/ms6/live/3441A116-B12E-4D2F-ACA8-C1984642FA4B/audio/simulcast/hls/nonuk/pc_hd_abr_v2/ak/bbc_radio_one.m3u8' },
-  { id: 'uk-bbc2',       name: 'BBC Radio 2',           country: 'GB', city: 'Londres',          genre: 'Pop Clásico', flag: '🇬🇧', color: '#16a34a', stream: 'http://as-hls-ww-live.akamaized.net/pool_74208725/live/ww/bbc_radio_two/bbc_radio_two.isml/bbc_radio_two-audio%3d128000.norewind.m3u8' },
-  { id: 'uk-bbc3',       name: 'BBC Radio 3',           country: 'GB', city: 'Londres',          genre: 'Clásica',     flag: '🇬🇧', color: '#7c3aed', stream: 'http://as-hls-ww-live.akamaized.net/pool_23461179/live/ww/bbc_radio_three/bbc_radio_three.isml/bbc_radio_three-audio%3d128000.norewind.m3u8' },
-  { id: 'uk-bbc4',       name: 'BBC Radio 4',           country: 'GB', city: 'Londres',          genre: 'Noticias',    flag: '🇬🇧', color: '#b45309', stream: 'http://as-hls-ww-live.akamaized.net/pool_55057080/live/ww/bbc_radio_fourfm/bbc_radio_fourfm.isml/bbc_radio_fourfm-audio%3d128000.norewind.m3u8' },
-  { id: 'uk-bbc6',       name: 'BBC Radio 6 Music',     country: 'GB', city: 'Londres',          genre: 'Alternativo', flag: '🇬🇧', color: '#059669', stream: 'http://as-hls-ww-live.akamaized.net/pool_81827798/live/ww/bbc_6music/bbc_6music.isml/bbc_6music-audio%3d128000.norewind.m3u8' },
-  { id: 'uk-talksport',  name: 'talkSPORT',             country: 'GB', city: 'Londres',          genre: 'Deportes',    flag: '🇬🇧', color: '#15803d', stream: 'http://radio.talksport.com/stream?aisGetOriginalStream=true' },
-  { id: 'uk-smooth',     name: 'Smooth Radio',          country: 'GB', city: 'Londres',          genre: 'Romántica',   flag: '🇬🇧', color: '#0369a1', stream: 'http://media-the.musicradio.com/SmoothLondonMP3' },
+  { id: 'uk-bbc1',       name: 'BBC Radio 1',           country: 'GB', city: 'Londres',          genre: 'Pop/Hits',    flag: '🇬🇧', color: '#1d4ed8', stream: 'https://as-hls-ww-live.akamaized.net/pool_904/live/ww/bbc_radio_one/bbc_radio_one.isml/bbc_radio_one-audio%3d128000.norewind.m3u8' },
+  { id: 'uk-bbc2',       name: 'BBC Radio 2',           country: 'GB', city: 'Londres',          genre: 'Pop Clásico', flag: '🇬🇧', color: '#16a34a', stream: 'https://as-hls-ww-live.akamaized.net/pool_74208725/live/ww/bbc_radio_two/bbc_radio_two.isml/bbc_radio_two-audio%3d128000.norewind.m3u8' },
+  { id: 'uk-bbc3',       name: 'BBC Radio 3',           country: 'GB', city: 'Londres',          genre: 'Clásica',     flag: '🇬🇧', color: '#7c3aed', stream: 'https://as-hls-ww-live.akamaized.net/pool_23461179/live/ww/bbc_radio_three/bbc_radio_three.isml/bbc_radio_three-audio%3d128000.norewind.m3u8' },
+  { id: 'uk-bbc4',       name: 'BBC Radio 4',           country: 'GB', city: 'Londres',          genre: 'Noticias',    flag: '🇬🇧', color: '#b45309', stream: 'https://as-hls-ww-live.akamaized.net/pool_55057080/live/ww/bbc_radio_fourfm/bbc_radio_fourfm.isml/bbc_radio_fourfm-audio%3d128000.norewind.m3u8' },
+  { id: 'uk-bbc6',       name: 'BBC Radio 6 Music',     country: 'GB', city: 'Londres',          genre: 'Alternativo', flag: '🇬🇧', color: '#059669', stream: 'https://as-hls-ww-live.akamaized.net/pool_81827798/live/ww/bbc_6music/bbc_6music.isml/bbc_6music-audio%3d128000.norewind.m3u8' },
+  { id: 'uk-talksport',  name: 'talkSPORT',             country: 'GB', city: 'Londres',          genre: 'Deportes',    flag: '🇬🇧', color: '#15803d', stream: 'https://playerservices.streamtheworld.com/api/livestream-redirect/TALKSPORT.mp3' },
+  { id: 'uk-smooth',     name: 'Smooth Radio',          country: 'GB', city: 'Londres',          genre: 'Romántica',   flag: '🇬🇧', color: '#0369a1', stream: 'https://playerservices.streamtheworld.com/api/livestream-redirect/SMOOTHLONDON.mp3' },
 
   // ══════════════════════════════════════════════════════════════════════════
   // ESTADOS UNIDOS (verificado vía radio-browser.info)
   // ══════════════════════════════════════════════════════════════════════════
-  { id: 'us-npr',        name: 'NPR News',              country: 'US', city: 'Washington',       genre: 'Noticias',    flag: '🇺🇸', color: '#1d4ed8', stream: 'http://npr-ice.streamguys1.com/live.mp3' },
-  { id: 'us-wqxr',       name: 'WQXR Classical',        country: 'US', city: 'New York',         genre: 'Clásica',     flag: '🇺🇸', color: '#7c3aed', stream: 'http://stream.wqxr.org/wqxr' },
+  { id: 'us-npr',        name: 'NPR News',              country: 'US', city: 'Washington',       genre: 'Noticias',    flag: '🇺🇸', color: '#1d4ed8', stream: 'https://npr-ice.streamguys1.com/live.mp3' },
+  { id: 'us-wqxr',       name: 'WQXR Classical',        country: 'US', city: 'New York',         genre: 'Clásica',     flag: '🇺🇸', color: '#7c3aed', stream: 'https://stream.wqxr.org/wqxr' },
   { id: 'us-z100',       name: 'Z100 New York',         country: 'US', city: 'New York',         genre: 'Pop/Hits',    flag: '🇺🇸', color: '#db2777', stream: 'https://stream.revma.ihrhls.com/zc1469' },
-  { id: 'us-kroq',       name: 'KROQ 106.7',            country: 'US', city: 'Los Angeles',      genre: 'Alternativo', flag: '🇺🇸', color: '#dc2626', stream: 'http://live.amperwave.net/direct/audacy-kroqfmaac-imc' },
-  { id: 'us-kexp',       name: 'KEXP Seattle',          country: 'US', city: 'Seattle',          genre: 'Alternativo', flag: '🇺🇸', color: '#15803d', stream: 'http://live-mp3-128.kexp.org/kexp128.mp3' },
+  { id: 'us-kroq',       name: 'KROQ 106.7',            country: 'US', city: 'Los Angeles',      genre: 'Alternativo', flag: '🇺🇸', color: '#dc2626', stream: 'https://live.amperwave.net/direct/audacy-kroqfmaac-imc' },
+  { id: 'us-kexp',       name: 'KEXP Seattle',          country: 'US', city: 'Seattle',          genre: 'Alternativo', flag: '🇺🇸', color: '#15803d', stream: 'https://kexp-mp3-128.streamguys1.com/kexp128.mp3' },
   { id: 'us-kcrw',       name: 'KCRW Santa Mónica',     country: 'US', city: 'Los Angeles',      genre: 'Alternativo', flag: '🇺🇸', color: '#0369a1', stream: 'https://streams.kcrw.com/kcrw_mp3' },
-  { id: 'us-wbez',       name: 'WBEZ Chicago',          country: 'US', city: 'Chicago',          genre: 'Cultural',    flag: '🇺🇸', color: '#0891b2', stream: 'http://stream.wbez.org/wbez128.mp3' },
+  { id: 'us-wbez',       name: 'WBEZ Chicago',          country: 'US', city: 'Chicago',          genre: 'Cultural',    flag: '🇺🇸', color: '#0891b2', stream: 'https://stream.wbez.org/wbez128.mp3' },
 
   // ══════════════════════════════════════════════════════════════════════════
   // EUROPA — FRANCE (verificado vía radio-browser.info)
   // ══════════════════════════════════════════════════════════════════════════
-  { id: 'fr-fip',        name: 'FIP',                   country: 'FR', city: 'París',            genre: 'Jazz/Blues',  flag: '🇫🇷', color: '#1d4ed8', stream: 'http://icecast.radiofrance.fr/fip-hifi.aac' },
-  { id: 'fr-rtl',        name: 'RTL France',            country: 'FR', city: 'París',            genre: 'Noticias',    flag: '🇫🇷', color: '#dc2626', stream: 'http://streaming.radio.rtl.fr/rtl-1-44-128' },
-  { id: 'fr-nova',       name: 'Radio Nova',            country: 'FR', city: 'París',            genre: 'Electrónica', flag: '🇫🇷', color: '#0891b2', stream: 'http://novazz.ice.infomaniak.ch/novazz-128.mp3' },
-  { id: 'fr-mouv',       name: "Mouv'",                 country: 'FR', city: 'París',            genre: 'Hip-Hop',     flag: '🇫🇷', color: '#7c3aed', stream: 'http://icecast.radiofrance.fr/mouv-hifi.aac' },
+  { id: 'fr-fip',        name: 'FIP',                   country: 'FR', city: 'París',            genre: 'Jazz/Blues',  flag: '🇫🇷', color: '#1d4ed8', stream: 'https://icecast.radiofrance.fr/fip-hifi.aac' },
+  { id: 'fr-rtl',        name: 'RTL France',            country: 'FR', city: 'París',            genre: 'Noticias',    flag: '🇫🇷', color: '#dc2626', stream: 'https://streaming.radio.rtl.fr/rtl-1-44-128' },
+  { id: 'fr-nova',       name: 'Radio Nova',            country: 'FR', city: 'París',            genre: 'Electrónica', flag: '🇫🇷', color: '#0891b2', stream: 'https://novazz.ice.infomaniak.ch/novazz-128.mp3' },
+  { id: 'fr-mouv',       name: "Mouv'",                 country: 'FR', city: 'París',            genre: 'Hip-Hop',     flag: '🇫🇷', color: '#7c3aed', stream: 'https://icecast.radiofrance.fr/mouv-hifi.aac' },
 
   // ══════════════════════════════════════════════════════════════════════════
   // EUROPA — ALEMANIA (verificado vía radio-browser.info)
   // ══════════════════════════════════════════════════════════════════════════
   { id: 'de-dlf',        name: 'Deutschlandfunk',       country: 'DE', city: 'Colonia',          genre: 'Cultural',    flag: '🇩🇪', color: '#15803d', stream: 'https://st01.sslstream.dlf.de/dlf/01/128/mp3/stream.mp3' },
-  { id: 'de-ndr',        name: 'NDR Info',              country: 'DE', city: 'Hamburgo',         genre: 'Noticias',    flag: '🇩🇪', color: '#1d4ed8', stream: 'http://icecast.ndr.de/ndr/ndrinfo/hamburg/mp3/128/stream.mp3' },
-  { id: 'de-fritz',      name: 'Fritz',                 country: 'DE', city: 'Berlín',           genre: 'Alternativo', flag: '🇩🇪', color: '#ea580c', stream: 'http://dispatcher.rndfnk.com/rbb/fritz/live/mp3/mid' },
-  { id: 'de-radioeins',  name: 'radioeins',             country: 'DE', city: 'Berlín',           genre: 'Alternativo', flag: '🇩🇪', color: '#7c3aed', stream: 'http://d141.rndfnk.com/ard/rbb/radioeins/live/mp3/128/stream.mp3' },
+  { id: 'de-ndr',        name: 'NDR Info',              country: 'DE', city: 'Hamburgo',         genre: 'Noticias',    flag: '🇩🇪', color: '#1d4ed8', stream: 'https://icecast.ndr.de/ndr/ndrinfo/hamburg/mp3/128/stream.mp3' },
+  { id: 'de-fritz',      name: 'Fritz',                 country: 'DE', city: 'Berlín',           genre: 'Alternativo', flag: '🇩🇪', color: '#ea580c', stream: 'https://dispatcher.rndfnk.com/rbb/fritz/live/mp3/mid' },
+  { id: 'de-radioeins',  name: 'radioeins',             country: 'DE', city: 'Berlín',           genre: 'Alternativo', flag: '🇩🇪', color: '#7c3aed', stream: 'https://dispatcher.rndfnk.com/rbb/radioeins/live/mp3/mid' },
 
   // ══════════════════════════════════════════════════════════════════════════
   // EUROPA — ITALIA / PORTUGAL / BENELUX / OTROS (verificado vía radio-browser.info)
   // ══════════════════════════════════════════════════════════════════════════
-  { id: 'it-rai1',       name: 'RAI Radio 1',           country: 'IT', city: 'Roma',             genre: 'Variado',     flag: '🇮🇹', color: '#15803d', stream: 'http://icestreaming.rai.it/1.mp3' },
-  { id: 'it-rai2',       name: 'RAI Radio 2',           country: 'IT', city: 'Roma',             genre: 'Pop',         flag: '🇮🇹', color: '#dc2626', stream: 'http://icestreaming.rai.it/2.mp3' },
+  { id: 'it-rai1',       name: 'RAI Radio 1',           country: 'IT', city: 'Roma',             genre: 'Variado',     flag: '🇮🇹', color: '#15803d', stream: 'https://icestreaming.rai.it/1.mp3' },
+  { id: 'it-rai2',       name: 'RAI Radio 2',           country: 'IT', city: 'Roma',             genre: 'Pop',         flag: '🇮🇹', color: '#dc2626', stream: 'https://icestreaming.rai.it/2.mp3' },
   { id: 'it-m2o',        name: 'Radio m2o',             country: 'IT', city: 'Roma',             genre: 'Electrónica', flag: '🇮🇹', color: '#0891b2', stream: 'https://4c4b867c89244861ac216426883d1ad0.msvdn.net/radiom2o/radiom2o/master_ma.m3u8' },
-  { id: 'pt-antena1',    name: 'Antena 1 Portugal',     country: 'PT', city: 'Lisboa',           genre: 'Variado',     flag: '🇵🇹', color: '#dc2626', stream: 'http://streaming-live-app.rtp.pt/liveradio/antena180a/playlist.m3u8' },
+  { id: 'pt-antena1',    name: 'Antena 1 Portugal',     country: 'PT', city: 'Lisboa',           genre: 'Variado',     flag: '🇵🇹', color: '#dc2626', stream: 'https://streaming-live-app.rtp.pt/liveradio/antena180a/playlist.m3u8' },
   { id: 'nl-538',        name: 'Radio 538',             country: 'NL', city: 'Amsterdam',        genre: 'Pop/Dance',   flag: '🇳🇱', color: '#ea580c', stream: 'https://playerservices.streamtheworld.com/api/livestream-redirect/RADIO538.mp3' },
-  { id: 'nl-3fm',        name: 'NPO 3FM',               country: 'NL', city: 'Amsterdam',        genre: 'Alternativo', flag: '🇳🇱', color: '#1d4ed8', stream: 'http://icecast.omroep.nl/3fm-bb-mp3' },
-  { id: 'be-mnm',        name: 'MNM',                   country: 'BE', city: 'Bruselas',         genre: 'Pop',         flag: '🇧🇪', color: '#dc2626', stream: 'http://icecast.vrtcdn.be/mnm-high.mp3' },
-  { id: 'ch-srf3',       name: 'SRF 3',                 country: 'CH', city: 'Zúrich',           genre: 'Pop',         flag: '🇨🇭', color: '#dc2626', stream: 'http://stream.srg-ssr.ch/m/drs3/mp3_128' },
+  { id: 'nl-3fm',        name: 'NPO 3FM',               country: 'NL', city: 'Amsterdam',        genre: 'Alternativo', flag: '🇳🇱', color: '#1d4ed8', stream: 'https://icecast.omroep.nl/3fm-bb-mp3' },
+  { id: 'be-mnm',        name: 'MNM',                   country: 'BE', city: 'Bruselas',         genre: 'Pop',         flag: '🇧🇪', color: '#dc2626', stream: 'https://icecast.vrtcdn.be/mnm-high.mp3' },
+  { id: 'ch-srf3',       name: 'SRF 3',                 country: 'CH', city: 'Zúrich',           genre: 'Pop',         flag: '🇨🇭', color: '#dc2626', stream: 'https://stream.srg-ssr.ch/m/drs3/mp3_128' },
   { id: 'at-oe3',        name: 'Ö3',                    country: 'AT', city: 'Viena',            genre: 'Pop/Hits',    flag: '🇦🇹', color: '#dc2626', stream: 'https://orf-live.ors-shoutcast.at/oe3-q2a' },
   { id: 'se-p3',         name: 'P3 Sverige',            country: 'SE', city: 'Estocolmo',        genre: 'Pop',         flag: '🇸🇪', color: '#1d4ed8', stream: 'https://live1.sr.se/p3-aac-320' },
   { id: 'no-nrk',        name: 'NRK P3',                country: 'NO', city: 'Oslo',             genre: 'Pop',         flag: '🇳🇴', color: '#dc2626', stream: 'https://cdn0-47115-liveicecast0.dna.contentdelivery.net/p3_mp3_h' },
-  { id: 'dk-dr1',        name: 'DR P1',                 country: 'DK', city: 'Copenhague',       genre: 'Noticias',    flag: '🇩🇰', color: '#dc2626', stream: 'http://live-icy.gss.dr.dk/A/A03H.mp3' },
-  { id: 'fi-yle',        name: 'Yle Radio 1',           country: 'FI', city: 'Helsinki',         genre: 'Cultural',    flag: '🇫🇮', color: '#1d4ed8', stream: 'http://icecast.live.yle.fi/radio/YleRadio1Hifi/icecast.audio' },
-  { id: 'pl-trojka',     name: 'Polskie Radio 3',       country: 'PL', city: 'Varsovia',         genre: 'Cultural',    flag: '🇵🇱', color: '#dc2626', stream: 'http://stream3.polskieradio.pl:8904/' },
-  { id: 'gr-skai',       name: 'Skai Radio',            country: 'GR', city: 'Atenas',           genre: 'Pop',         flag: '🇬🇷', color: '#1d4ed8', stream: 'http://netradio.live24.gr/skai1003' },
+  { id: 'dk-dr1',        name: 'DR P1',                 country: 'DK', city: 'Copenhague',       genre: 'Noticias',    flag: '🇩🇰', color: '#dc2626', stream: 'https://live-icy.gss.dr.dk/A/A03H.mp3' },
+  { id: 'fi-yle',        name: 'Yle Radio 1',           country: 'FI', city: 'Helsinki',         genre: 'Cultural',    flag: '🇫🇮', color: '#1d4ed8', stream: 'https://icecast.live.yle.fi/radio/YleRadio1Hifi/icecast.audio' },
+  { id: 'pl-trojka',     name: 'Polskie Radio 3',       country: 'PL', city: 'Varsovia',         genre: 'Cultural',    flag: '🇵🇱', color: '#dc2626', stream: 'https://stream3.polskieradio.pl:8904/' },
+  { id: 'gr-skai',       name: 'Skai Radio',            country: 'GR', city: 'Atenas',           genre: 'Pop',         flag: '🇬🇷', color: '#1d4ed8', stream: 'https://netradio.live24.gr/skai1003' },
   { id: 'ro-kiss',       name: 'Kiss FM Romania',       country: 'RO', city: 'Bucarest',         genre: 'Pop',         flag: '🇷🇴', color: '#dc2626', stream: 'https://live.kissfm.ro/kissfm.aacp' },
-  { id: 'cz-beat',       name: 'Rádio Beat',            country: 'CZ', city: 'Praga',            genre: 'Rock',        flag: '🇨🇿', color: '#dc2626', stream: 'http://icecast2.play.cz/radiobeat128.mp3' },
+  { id: 'cz-beat',       name: 'Rádio Beat',            country: 'CZ', city: 'Praga',            genre: 'Rock',        flag: '🇨🇿', color: '#dc2626', stream: 'https://icecast2.play.cz/radiobeat128.mp3' },
 
   // ══════════════════════════════════════════════════════════════════════════
   // ASIA / PACÍFICO (verificado vía radio-browser.info)
   // ══════════════════════════════════════════════════════════════════════════
-  { id: 'au-triplej',    name: 'Triple J',              country: 'AU', city: 'Sídney',           genre: 'Alternativo', flag: '🇦🇺', color: '#dc2626', stream: 'http://live-radio01.mediahubaustralia.com/2TJW/mp3/' },
+  { id: 'au-triplej',    name: 'Triple J',              country: 'AU', city: 'Sídney',           genre: 'Alternativo', flag: '🇦🇺', color: '#dc2626', stream: 'https://live-radio01.mediahubaustralia.com/2TJW/mp3/' },
   { id: 'au-nova',       name: 'Nova 96.9',             country: 'AU', city: 'Sídney',           genre: 'Pop/Hits',    flag: '🇦🇺', color: '#7c3aed', stream: 'https://playerservices.streamtheworld.com/api/livestream-redirect/NOVA_969_AAC48.aac' },
-  { id: 'ru-europaplus', name: 'Europa Plus',           country: 'RU', city: 'Moscú',            genre: 'Pop',         flag: '🇷🇺', color: '#0891b2', stream: 'http://ep256.hostingradio.ru:8052/europaplus256.mp3' },
+  { id: 'ru-europaplus', name: 'Europa Plus',           country: 'RU', city: 'Moscú',            genre: 'Pop',         flag: '🇷🇺', color: '#0891b2', stream: 'https://ep256.hostingradio.ru:8052/europaplus256.mp3' },
   { id: 'za-947',        name: '947 FM',                country: 'ZA', city: 'Johannesburgo',    genre: 'Pop/Hits',    flag: '🇿🇦', color: '#dc2626', stream: 'https://playerservices.streamtheworld.com/api/livestream-redirect/FM947_SC' },
 
   // ══════════════════════════════════════════════════════════════════════════
   // CANALES TEMÁTICOS ONLINE — LOFI / CHILLOUT
   // ══════════════════════════════════════════════════════════════════════════
-  { id: 'on-lofi',       name: 'Lofi Hip-Hop',          country: 'ON', city: 'Online',           genre: 'Lofi/Chill',  flag: '🌐', color: '#7c3aed', stream: 'https://radio.streemlion.com:3420/stream' },
+  { id: 'on-lofi',       name: 'Lofi Hip-Hop',          country: 'ON', city: 'Online',           genre: 'Lofi/Chill',  flag: '🌐', color: '#7c3aed', stream: 'https://stream.zeno.fm/nq2mcb5ms5quv' },
   { id: 'on-chillstep',  name: 'Chillstep Radio',       country: 'ON', city: 'Online',           genre: 'Lofi/Chill',  flag: '🌐', color: '#0891b2', stream: 'https://stream.zeno.fm/f3wvbbqmdg8uv' },
   { id: 'on-focus',      name: 'Focus Study Radio',     country: 'ON', city: 'Online',           genre: 'Lofi/Chill',  flag: '🌐', color: '#6d28d9', stream: 'https://stream.zeno.fm/hn56vhkam4quv' },
   { id: 'on-ambient',    name: 'Ambient / Espacial',    country: 'ON', city: 'Online',           genre: 'Ambient',     flag: '🌐', color: '#0369a1', stream: 'https://stream.zeno.fm/2jf44me3xg8uv' },
