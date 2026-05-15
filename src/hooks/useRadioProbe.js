@@ -2,20 +2,38 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 
 const HLS_RE = /\.(m3u8?)(\?|$)/i;
 
-function isHlsUrl(url) {
-  return HLS_RE.test(url);
+/**
+ * Some stream URLs cannot be reliably probed from a browser:
+ *
+ * 1. HLS (.m3u8) — needs hls.js; native Audio can't decode it.
+ * 2. Redirecting streams (zeno.fm, streamtheworld) — the browser follows the
+ *    redirect cross-origin and gets an opaque response, which Audio refuses
+ *    (OpaqueResponseBlocking). The token in the final URL also expires in ~60s
+ *    so storing it is useless.
+ *
+ * These are assumed online and played with their original URL; the browser will
+ * follow redirects at play-time (works fine in real playback, just not probe).
+ */
+function isAssumedOnline(url) {
+  if (HLS_RE.test(url)) return true;
+  try {
+    const { hostname } = new URL(url);
+    // zeno.fm: both the redirect entry point and pre-resolved CDN URLs
+    if (hostname === 'stream.zeno.fm' || hostname.endsWith('.zeno.fm')) return true;
+    // streamtheworld: redirect API and direct CDN nodes (NNN.live.streamtheworld.com)
+    if (hostname.includes('streamtheworld.com')) return true;
+    // mdstrm: redirect/live endpoints
+    if (hostname === 'mdstrm.com' || hostname.endsWith('.mdstrm.com')) return true;
+  } catch { /* ignore */ }
+  return false;
 }
 
 /**
- * Probe a single stream URL via Audio element.
- * HLS streams can't be probed with a plain Audio element (no native HLS support
- * in most browsers), so they are assumed online to avoid false negatives.
- * CORS proxies are intentionally NOT used: browsers block opaque responses for
- * media, so proxied audio streams always fail with OpaqueResponseBlocking.
+ * Probe a stream URL using an <audio> element.
+ * Returns { ok: boolean, resolvedUrl: string }.
  */
-async function probeStream(url, timeoutMs = 6000) {
-  // HLS streams need hls.js — native Audio element can't probe them
-  if (isHlsUrl(url)) return { ok: true, resolvedUrl: url };
+async function probeStream(url, timeoutMs = 7000) {
+  if (isAssumedOnline(url)) return { ok: true, resolvedUrl: url };
 
   return new Promise((resolve) => {
     const audio = new Audio();
