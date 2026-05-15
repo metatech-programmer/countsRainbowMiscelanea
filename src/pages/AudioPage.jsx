@@ -128,6 +128,7 @@ export default function AudioPage() {
   const {
     probing, probingDone,
     isOffline, isChecked,
+    getPlayUrl,
     markOffline, markOnline,
     onlineCount, checkedCount,
     recheckAll,
@@ -193,7 +194,7 @@ export default function AudioPage() {
   // Ground-truth feedback from actual playback
   useEffect(() => {
     if (!current) return;
-    if (status === 'playing') markOnline(current.id);
+    if (status === 'playing') markOnline(current.id, current.stream);
     if (status === 'error')   markOffline(current.id);
   }, [status, current, markOnline, markOffline]);
 
@@ -245,11 +246,12 @@ export default function AudioPage() {
   // ── Actions ───────────────────────────────────────────────────────────────
   const play = useCallback((station) => {
     if (isOffline(station)) return;
-    playAudio(station);
+    const resolvedUrl = getPlayUrl(station);
+    playAudio({ ...station, stream: resolvedUrl });
     const next = [station, ...recents.filter((r) => r.id !== station.id)].slice(0, 20);
     setRecents(next);
     saveRecents(next);
-  }, [isOffline, playAudio, recents]);
+  }, [isOffline, getPlayUrl, playAudio, recents]);
 
   const handleStop   = useCallback(() => stopAudio(), [stopAudio]);
   const handleRetry  = useCallback(() => { if (current) play(current); }, [current, play]);

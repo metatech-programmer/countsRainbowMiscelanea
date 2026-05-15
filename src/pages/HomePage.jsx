@@ -3,7 +3,6 @@ import { addCount, deleteCount, getCountsByDay } from '../lib/db.js';
 import { DEFAULT_ROWS_PER_PAGE, STORAGE_KEYS, TRANSACTION_TYPES, WHATSAPP_PHONE } from '../lib/constants.js';
 import { formatCurrency, getLocalDate, safeJsonParse } from '../lib/utils.js';
 import useRequestState from '../lib/useRequestState.js';
-import BackupPanel from '../components/BackupPanel.jsx';
 import { useConfirm } from '../components/ConfirmProvider.jsx';
 import { useToast } from '../components/ToastProvider.jsx';
 import KpiCard from '../components/ui/KpiCard.jsx';
@@ -15,7 +14,6 @@ const paymentOptions = [
   {
     id: 'nequi',
     label: 'Nequi',
-    // Nequi: morado oscuro con degradado a rosado
     active: 'border-[#6B21A8] bg-gradient-to-r from-[#6B21A8] to-[#EC4899] text-white shadow-[0_0_16px_rgba(107,33,168,0.4)]',
     inactive: 'border-[#6B21A8]/40 bg-gradient-to-r from-[#6B21A8]/8 to-[#EC4899]/8 text-[#6B21A8] hover:from-[#6B21A8]/15 hover:to-[#EC4899]/15 dark:border-[#A855F7]/40 dark:from-[#6B21A8]/15 dark:to-[#EC4899]/15 dark:text-[#d8b4fe]',
     dot: 'bg-gradient-to-r from-[#6B21A8] to-[#EC4899]',
@@ -23,12 +21,19 @@ const paymentOptions = [
   {
     id: 'daviplata',
     label: 'Daviplata',
-    // Daviplata: rojo intenso con texto blanco
     active: 'border-[#DC2626] bg-[#DC2626] text-white shadow-[0_0_16px_rgba(220,38,38,0.4)]',
     inactive: 'border-[#DC2626]/40 bg-[#DC2626]/6 text-[#DC2626] hover:bg-[#DC2626]/12 dark:border-[#EF4444]/40 dark:bg-[#DC2626]/12 dark:text-[#fca5a5]',
     dot: 'bg-[#DC2626]',
   },
 ];
+
+const QUICK_AMOUNTS = [1000, 2000, 5000, 10000, 20000, 50000];
+
+const QUICK_DESCRIPTIONS = {
+  venta: ['minutos', 'recarga', 'plan datos', 'minutos + datos', 'chip', 'giga'],
+  jer: ['JER prepago', 'JER pospago', 'portabilidad', 'activación'],
+  gastos: ['papelería', 'transporte', 'domicilio', 'arriendo', 'servicios'],
+};
 
 const TYPE_CONFIG = {
   venta: { label: 'Venta', shortcut: 'V', color: 'border-emerald-400 bg-emerald-600 text-white shadow-[0_0_16px_rgba(16,185,129,0.3)]', inactive: 'border-slate-200 bg-white text-slate-600 hover:border-emerald-300 hover:text-emerald-700 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-300', icon: '💰' },
@@ -418,12 +423,25 @@ function HomePage() {
                   {valueError}
                 </p>
               )}
-              {value && Number(value) > 0 && (
-                <p className="mt-1 text-xs text-slate-400">{formatCurrency(Number(value))}</p>
+              {value && Number(value) > 0 ? (
+                <p className="mt-1 text-xs font-semibold text-emerald-600 dark:text-emerald-400">{formatCurrency(Number(value))}</p>
+              ) : (
+                <div className="mt-2 flex flex-wrap gap-1.5">
+                  {QUICK_AMOUNTS.map((amt) => (
+                    <button
+                      key={amt}
+                      type="button"
+                      onClick={() => { setValue(String(amt)); setValueError(''); }}
+                      className="rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-semibold text-slate-600 transition-all hover:border-brand-400 hover:bg-brand-50 hover:text-brand-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:border-brand-600 dark:hover:bg-brand-900/30 dark:hover:text-brand-300"
+                    >
+                      {formatCurrency(amt)}
+                    </button>
+                  ))}
+                </div>
               )}
             </div>
 
-            {/* Description with autocomplete */}
+            {/* Description with autocomplete + quick tags */}
             <div className="relative">
               <label htmlFor="desc-input" className="label mb-1.5 block">
                 Descripción <span className="text-rose-500">*</span>
@@ -446,16 +464,36 @@ function HomePage() {
                 <p id="description-error" className="mt-1.5 text-xs font-semibold text-rose-500">{descriptionError}</p>
               )}
 
+              {/* Quick description tags */}
+              {!description && (
+                <div className="mt-2 flex flex-wrap gap-1.5">
+                  {(QUICK_DESCRIPTIONS[type] || []).map((tag) => (
+                    <button
+                      key={tag}
+                      type="button"
+                      onMouseDown={() => { setDescription(tag); setDescriptionError(''); }}
+                      className="rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-600 transition-all hover:border-brand-400 hover:bg-brand-50 hover:text-brand-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400 dark:hover:border-brand-600 dark:hover:text-brand-300"
+                    >
+                      {tag}
+                    </button>
+                  ))}
+                </div>
+              )}
+
               {/* Autocomplete dropdown */}
               {filteredSuggestions.length > 0 && (
                 <div className="absolute left-0 right-0 top-full z-10 mt-1 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-card dark:border-slate-700 dark:bg-slate-900">
+                  <div className="border-b border-slate-100 px-3 py-1.5 dark:border-slate-800">
+                    <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">Recientes</p>
+                  </div>
                   {filteredSuggestions.map((s) => (
                     <button
                       key={s}
                       type="button"
                       onMouseDown={() => { setDescription(s); setShowSuggestions(false); }}
-                      className="flex w-full items-center px-4 py-2.5 text-left text-sm text-slate-700 transition-colors hover:bg-brand-50 hover:text-brand-700 dark:text-slate-300 dark:hover:bg-slate-800"
+                      className="flex w-full items-center gap-2 px-4 py-2.5 text-left text-sm text-slate-700 transition-colors hover:bg-brand-50 hover:text-brand-700 dark:text-slate-300 dark:hover:bg-slate-800"
                     >
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="flex-shrink-0 text-slate-400"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>
                       {s}
                     </button>
                   ))}
@@ -688,7 +726,6 @@ function HomePage() {
         )}
       </section>
 
-      <BackupPanel />
     </div>
   );
 }

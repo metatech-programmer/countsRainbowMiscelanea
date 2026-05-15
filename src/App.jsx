@@ -8,6 +8,7 @@ import HistoryPage from './pages/HistoryPage.jsx';
 import StatsPage from './pages/StatsPage.jsx';
 import AudioPage from './pages/AudioPage.jsx';
 import TVPage from './tv/pages/TVPage.tsx';
+import SettingsPage from './pages/SettingsPage.jsx';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
               <Route path="/estadisticas" element={<StatsPage />} />
               <Route path="/audio" element={<AudioPage />} />
               <Route path="/tv" element={<TVPage />} />
+              <Route path="/ajustes" element={<SettingsPage />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </PageShell>

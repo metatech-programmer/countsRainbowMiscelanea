@@ -10,16 +10,10 @@ import KpiCard from '../components/ui/KpiCard.jsx';
 import TransactionBadge from '../components/ui/TransactionBadge.jsx';
 import Spinner from '../components/ui/Spinner.jsx';
 import EmptyState from '../components/ui/EmptyState.jsx';
+import RecordsFilterPanel from '../components/ui/RecordsFilterPanel.jsx';
 
 const ROW_HEIGHT = 56;
 const VIRTUAL_THRESHOLD = 100;
-
-const TYPE_CHIPS = [
-  { value: 'all', label: 'Todos' },
-  { value: 'venta', label: 'Ventas' },
-  { value: 'jer', label: 'JER' },
-  { value: 'gastos', label: 'Gastos' },
-];
 
 function TrashIcon({ size = 14 }) {
   return (
@@ -32,26 +26,9 @@ function TrashIcon({ size = 14 }) {
   );
 }
 
-function SearchIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="11" cy="11" r="8" />
-      <line x1="21" y1="21" x2="16.65" y2="16.65" />
-    </svg>
-  );
-}
-
-function FilterIcon() {
-  return (
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
-    </svg>
-  );
-}
-
 function DownloadIcon() {
   return (
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
       <polyline points="7 10 12 15 17 10" />
       <line x1="12" y1="15" x2="12" y2="3" />
@@ -65,16 +42,17 @@ function HistoryPage() {
   const [filterSearch, setFilterSearch] = useState('');
   const [filterMin, setFilterMin] = useState('');
   const [filterMax, setFilterMax] = useState('');
+  const [dateFrom, setDateFrom] = useState('');
+  const [dateTo, setDateTo] = useState('');
+  const [activePeriod, setActivePeriod] = useState(null);
   const [day, setDay] = useState('');
   const [month, setMonth] = useState('');
   const [year, setYear] = useState('');
   const [sortField, setSortField] = useState('date');
   const [sortDir, setSortDir] = useState('desc');
-  const [showFilters, setShowFilters] = useState(false);
   const request = useRequestState();
   const { confirm } = useConfirm();
   const { push } = useToast();
-  const resultsRef = useRef(null);
 
   useEffect(() => { loadAll(); }, []);
 
@@ -113,9 +91,13 @@ function HistoryPage() {
     setFilterSearch('');
     setFilterMin('');
     setFilterMax('');
+    setDateFrom('');
+    setDateTo('');
+    setActivePeriod(null);
     setDay('');
     setMonth('');
     setYear('');
+    loadAll();
   }
 
   const filtered = useMemo(() => {
@@ -129,6 +111,8 @@ function HistoryPage() {
     if (!isNaN(minV) && minV > 0) result = result.filter((i) => i.value >= minV);
     const maxV = Number(filterMax);
     if (!isNaN(maxV) && maxV > 0) result = result.filter((i) => i.value <= maxV);
+    if (dateFrom) result = result.filter((i) => i.date >= dateFrom);
+    if (dateTo) result = result.filter((i) => i.date <= dateTo);
 
     result.sort((a, b) => {
       let va = a[sortField];
@@ -138,9 +122,8 @@ function HistoryPage() {
       if (va > vb) return sortDir === 'asc' ? 1 : -1;
       return 0;
     });
-
     return result;
-  }, [counts, filterType, filterSearch, filterMin, filterMax, sortField, sortDir]);
+  }, [counts, filterType, filterSearch, filterMin, filterMax, dateFrom, dateTo, sortField, sortDir]);
 
   const totals = useMemo(() => filtered.reduce(
     (acc, item) => {
@@ -156,7 +139,7 @@ function HistoryPage() {
     if (!id) return;
     const confirmed = await confirm({
       title: 'Eliminar registro',
-      message: 'Esta accion eliminara permanentemente el registro.',
+      message: 'Esta acción eliminará permanentemente el registro.',
       confirmText: 'Eliminar',
     });
     if (!confirmed) return;
@@ -190,12 +173,8 @@ function HistoryPage() {
   }
 
   function toggleSort(field) {
-    if (sortField === field) {
-      setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'));
-    } else {
-      setSortField(field);
-      setSortDir('desc');
-    }
+    if (sortField === field) setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'));
+    else { setSortField(field); setSortDir('desc'); }
   }
 
   function SortIndicator({ field }) {
@@ -205,195 +184,72 @@ function HistoryPage() {
 
   const useVirtual = filtered.length >= VIRTUAL_THRESHOLD;
   const virtualList = useVirtualList(useVirtual ? filtered : [], ROW_HEIGHT);
-
-  const hasActiveFilter = filterType !== 'all' || filterSearch || filterMin || filterMax || day || month || year;
-
   const netProfit = totals.ventas - totals.gastos;
 
   return (
     <div className="flex flex-col gap-8 animate-fade-in">
 
       {/* Header */}
-      <div>
-        <p className="section-eyebrow">Administración</p>
-        <h1 className="font-display text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
-          Historial de operaciones
-        </h1>
-        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-          {counts.length.toLocaleString('es-CO')} registros en total
-        </p>
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <p className="section-eyebrow">Administración</p>
+          <h1 className="font-display text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
+            Historial de operaciones
+          </h1>
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+            {counts.length.toLocaleString('es-CO')} registros en total
+          </p>
+        </div>
+        <button
+          type="button"
+          className="btn-ghost btn-sm"
+          onClick={exportCsv}
+          disabled={filtered.length === 0}
+        >
+          <DownloadIcon /> Exportar CSV
+        </button>
       </div>
 
-      {/* KPIs del periodo filtrado */}
-      <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4" aria-label="Totales del periodo">
+      {/* KPIs */}
+      <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4" aria-label="Totales del período">
         <KpiCard eyebrow="Ventas" value={formatCurrency(totals.ventas)} colorClass="text-emerald-600 dark:text-emerald-400" loading={request.status === 'loading' && counts.length === 0} />
         <KpiCard eyebrow="JER" value={formatCurrency(totals.jer)} colorClass="text-sky-600 dark:text-sky-400" loading={request.status === 'loading' && counts.length === 0} />
         <KpiCard eyebrow="Gastos" value={formatCurrency(totals.gastos)} colorClass="text-rose-600 dark:text-rose-400" loading={request.status === 'loading' && counts.length === 0} />
         <KpiCard eyebrow="Ganancia neta" value={formatCurrency(netProfit)} colorClass={netProfit >= 0 ? 'text-brand-600 dark:text-brand-400' : 'text-rose-600 dark:text-rose-400'} loading={request.status === 'loading' && counts.length === 0} />
       </section>
 
-      {/* Filter panel */}
-      <section className="card">
-        <div
-          className="flex cursor-pointer items-center justify-between gap-4 p-5"
-          onClick={() => setShowFilters((v) => !v)}
-          role="button"
-          aria-expanded={showFilters}
-          tabIndex={0}
-          onKeyDown={(e) => e.key === 'Enter' && setShowFilters((v) => !v)}
-        >
-          <div className="flex items-center gap-2.5">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800">
-              <FilterIcon />
-            </div>
-            <div>
-              <p className="text-sm font-semibold text-slate-800 dark:text-white">Filtros y búsqueda</p>
-              {hasActiveFilter && (
-                <p className="text-xs text-brand-600 dark:text-brand-400">{filtered.length} resultados activos</p>
-              )}
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            {hasActiveFilter && (
-              <button
-                type="button"
-                onClick={(e) => { e.stopPropagation(); clearFilters(); loadAll(); }}
-                className="btn-ghost btn-sm"
-              >
-                Limpiar
-              </button>
-            )}
-            <span className={`text-slate-400 transition-transform duration-200 ${showFilters ? 'rotate-180' : ''}`}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 12 15 18 9" /></svg>
-            </span>
-          </div>
-        </div>
-
-        {showFilters && (
-          <div className="animate-slide-up border-t border-slate-100 p-5 dark:border-slate-800">
-            {/* Type chips */}
-            <div className="mb-5 flex flex-wrap gap-2">
-              {TYPE_CHIPS.map((chip) => (
-                <button
-                  key={chip.value}
-                  type="button"
-                  onClick={() => setFilterType(chip.value)}
-                  aria-pressed={filterType === chip.value}
-                  className={`rounded-xl border px-4 py-2 text-sm font-semibold transition-all duration-150 ${
-                    filterType === chip.value
-                      ? 'border-brand-600 bg-brand-600 text-white shadow-glow-sm'
-                      : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300'
-                  }`}
-                >
-                  {chip.label}
-                </button>
-              ))}
-            </div>
-
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              {/* Search */}
-              <div className="relative">
-                <label className="label-sm mb-1.5 block">Buscar descripción</label>
-                <div className="relative">
-                  <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
-                    <SearchIcon />
-                  </span>
-                  <input
-                    className="input pl-9"
-                    value={filterSearch}
-                    onChange={(e) => setFilterSearch(e.target.value)}
-                    placeholder="Producto o detalle..."
-                  />
-                </div>
-              </div>
-
-              {/* Min amount */}
-              <div>
-                <label className="label-sm mb-1.5 block">Monto mínimo</label>
-                <input className="input" type="number" min="0" value={filterMin} onChange={(e) => setFilterMin(e.target.value)} placeholder="0" />
-              </div>
-
-              {/* Max amount */}
-              <div>
-                <label className="label-sm mb-1.5 block">Monto máximo</label>
-                <input className="input" type="number" min="0" value={filterMax} onChange={(e) => setFilterMax(e.target.value)} placeholder="∞" />
-              </div>
-
-              {/* Date filters */}
-              <div>
-                <label className="label-sm mb-1.5 block">Filtrar por fecha</label>
-                <div className="flex flex-col gap-1.5">
-                  <input
-                    className="input py-2 text-xs"
-                    type="date"
-                    value={day}
-                    onChange={(e) => setDay(e.target.value)}
-                    aria-label="Filtrar por día"
-                  />
-                  <input
-                    className="input py-2 text-xs"
-                    type="month"
-                    value={month}
-                    onChange={(e) => setMonth(e.target.value)}
-                    aria-label="Filtrar por mes"
-                  />
-                  <input
-                    className="input py-2 text-xs"
-                    type="number"
-                    placeholder="Año (ej: 2025)"
-                    value={year}
-                    onChange={(e) => setYear(e.target.value)}
-                    aria-label="Filtrar por año"
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Date filter apply buttons */}
-            <div className="mt-4 flex flex-wrap gap-2">
-              <button className="btn-secondary btn-sm" type="button" onClick={() => applyDateFilter('day')} disabled={!day || request.status === 'loading'}>
-                Aplicar día
-              </button>
-              <button className="btn-secondary btn-sm" type="button" onClick={() => applyDateFilter('month')} disabled={!month || request.status === 'loading'}>
-                Aplicar mes
-              </button>
-              <button className="btn-secondary btn-sm" type="button" onClick={() => applyDateFilter('year')} disabled={!year || request.status === 'loading'}>
-                Aplicar año
-              </button>
-              <button className="btn-primary btn-sm" type="button" onClick={loadAll} disabled={request.status === 'loading'}>
-                Ver todo
-              </button>
-            </div>
-          </div>
-        )}
-      </section>
+      {/* Unified filter panel */}
+      <RecordsFilterPanel
+        filterType={filterType} setFilterType={setFilterType}
+        filterSearch={filterSearch} setFilterSearch={setFilterSearch} showSearch
+        filterMin={filterMin} setFilterMin={setFilterMin}
+        filterMax={filterMax} setFilterMax={setFilterMax}
+        dateFrom={dateFrom} setDateFrom={setDateFrom}
+        dateTo={dateTo} setDateTo={setDateTo}
+        activePeriod={activePeriod} setActivePeriod={setActivePeriod} showPeriodPresets
+        day={day} setDay={setDay}
+        month={month} setMonth={setMonth}
+        year={year} setYear={setYear}
+        onApplyDay={() => applyDateFilter('day')}
+        onApplyMonth={() => applyDateFilter('month')}
+        onApplyYear={() => applyDateFilter('year')}
+        onLoadAll={loadAll}
+        onReset={clearFilters}
+        resultCount={filtered.length}
+        loading={request.status === 'loading'}
+      />
 
       {/* Records table */}
-      <section id="records-table" className="card p-6 sm:p-8">
+      <section className="card p-6 sm:p-8">
         <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
           <div>
             <h2 className="font-display text-xl font-bold text-slate-900 dark:text-white">Registros</h2>
-            <p
-              className="mt-0.5 text-sm text-slate-500 dark:text-slate-400"
-              aria-live="polite"
-              aria-atomic="true"
-              ref={resultsRef}
-            >
+            <p className="mt-0.5 text-sm text-slate-500 dark:text-slate-400">
               {filtered.length.toLocaleString('es-CO')} registro{filtered.length !== 1 ? 's' : ''}
               {useVirtual ? ' — scroll para ver todos' : ''}
             </p>
           </div>
-          <div className="flex items-center gap-2">
-            {request.status === 'loading' && <Spinner size="sm" />}
-            <button
-              type="button"
-              className="btn-ghost btn-sm"
-              onClick={exportCsv}
-              disabled={filtered.length === 0}
-            >
-              <DownloadIcon /> Exportar CSV
-            </button>
-          </div>
+          {request.status === 'loading' && <Spinner size="sm" />}
         </div>
 
         {request.status === 'error' && (
@@ -402,7 +258,6 @@ function HistoryPage() {
           </div>
         )}
 
-        {/* Virtualized or standard */}
         {useVirtual ? (
           <div
             ref={virtualList.containerRef}
@@ -410,7 +265,7 @@ function HistoryPage() {
             className="overflow-auto rounded-xl scrollbar-thin"
             style={{ height: Math.min(filtered.length * ROW_HEIGHT + 48, 560) }}
             role="region"
-            aria-label="Tabla de registros con scroll virtual"
+            aria-label="Tabla de registros virtualizada"
             tabIndex={0}
           >
             <table className="table-modern min-w-[640px]" aria-rowcount={filtered.length}>
@@ -424,9 +279,7 @@ function HistoryPage() {
                 </tr>
               </thead>
               <tbody>
-                {virtualList.paddingTop > 0 && (
-                  <tr aria-hidden="true" style={{ height: virtualList.paddingTop }}><td colSpan={5} /></tr>
-                )}
+                {virtualList.paddingTop > 0 && <tr aria-hidden="true" style={{ height: virtualList.paddingTop }}><td colSpan={5} /></tr>}
                 {virtualList.visibleItems.map(({ item, index }) => (
                   <tr key={item.id} aria-rowindex={index + 1} style={{ height: ROW_HEIGHT }}>
                     <td><TransactionBadge type={item.type} /></td>
@@ -434,21 +287,13 @@ function HistoryPage() {
                     <td className="max-w-[220px] truncate text-slate-500 dark:text-slate-400">{item.description}</td>
                     <td className="text-xs text-slate-400">{item.date}</td>
                     <td className="text-right">
-                      <button
-                        type="button"
-                        className="rounded-lg p-1.5 text-slate-300 transition-colors hover:bg-rose-50 hover:text-rose-500 dark:text-slate-600 dark:hover:bg-rose-900/20 dark:hover:text-rose-400"
-                        onClick={() => handleDelete(item.id)}
-                        disabled={request.status === 'loading'}
-                        aria-label={`Eliminar registro del ${item.date}`}
-                      >
+                      <button type="button" className="rounded-lg p-1.5 text-slate-300 transition-colors hover:bg-rose-50 hover:text-rose-500 dark:text-slate-600 dark:hover:bg-rose-900/20 dark:hover:text-rose-400" onClick={() => handleDelete(item.id)} disabled={request.status === 'loading'} aria-label={`Eliminar registro del ${item.date}`}>
                         <TrashIcon />
                       </button>
                     </td>
                   </tr>
                 ))}
-                {virtualList.paddingBottom > 0 && (
-                  <tr aria-hidden="true" style={{ height: virtualList.paddingBottom }}><td colSpan={5} /></tr>
-                )}
+                {virtualList.paddingBottom > 0 && <tr aria-hidden="true" style={{ height: virtualList.paddingBottom }}><td colSpan={5} /></tr>}
               </tbody>
             </table>
           </div>
@@ -458,12 +303,8 @@ function HistoryPage() {
               <EmptyState
                 icon={<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>}
                 title="Sin resultados"
-                description={hasActiveFilter ? 'Intenta cambiar los filtros activos' : 'No hay registros cargados'}
-                action={hasActiveFilter && (
-                  <button type="button" className="btn-ghost btn-sm" onClick={() => { clearFilters(); loadAll(); }}>
-                    Limpiar filtros
-                  </button>
-                )}
+                description="Ajusta los filtros o carga todos los registros"
+                action={<button type="button" className="btn-ghost btn-sm" onClick={clearFilters}>Limpiar filtros</button>}
               />
             ) : (
               <table className="table-modern min-w-[640px]">
@@ -484,13 +325,7 @@ function HistoryPage() {
                       <td className="max-w-[220px] truncate text-slate-500 dark:text-slate-400">{item.description}</td>
                       <td className="text-xs text-slate-400">{item.date}</td>
                       <td className="text-right">
-                        <button
-                          type="button"
-                          className="rounded-lg p-1.5 text-slate-300 transition-colors hover:bg-rose-50 hover:text-rose-500 dark:text-slate-600 dark:hover:bg-rose-900/20 dark:hover:text-rose-400"
-                          onClick={() => handleDelete(item.id)}
-                          disabled={request.status === 'loading'}
-                          aria-label={`Eliminar registro del ${item.date}`}
-                        >
+                        <button type="button" className="rounded-lg p-1.5 text-slate-300 transition-colors hover:bg-rose-50 hover:text-rose-500 dark:text-slate-600 dark:hover:bg-rose-900/20 dark:hover:text-rose-400" onClick={() => handleDelete(item.id)} disabled={request.status === 'loading'} aria-label={`Eliminar registro del ${item.date}`}>
                           <TrashIcon />
                         </button>
                       </td>
