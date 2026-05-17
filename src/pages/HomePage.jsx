@@ -35,6 +35,12 @@ const QUICK_DESCRIPTIONS = {
   gastos: ['papelería', 'transporte', 'domicilio', 'arriendo', 'servicios'],
 };
 
+const AUTO_DESCRIPTIONS = {
+  venta: 'venta general',
+  jer: 'ingreso de servicio jer',
+  gastos: 'gasto operativo',
+};
+
 const TYPE_CONFIG = {
   venta: { label: 'Venta', shortcut: 'V', color: 'border-emerald-400 bg-emerald-600 text-white shadow-[0_0_16px_rgba(16,185,129,0.3)]', inactive: 'border-slate-200 bg-white text-slate-600 hover:border-emerald-300 hover:text-emerald-700 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-300', icon: '💰' },
   jer: { label: 'JER', shortcut: 'J', color: 'border-sky-400 bg-sky-600 text-white shadow-[0_0_16px_rgba(14,165,233,0.3)]', inactive: 'border-slate-200 bg-white text-slate-600 hover:border-sky-300 hover:text-sky-700 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-300', icon: '📦' },
@@ -105,6 +111,7 @@ function HomePage() {
   const [value, setValue] = useState('');
   const [description, setDescription] = useState('');
   const [descriptionError, setDescriptionError] = useState('');
+  const [showCustomDescription, setShowCustomDescription] = useState(false);
   const [valueError, setValueError] = useState('');
   const [suggestions, setSuggestions] = useState(() =>
     safeJsonParse(localStorage.getItem(STORAGE_KEYS.PAPELERIA_LISTA), [])
@@ -140,6 +147,14 @@ function HomePage() {
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, []);
+
+  useEffect(() => {
+    if (type !== TRANSACTION_TYPES.GASTOS) {
+      setShowCustomDescription(false);
+      setDescriptionError('');
+      setShowSuggestions(false);
+    }
+  }, [type]);
 
   async function loadCounts() {
     try {
@@ -179,6 +194,7 @@ function HomePage() {
     event.preventDefault();
     const numericValue = Number(value);
     const cleanDescription = description.trim();
+    const isDescriptionRequired = type === TRANSACTION_TYPES.GASTOS || showCustomDescription;
     let hasError = false;
 
     if (!numericValue || numericValue <= 0) {
@@ -189,7 +205,7 @@ function HomePage() {
       setValueError('');
     }
 
-    if (!cleanDescription) {
+    if (isDescriptionRequired && !cleanDescription) {
       setDescriptionError('Agrega una descripcion corta.');
       if (!hasError) descInputRef.current?.focus();
       hasError = true;
@@ -199,13 +215,15 @@ function HomePage() {
 
     if (hasError) return;
 
+    const autoDescription = AUTO_DESCRIPTIONS[type] || TYPE_CONFIG[type].label;
+    const baseDescription = cleanDescription || autoDescription;
     const prefix = payment ? `(${payment}) ` : '';
     const payload = {
       id: Date.now(),
       date: dayKey,
       type,
       value: numericValue,
-      description: `${prefix}${cleanDescription.toLowerCase()}`,
+      description: `${prefix}${baseDescription.toLowerCase()}`,
     };
 
     try {
@@ -213,11 +231,12 @@ function HomePage() {
       await addCount(payload);
       setValue('');
       setDescription('');
+      setShowCustomDescription(false);
       setPayment('');
       setShowSuggestions(false);
       setLastSaved(payload);
       await loadCounts();
-      if (!suggestions.includes(cleanDescription.toLowerCase())) {
+      if (cleanDescription && !suggestions.includes(cleanDescription.toLowerCase())) {
         const updated = [cleanDescription.toLowerCase(), ...suggestions].slice(0, 12);
         setSuggestions(updated);
         localStorage.setItem(STORAGE_KEYS.PAPELERIA_LISTA, JSON.stringify(updated));
@@ -311,9 +330,12 @@ function HomePage() {
     return typeof item === 'object' && item.done;
   }
 
-  const filteredSuggestions = showSuggestions && description
+  const shouldShowDescriptionField = type === TRANSACTION_TYPES.GASTOS || showCustomDescription;
+  const isDescriptionRequired = type === TRANSACTION_TYPES.GASTOS || showCustomDescription;
+
+  const filteredSuggestions = shouldShowDescriptionField && showSuggestions && description
     ? suggestions.filter((s) => s.includes(description.toLowerCase())).slice(0, 6)
-    : showSuggestions && !description
+    : shouldShowDescriptionField && showSuggestions && !description
     ? suggestions.slice(0, 6)
     : [];
 
@@ -443,61 +465,95 @@ function HomePage() {
 
             {/* Description with autocomplete + quick tags */}
             <div className="relative">
-              <label htmlFor="desc-input" className="label mb-1.5 block">
-                Descripción <span className="text-rose-500">*</span>
-              </label>
-              <input
-                id="desc-input"
-                ref={descInputRef}
-                className={`input ${descriptionError ? 'input-error' : ''}`}
-                type="text"
-                value={description}
-                onChange={(e) => { setDescription(e.target.value); setDescriptionError(''); }}
-                onFocus={() => setShowSuggestions(true)}
-                onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
-                placeholder="Detalle del producto o servicio"
-                autoComplete="off"
-                aria-invalid={Boolean(descriptionError)}
-                aria-describedby={descriptionError ? 'description-error' : undefined}
-              />
-              {descriptionError && (
-                <p id="description-error" className="mt-1.5 text-xs font-semibold text-rose-500">{descriptionError}</p>
+              {type !== TRANSACTION_TYPES.GASTOS && !shouldShowDescriptionField && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowCustomDescription(true);
+                    setTimeout(() => descInputRef.current?.focus(), 0);
+                  }}
+                  className="w-full rounded-xl border border-dashed border-slate-300 bg-slate-50 px-4 py-2.5 text-sm font-semibold text-slate-600 transition-all hover:border-brand-400 hover:bg-brand-50 hover:text-brand-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:border-brand-600 dark:hover:text-brand-300"
+                >
+                  + Agregar descripción personalizada
+                </button>
               )}
 
-              {/* Quick description tags */}
-              {!description && (
-                <div className="mt-2 flex flex-wrap gap-1.5">
-                  {(QUICK_DESCRIPTIONS[type] || []).map((tag) => (
-                    <button
-                      key={tag}
-                      type="button"
-                      onMouseDown={() => { setDescription(tag); setDescriptionError(''); }}
-                      className="rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-600 transition-all hover:border-brand-400 hover:bg-brand-50 hover:text-brand-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400 dark:hover:border-brand-600 dark:hover:text-brand-300"
-                    >
-                      {tag}
-                    </button>
-                  ))}
-                </div>
-              )}
-
-              {/* Autocomplete dropdown */}
-              {filteredSuggestions.length > 0 && (
-                <div className="absolute left-0 right-0 top-full z-10 mt-1 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-card dark:border-slate-700 dark:bg-slate-900">
-                  <div className="border-b border-slate-100 px-3 py-1.5 dark:border-slate-800">
-                    <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">Recientes</p>
+              {shouldShowDescriptionField && (
+                <>
+                  <div className="mb-1.5 flex items-center justify-between gap-2">
+                    <label htmlFor="desc-input" className="label block">
+                      Descripción {isDescriptionRequired && <span className="text-rose-500">*</span>}
+                    </label>
+                    {type !== TRANSACTION_TYPES.GASTOS && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setShowCustomDescription(false);
+                          setDescription('');
+                          setDescriptionError('');
+                          setShowSuggestions(false);
+                        }}
+                        className="text-xs font-semibold text-slate-500 underline decoration-dotted underline-offset-2 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
+                      >
+                        Quitar
+                      </button>
+                    )}
                   </div>
-                  {filteredSuggestions.map((s) => (
-                    <button
-                      key={s}
-                      type="button"
-                      onMouseDown={() => { setDescription(s); setShowSuggestions(false); }}
-                      className="flex w-full items-center gap-2 px-4 py-2.5 text-left text-sm text-slate-700 transition-colors hover:bg-brand-50 hover:text-brand-700 dark:text-slate-300 dark:hover:bg-slate-800"
-                    >
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="flex-shrink-0 text-slate-400"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>
-                      {s}
-                    </button>
-                  ))}
-                </div>
+
+                  <input
+                    id="desc-input"
+                    ref={descInputRef}
+                    className={`input ${descriptionError ? 'input-error' : ''}`}
+                    type="text"
+                    value={description}
+                    onChange={(e) => { setDescription(e.target.value); setDescriptionError(''); }}
+                    onFocus={() => setShowSuggestions(true)}
+                    onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
+                    placeholder="Detalle del producto o servicio"
+                    autoComplete="off"
+                    aria-invalid={Boolean(descriptionError)}
+                    aria-describedby={descriptionError ? 'description-error' : undefined}
+                  />
+                  {descriptionError && (
+                    <p id="description-error" className="mt-1.5 text-xs font-semibold text-rose-500">{descriptionError}</p>
+                  )}
+
+                  {/* Quick description tags */}
+                  {!description && (
+                    <div className="mt-2 flex flex-wrap gap-1.5">
+                      {(QUICK_DESCRIPTIONS[type] || []).map((tag) => (
+                        <button
+                          key={tag}
+                          type="button"
+                          onMouseDown={() => { setDescription(tag); setDescriptionError(''); }}
+                          className="rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-600 transition-all hover:border-brand-400 hover:bg-brand-50 hover:text-brand-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400 dark:hover:border-brand-600 dark:hover:text-brand-300"
+                        >
+                          {tag}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Autocomplete dropdown */}
+                  {filteredSuggestions.length > 0 && (
+                    <div className="absolute left-0 right-0 top-full z-10 mt-1 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-card dark:border-slate-700 dark:bg-slate-900">
+                      <div className="border-b border-slate-100 px-3 py-1.5 dark:border-slate-800">
+                        <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">Recientes</p>
+                      </div>
+                      {filteredSuggestions.map((s) => (
+                        <button
+                          key={s}
+                          type="button"
+                          onMouseDown={() => { setDescription(s); setShowSuggestions(false); }}
+                          className="flex w-full items-center gap-2 px-4 py-2.5 text-left text-sm text-slate-700 transition-colors hover:bg-brand-50 hover:text-brand-700 dark:text-slate-300 dark:hover:bg-slate-800"
+                        >
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="flex-shrink-0 text-slate-400"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>
+                          {s}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </>
               )}
             </div>
 
